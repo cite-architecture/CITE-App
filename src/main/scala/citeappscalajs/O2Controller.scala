@@ -31,7 +31,7 @@ object O2Controller {
 				case 1 => O2Model.userAlert := "notice"
 				case 2 => O2Model.userAlert := "warn"
 			}
-			js.timers.setTimeout(12000){ O2Model.userMessageVisibility := "app_hidden" }
+			js.timers.setTimeout(9000){ O2Model.userMessageVisibility := "app_hidden" }
 		}
 
 		def validateUrn(urnString: String): Unit = {
@@ -53,13 +53,17 @@ object O2Controller {
 				val newUrn: CtsUrn = CtsUrn(urnString)
 				O2Model.urn := newUrn
 				validUrnInField := "validUrn"
-				updateUserMessage("Current URN changed.",1)
+				updateUserMessage("Current URN changed.",0)
 			} catch {
 					case e: Exception => {
 						validUrnInField := "invalidUrn"
 						updateUserMessage("Invalid URN. Current URN not changed.",2)
 					}
 			}
+		}
+
+		def loadTextRepository(cex: String){
+				println("Will load repository.")
 		}
 
 

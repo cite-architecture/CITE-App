@@ -2,6 +2,7 @@
 
 .app_message {
 	font-size: 80%;
+	min-height: 1.4em;
 	-webkit-transition: all 1s ease-out 0s;
 	-moz-transition: all 1s ease-out 0s;
 	-ms-transition: all 1s ease-out 0s;
@@ -10,7 +11,7 @@
 }
 
 .app_message.default, #mainMessage.default {
-		color: rgb(0, 0, 166);
+		color: #777;
 }
 .app_message.notice, #mainMessage.notice {
 	  color: rgb(0, 100, 0);
