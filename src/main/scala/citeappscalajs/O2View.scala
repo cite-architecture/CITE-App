@@ -43,29 +43,54 @@ object O2View {
 		}
 
 		<div id="o2_Container">
-			<h2>Texts</h2>
-
+			<h2>Text</h2>
+			
 			{ o2messageDiv.bind }
 
-			<p>
-				{ O2Model.passage.bind }
+			<p id="o2_urnInput">
+				<input
+					class={ s"${O2Controller.validUrnInField.bind}" }
+					size={ 40 }
+					type="text"
+					value={ O2Model.urn.bind.toString }
+					onkeyup={ urnValidatingKeyUpHandler }>
+				</input>
+				<span class={ s"${O2Controller.validUrnInField.bind}" } id="o2_validUrnFlag"></span>
+				<br/>
+				<span>Current: { O2Model.urn.bind.toString } </span>
 			</p>
+
+				{ passageContainer.bind }
 
 			<button onclick={ event: Event => O2Controller.changePassage }>Change Passage</button>
 
-			<p>URN: { O2Model.urn.bind.toString } </p>
-
-			<input
-				class={ s"${O2Controller.validUrnInField.bind}" }
-				size={ 40 }
-				type="text"
-				value={ O2Model.urn.bind.toString }
-				onkeyup={ urnValidatingKeyUpHandler }>
-				</input>
-
-			<span class={ s"${O2Controller.validUrnInField.bind}" } id="o2_validUrnFlag"></span>
-
 		</div>
 	}
+
+/* Passage Container */
+@dom
+def passageContainer = {
+	<div id="o2_passageContainer">
+
+		<p>
+				{ O2Model.passage.bind }
+		</p>
+		{ prevButton.bind }
+		{ nextButton.bind }
+	</div>
+}
+
+/* Navigation Buttons */
+@dom
+def nextButton = {
+	<button class="navButton"> → </button>
+}
+
+@dom
+def prevButton = {
+	<button class="navButton"> ← </button>
+}
+
+
 
 }

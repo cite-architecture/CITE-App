@@ -20,7 +20,8 @@ object O2Controller {
 	  val validUrnInField = Var("noUrn") // Options: noUrn, invalidUrn, validUrn
 
 		def changePassage: Unit = {
-			O2Model.passage := s"${O2Model.passage}#"
+			var currentPassage = O2Model.passage.get
+			O2Model.passage := s"${currentPassage}#"
 		}
 
 		def updateUserMessage(msg: String, alert: Int): Unit = {

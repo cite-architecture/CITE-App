@@ -39,10 +39,10 @@ object CiteMainView {
 	@dom
 	def mainDiv = {
 		<div id="main_Container">
-		{ filePicker.bind }
-		{ mainMessageDiv.bind }
 		<h1>CITE Environment</h1>
-			 { textView.bind }
+			{ filePicker.bind }
+			{ mainMessageDiv.bind }
+			{ textView.bind }
 		</div>
 
 	}
