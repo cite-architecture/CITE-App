@@ -19,14 +19,18 @@ object CiteMainView {
 	val textView = O2View.o2div
 
 	@dom
-	def nGramView = { <div id="NGramContainer"><h2>NGram Analysis</h2></div> }  // will replace with proper mvc, as for textView above
+	def mainMessageDiv = {
+			<div id="main_message" class={ s"app_message ${CiteMainModel.userMessageVisibility.bind} ${CiteMainModel.userAlert.bind}" } >
+				<p> { CiteMainModel.userMessage.bind }  </p>
+			</div>
+	}
 
 	@dom
 	def mainDiv = {
-		<div id="MainCITEContainer">
+		<div id="main_Container">
+		{ mainMessageDiv.bind }
 		<h1>CITE Environment</h1>
 			 { textView.bind }
-			 { nGramView.bind }
 		</div>
 
 	}

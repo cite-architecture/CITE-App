@@ -7,19 +7,19 @@ import org.scalajs.dom.document
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.ext.Ajax
 import scala.concurrent
-											.ExecutionContext
-											.Implicits
-											.global
+              .ExecutionContext
+              .Implicits
+              .global
 
 import scala.scalajs.js.annotation.JSExport
 
 @JSExport
-class CiteMain(remoteUrl: String) {
+object CiteMainModel {
 
-	@JSExport
-	def main(libUrl: String): Unit = {
-		CiteMainController.main(remoteUrl)
-	}
+		val userMessage = Var("Main loaded.")
+		val userAlert = Var("default")
+	  val userMessageVisibility = Var("")
 
+		val cexString = Var("")
 
 }

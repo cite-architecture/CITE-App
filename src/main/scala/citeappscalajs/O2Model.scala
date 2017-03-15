@@ -18,7 +18,17 @@ object O2Model {
 	val passage = Var("passage")
 	val urn = Var(CtsUrn("urn:cts:greekLit:tlg0012.tlg001.msA:1.1"))
 
-	val userMessage = Var("No message.")
-	val userAlert = Var(false)
+	val userMessage = Var("")
+	val userAlert = Var("default")
+	val userMessageVisibility = Var("")
+
+
+	var corpus:Corpus = null
+
+	var currentLibrary = Var(Corpus)
+
+	var currentUrn =  Var(CtsUrn)
+	var currentNext =  Var(Option)
+	var currentPrev =  Var(Option)
 
 }

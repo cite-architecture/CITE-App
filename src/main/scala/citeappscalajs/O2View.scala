@@ -15,10 +15,17 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport
 object O2View {
 
-	val o2Cont = O2Controller
-	val o2Model = O2Model
+
+ 	// HTML Div holding messages
+	@dom
+	def o2messageDiv = {
+			<div id="o2_message" class={ s"app_message ${O2Model.userMessageVisibility.bind} ${O2Model.userAlert.bind}"  }>
+				<p>{ O2Model.userMessage.bind }  </p>
+			</div>
+	}
 
 
+	// HTML Div: main div for text work
   @dom
   def o2div = {
 
@@ -27,32 +34,36 @@ object O2View {
 				case (input: html.Input, KeyCode.Enter) => {
 					println("enter")
 					event.preventDefault()
-					o2Cont.changeUrn(s"${input.value.toString}")
-					input.value = ""
+					O2Controller.changeUrn(s"${input.value.toString}")
+					//input.value = ""
 				}
-				case(input: html.Input, _) =>  o2Cont.validateUrn(s"${input.value.toString}")
+				case(input: html.Input, _) =>  O2Controller.validateUrn(s"${input.value.toString}")
 				case _ =>  println("keydown else")
 			}
 		}
 
-		<div id="Ohco2TextContainer">
+		<div id="o2_Container">
 			<h2>Texts</h2>
 
-			<div>
-				<p>Message: { o2Model.userMessage.bind }  </p>
-			</div>
+			{ o2messageDiv.bind }
 
 			<p>
-				{ o2Model.passage.bind }
+				{ O2Model.passage.bind }
 			</p>
 
-			<button onclick={ event: Event => o2Cont.changePassage }>Change Passage</button>
+			<button onclick={ event: Event => O2Controller.changePassage }>Change Passage</button>
 
-			<p>URN: { o2Model.urn.bind.toString } </p>
+			<p>URN: { O2Model.urn.bind.toString } </p>
 
-			<input class={ s"${o2Cont.validUrnInField.bind}" } size={ 40 } type="text" onkeyup={ urnValidatingKeyUpHandler }></input>
+			<input
+				class={ s"${O2Controller.validUrnInField.bind}" }
+				size={ 40 }
+				type="text"
+				value={ O2Model.urn.bind.toString }
+				onkeyup={ urnValidatingKeyUpHandler }>
+				</input>
 
-			<span class={ s"${o2Cont.validUrnInField.bind}" } id="validUrnFlag"></span>
+			<span class={ s"${O2Controller.validUrnInField.bind}" } id="o2_validUrnFlag"></span>
 
 		</div>
 	}
