@@ -67,9 +67,9 @@ urn:cts:greekLit:tlg5026.msA.hmt:#book/scholion/part#Scholia to the Iliad#Main s
 			/* CRASHER BELOW!! */
 
 			val cer = CiteExchangeReader(tinyTexts,"#")
-			val tr = cer.textRepository
-			println(s"Texts: ${tr.catalog.size}")
-			println(s"Texts: ${tr.corpus.size}")
+			//val tr = cer.textRepository
+			//println(s"Texts: ${tr.catalog.size}")
+			//println(s"Texts: ${tr.corpus.size}")
 
 			//CiteMainController.updateUserMessage(s"Loaded file of size ${tinyTexts.size}",0)
 		}
