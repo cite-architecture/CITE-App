@@ -95,7 +95,7 @@ object CiteMainView {
 	@dom
 	def footer = {
 		<p>
-		CITE/CTS is ©2002–2017 Neel Smith and Christopher Blackwell. It was developed for the needs of the <a href="http://www.homermultitext.org">Homer Multitext</a>, Casey Dué and Mary Ebbott, Editors-in-Chief, Stephanie Lindeborg, Project Manager, a project of the <a href="http://www.chs.harvard.edu">Center for Hellenic Studies</a>, Gregory Nagy, Director. This implementation of the CITE data models was written by Neel Smith and Christopher Blackwell using <a href="https://www.scala-lang.org">Scala</a>, <a href="http://www.scala-js.org">Scala-JS</a>, and <a href="https://github.com/ThoughtWorksInc/Binding.scala">Binding.scala</a>. Licensed under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL 3.0</a>. Sourcecode on <a href="https://github.com/cite-architecture/ScalaJS-CITE-Environment">GitHub</a>.
+		CITE/CTS is ©2002–2017 Neel Smith and Christopher Blackwell. This implementation of the CITE data models was written by Neel Smith and Christopher Blackwell using <a href="https://www.scala-lang.org">Scala</a>, <a href="http://www.scala-js.org">Scala-JS</a>, and <a href="https://github.com/ThoughtWorksInc/Binding.scala">Binding.scala</a>. Licensed under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL 3.0</a>. Sourcecode on <a href="https://github.com/cite-architecture/ScalaJS-CITE-Environment">GitHub</a>.
 		</p>
 	}
 
