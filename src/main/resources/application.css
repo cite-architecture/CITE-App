@@ -120,6 +120,12 @@ div.app_sidebarDiv{
 		min-height: 200px;
 }
 
+#app_filePickerSpan {
+		font-weight: normal;
+		font-size: 65%;
+		float: right;
+}
+
 /* appwide forms */
 div.app_sidebarDiv label {
 		padding-right: 5px;

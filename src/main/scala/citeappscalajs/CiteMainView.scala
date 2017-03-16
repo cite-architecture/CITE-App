@@ -23,10 +23,14 @@ object CiteMainView {
 
 	@dom
 	def filePicker = {
-		<input
-			type="file"
-			onchange={ event: Event => CiteMainController.loadLocalLibrary( event )}
-			></input>
+		<span id="app_filePickerSpan">
+			<label for="app_filePicker">Choose local CITE Library</label>
+			<input
+				id="app_filePicker"
+				type="file"
+				onchange={ event: Event => CiteMainController.loadLocalLibrary( event )}
+				></input>
+		</span>
 	}
 
 	@dom
@@ -38,9 +42,11 @@ object CiteMainView {
 
 	@dom
 	def mainDiv = {
-		<header>CITE Environment</header>
-		<article id="main_Container">
+		<header>
 			{ filePicker.bind }
+			CITE Environment
+		</header>
+		<article id="main_Container">
 			{ mainMessageDiv.bind }
 
 			<div class="app_tabs">

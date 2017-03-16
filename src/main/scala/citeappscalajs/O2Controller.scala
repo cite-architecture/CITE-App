@@ -77,7 +77,7 @@ object O2Controller {
 					case e: Exception => {
 						val badMo: String = testText
 						O2Model.nGramThreshold := 3
-						O2Controller.updateUserMessage(s"Minimum Occurrances value must be an integer. ${badMo} is not an integer.", 2)
+						O2Controller.updateUserMessage(s"Minimum Occurrances value must be an integer. '${badMo}' is not an integer.", 2)
 						js.Dynamic.global.document.getElementById("o2_ngram_minOccurrances").value =  O2Model.nGramThreshold.get.toString
 					}
 		}
