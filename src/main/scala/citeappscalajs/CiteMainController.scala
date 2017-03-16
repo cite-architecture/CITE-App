@@ -1,10 +1,6 @@
 package citeappscalajs
-import com.thoughtworks.binding.{Binding, dom}
-import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
-import com.thoughtworks.binding.Binding.{Var, Vars}
-import com.thoughtworks.binding.dom
+import com.thoughtworks.binding._
 import scala.scalajs.js
-import scala.scalajs.js._
 import org.scalajs.dom.document
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.ext.Ajax
@@ -12,7 +8,6 @@ import scala.concurrent
 .ExecutionContext
 .Implicits
 .global
-
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeenv._
@@ -23,10 +18,6 @@ object CiteMainController {
 
 	@JSExport
 	def main(libUrl: String): Unit = {
-
-		//val mainModel = CiteMainModel
-		//val mainView = CiteMainView
-
 
 		def reportCEXLoad: Unit = {
 			val cexSize = CiteMainModel.cexString.get.split("\n").size
@@ -39,17 +30,12 @@ object CiteMainController {
 			O2Controller.updateUserMessage(s"Got data from main controller: ${O2Model.corpus.citedWorks.size} cited works.",0)
 		}
 
-
-
 		val remoteCall = Ajax.get(libUrl).onSuccess { case xhr =>
 			CiteMainModel.cexString := xhr.responseText
 			reportCEXLoad
 			passOhco2Data
-
 		}
-
 		dom.render(document.body, CiteMainView.mainDiv)
-
 	}
 
 	def updateUserMessage(msg: String, alert: Int): Unit = {
