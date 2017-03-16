@@ -8,9 +8,10 @@ import scala.concurrent
 .ExecutionContext
 .Implicits
 .global
+import edu.holycross.shot.citeenv._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
-import edu.holycross.shot.citeenv._
+import edu.holycross.shot.orca._
 import scala.scalajs.js.annotation.JSExport
 
 @JSExport
@@ -54,15 +55,23 @@ object CiteMainController {
 		val reader = new org.scalajs.dom.raw.FileReader()
 		reader.readAsText(e.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement].files(0))
 		reader.onload = (e: Event) => {
-			val contents = reader.result.asInstanceOf[String]
+//			val contents = reader.result.asInstanceOf[String]
+val tinyTexts = """#!ctsdata
+urn:cts:greekLit:tlg5026.msA.hmt:1.4.lemma#<div xmlns="http://www.tei-c.org/ns/1.0" n="lemma"> <p> θεά</p></div>
+urn:cts:greekLit:tlg5026.msA.hmt:1.4.comment#<div xmlns="http://www.tei-c.org/ns/1.0" n="comment"> <p> οὕτως εἴωθε τὴν <persName n="urn:cite:hmt:pers.pers6"> Μοῦσαν</persName> καλεῖν· ἀμέλει καὶ ἐν <title> Ὀδυσσεία</title> · <cit> <q> ἄνδρα μοι ἔννεπε <persName n="urn:cite:hmt:pers.pers6"> Μοῦσα</persName> <ref type="urn">
+#!ctscatalog
+urn#citationScheme#groupName#workTitle#versionLabel#exemplarLabel#online
+urn:cts:greekLit:tlg5026.msA.hmt:#book/scholion/part#Scholia to the Iliad#Main scholia of the Venetus A#HMT project edition##true
+"""
+
 			/* CRASHER BELOW!! */
-			/*
-			val cer = edu.holycross.shot.citeenv.CiteExchangeReader(contents,"\t")
+
+			val cer = CiteExchangeReader(tinyTexts,"#")
 			val tr = cer.textRepository
 			println(s"Texts: ${tr.catalog.size}")
 			println(s"Texts: ${tr.corpus.size}")
-			*/
-			CiteMainController.updateUserMessage(s"Loaded file of size ${contents.size}",0)
+
+			//CiteMainController.updateUserMessage(s"Loaded file of size ${tinyTexts.size}",0)
 		}
 	}
 
