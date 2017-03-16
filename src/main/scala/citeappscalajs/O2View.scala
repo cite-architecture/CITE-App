@@ -32,19 +32,22 @@ object O2View {
 		val urnValidatingKeyUpHandler = { event: KeyboardEvent =>
 			(event.currentTarget, event.keyCode) match {
 				case (input: html.Input, KeyCode.Enter) => {
-					println("enter")
 					event.preventDefault()
 					O2Controller.changeUrn(s"${input.value.toString}")
 					//input.value = ""
 				}
 				case(input: html.Input, _) =>  O2Controller.validateUrn(s"${input.value.toString}")
-				case _ =>  println("keydown else")
+				case _ =>
 			}
 		}
 
 		<div id="o2_Container">
-			<h2>Text</h2>
-			
+
+			<div id="02_sidebar" class="app_sidebarDiv">
+				{ citedWorksContainer.bind }
+				{ toolsContainter.bind }
+			</div>
+
 			{ o2messageDiv.bind }
 
 			<p id="o2_urnInput">
@@ -64,6 +67,7 @@ object O2View {
 
 			<button onclick={ event: Event => O2Controller.changePassage }>Change Passage</button>
 
+
 		</div>
 	}
 
@@ -80,6 +84,7 @@ def passageContainer = {
 	</div>
 }
 
+
 /* Navigation Buttons */
 @dom
 def nextButton = {
@@ -89,6 +94,64 @@ def nextButton = {
 @dom
 def prevButton = {
 	<button class="navButton"> ← </button>
+}
+
+/* Cited Works List */
+@dom
+def citedWorksContainer = {
+	<div id="o2_citedWorksContainer">
+	<h2>Cited Works</h2>
+	<ul>
+		<li class="app_clickable">Herodotus, Histories, English</li>
+		<li class="app_clickable">Herodotus, Histories, Greek</li>
+		<li class="app_clickable">Plutarch, Life of Pericles, Greek</li>
+		<li class="app_clickable">Ammianus Marcelinus, Rerum Gestarum, Latin</li>
+	</ul>
+	</div>
+}
+
+/* Analytical Tools Div */
+@dom
+def  toolsContainter = {
+	<div id="o2_toolsContainer">
+	<h2>Analytical Tools</h2>
+	{ nGramForm.bind }
+	</div>
+}
+
+/* NGram Form */
+@dom
+def nGramForm = {
+	<label for="o2_ngram-nlist">N-Gram</label>
+	<select id="o2_ngram_nlist">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4">4</option>
+		<option value="5">5</option>
+		<option value="6">6</option>
+		<option value="7">7</option>
+		<option value="8">8</option>
+		<option value="9">9</option>
+	</select>
+	<label for="o2_ngram_minOccurrances">Occurs</label>
+	<input
+			id="o2_ngram_minOccurrances"
+			type="text"
+			size={ 4 }
+			value={ O2Model.nGramThreshold.bind.toString }
+			onchange={ event: Event => O2Controller.validateIntegerEntry( event )}
+			/>
+	<br/>
+	<select id="o2_ngram_nGramScopeOption"><option value="current">Current Text</option><option value="corpus">Whole Corpus</option></select>
+	<br/>
+	<label for="o2_ngram_filterStringField">Filter String</label>
+	<input type="text" size={ 20 } id="o2_ngram_filterStringField"/>
+	<br/>
+	<label for="o2_ngram_ignorePuncBox">Ignore Punctuation</label>
+	<input type="checkbox" id="o2_ngram_ignorePuncBox" checked={ true }/>
+	<br/>
+	<input id="o2_ngram_Submit" type="Submit"></input>
 }
 
 

@@ -1,6 +1,74 @@
+/* Experimenting with pure-CSS tabs */
+
+.app_tabs {
+  position: relative;
+  min-height: 400px; /* This part sucks */
+  clear: both;
+  margin: 25px 0;
+}
+
+.app_tab {
+  float: left;
+}
+
+.app_tab label.tab_label {
+	font-weight: bold;
+	height: 1.2em;
+  background: #f4f4f4;
+	color: #888;
+  padding: 9px;
+	padding-top: 8px;
+  border: 1px solid #ccc;
+  border-bottom: 2px solid #f4f4f4;
+  margin-left: -1px;
+  position: relative;
+  left: 1px;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 5px 5px 0px 0px;
+	border-radius: 5px 5px 0px 0px;
+}
+
+.app_tab [type=radio] {
+  display: none;
+}
+
+.content {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  background: white;
+  right: 0;
+  bottom: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+	padding-top: 3px;
+  border: 1px solid #ccc;
+}
+
+[type=radio]:checked ~ label {
+  background: white;
+	color: black;
+  border-bottom: 3px solid white;
+  z-index: 2;
+}
+
+[type=radio]:checked ~ label ~ .content {
+  z-index: 1;
+}
+
 /* Appwide Stuff */
 
+.app_clickable, a {
+	color: #7273af;
+	text-decoration: none;
+}
+
+.app_clickable:hover, a:hover {
+		text-decoration: underline;
+}
+
 .app_message {
+	max-width: 500px;
 	font-size: 80%;
 	min-height: 1em;
 	-webkit-transition: all 1s ease-out 0s;
@@ -42,12 +110,30 @@
 	opacity: 0.90;
 }
 
+div.app_sidebarDiv{
+		font-size: 80%;
+		float: right;
+		max-width: 500px;
+		background-color: #fff;
+		padding: 15px;
+		padding-top: 3px;
+		min-height: 200px;
+}
+
+/* appwide forms */
+div.app_sidebarDiv label {
+		padding-right: 5px;
+}
+
+div.app_sidebarDiv h2 {
+		margin-bottom: 10px;
+}
+
 /* Containers */
 
 #o2_Container {
-	border: 1px solid silver;
-	padding: 15px;
 	padding-top: 3px;
+	min-height: 220px;
 }
 
 /* OHCO2 Stuff */
@@ -63,6 +149,10 @@
 #o2_validUrnFlag.validUrn:before {
 		content: " (valid URN)";
 		color: green;
+}
+
+#o2_citedWorksContainer ul {
+	list-style-type: decimal;
 }
 
 
@@ -90,6 +180,21 @@ body {
 	margin: 0;
 	padding: 25px;
 	padding-top: 5px;
+}
+
+header, footer {
+	line-height: 1.2em;
+	color: #777;
+}
+
+header {
+	font-size: 120%;
+	padding-bottom: 5px;
+	font-weight: bold;
+}
+
+footer {
+	font-size: 80%;
 }
 
 h1 {

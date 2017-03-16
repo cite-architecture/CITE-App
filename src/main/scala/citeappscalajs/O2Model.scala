@@ -31,4 +31,7 @@ object O2Model {
 	var currentNext =  Var(Option)
 	var currentPrev =  Var(Option)
 
+	/* Values for NGrams */
+	val nGramThreshold = Var(3)
+
 }

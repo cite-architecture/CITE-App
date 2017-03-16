@@ -38,13 +38,59 @@ object CiteMainView {
 
 	@dom
 	def mainDiv = {
-		<div id="main_Container">
-		<h1>CITE Environment</h1>
+		<header>CITE Environment</header>
+		<article id="main_Container">
 			{ filePicker.bind }
 			{ mainMessageDiv.bind }
-			{ textView.bind }
-		</div>
 
+			<div class="app_tabs">
+
+				<div class="app_tab">
+					<input type="radio" id="tab-1" name="tab-group-1" checked={ true }/>
+					<label class="tab_label" for="tab-1">Texts</label>
+						<div class="content">
+						 { textView.bind }
+						</div>
+				</div>
+
+				<div class="app_tab">
+					<input type="radio" id="tab-2" name="tab-group-1" checked={ false }/>
+					<label class="tab_label" for="tab-2">Collections</label>
+						<div class="content">
+							<p>CITE Collections are not yet implemented.</p>
+						</div>
+				</div>
+
+				<div class="app_tab">
+					<input type="radio" id="tab-3" name="tab-group-1" checked={ false }/>
+					<label class="tab_label" for="tab-3">Images</label>
+						<div class="content">
+							<p>CITE Images are not yet implemented.</p>
+						</div>
+				</div>
+
+				<div class="app_tab">
+					<input type="radio" id="tab-4" name="tab-group-1" checked={ false }/>
+					<label class="tab_label" for="tab-4">Relations</label>
+						<div class="content">
+							<p>CITE Relations are not yet implemented.</p>
+						</div>
+				</div>
+
+
+			</div>
+		</article>
+		<footer>
+		{ footer.bind }
+		</footer>
+
+	}
+
+	@dom
+	def footer = {
+		<p>
+		CITE/CTS is ©2002–2017 Neel Smith and Christopher Blackwell. It was developed for the needs of the <a href="http://www.homermultitext.org">Homer Multitext</a>, Casey Dué and Mary Ebbott, Editors-in-Chief, Stephanie Lindeborg, Projectd Manager, a project of the <a href="http://www.chs.harvard.edu">Center for Hellenic Studies</a>, Gregory Nagy, Director. This implementation of the CITE data models was written by Neel Smith and Christopher Blackwell using <a href="https://www.scala-lang.org">Scala</a>, <a href="http://www.scala-js.org">Scala-JS</a>, and <a href="https://github.com/ThoughtWorksInc/Binding.scala">Binding.scala</a>. Licensed under the <a href=" ">GPL 3.0</a>. Sourcecode on <a href=" ">GitHub</a>.
+		</p>
 	}
 
 }

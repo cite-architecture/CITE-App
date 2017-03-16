@@ -9,13 +9,13 @@ import org.scalajs.dom.document
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.ext.Ajax
 import scala.concurrent
-											.ExecutionContext
-											.Implicits
-											.global
+.ExecutionContext
+.Implicits
+.global
 
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
-import edu.holycross.shot.citeenv
+import edu.holycross.shot.citeenv._
 import scala.scalajs.js.annotation.JSExport
 
 @JSExport
@@ -52,16 +52,16 @@ object CiteMainController {
 
 	}
 
-		def updateUserMessage(msg: String, alert: Int): Unit = {
-			CiteMainModel.userMessageVisibility := "app_visible"
-			CiteMainModel.userMessage := msg
-			alert match {
-				case 0 => CiteMainModel.userAlert := "default"
-				case 1 => CiteMainModel.userAlert := "notice"
-				case 2 => CiteMainModel.userAlert := "warn"
-			}
-			js.timers.setTimeout(9000){ CiteMainModel.userMessageVisibility := "app_hidden" }
+	def updateUserMessage(msg: String, alert: Int): Unit = {
+		CiteMainModel.userMessageVisibility := "app_visible"
+		CiteMainModel.userMessage := msg
+		alert match {
+			case 0 => CiteMainModel.userAlert := "default"
+			case 1 => CiteMainModel.userAlert := "notice"
+			case 2 => CiteMainModel.userAlert := "warn"
 		}
+		js.timers.setTimeout(9000){ CiteMainModel.userMessageVisibility := "app_hidden" }
+	}
 
 	def loadLocalLibrary(e: Event):Unit = {
 		println(s"will load ${e}")
