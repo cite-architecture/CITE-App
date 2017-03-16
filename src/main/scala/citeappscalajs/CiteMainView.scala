@@ -24,7 +24,7 @@ object CiteMainView {
 	@dom
 	def filePicker = {
 		<span id="app_filePickerSpan">
-			<label for="app_filePicker">Choose local CITE Library</label>
+			<label for="app_filePicker">Choose a local <code>.cex</code> file</label>
 			<input
 				id="app_filePicker"
 				type="file"
