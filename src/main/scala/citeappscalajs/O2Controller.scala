@@ -53,6 +53,7 @@ object O2Controller {
 			try {
 				val newUrn: CtsUrn = CtsUrn(urnString)
 				O2Model.urn := newUrn
+				//O2Model.urnPreview := O2Model.textRepository
 				validUrnInField := "validUrn"
 				updateUserMessage("Current URN changed.",0)
 			} catch {
@@ -61,6 +62,11 @@ object O2Controller {
 						updateUserMessage("Invalid URN. Current URN not changed.",2)
 					}
 			}
+		}
+
+		def insertFirstNodeUrn(urn: CtsUrn): Unit = {
+				val firstUrn = O2Model.textRepository.corpus.firstNode(urn).urn
+				js.Dynamic.global.document.getElementById("o2_urnInput").value = firstUrn.toString
 		}
 
 		def loadTextRepository(cex: String){

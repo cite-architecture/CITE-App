@@ -10,8 +10,6 @@ import scala.concurrent
 .global
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
-import edu.holycross.shot.orca._
-import edu.holycross.shot.citeenv._
 import scala.scalajs.js.annotation.JSExport
 
 @JSExport
@@ -20,22 +18,14 @@ object CiteMainController {
 	@JSExport
 	def main(libUrl: String): Unit = {
 
-		def reportCEXLoad: Unit = {
-			val cexSize = CiteMainModel.cexString.get.split("\n").size
-			val msgString = s"Default, remote library file loaded: ${cexSize} lines."
-			updateUserMessage(msgString,0)
-		}
-
 		def passOhco2Data: Unit = {
-			O2Model.corpus = Corpus(CiteMainModel.cexString.get,"\t")
-			O2Controller.updateUserMessage(s"Got data from main controller: ${O2Model.corpus.citedWorks.size} cited works.",0)
+		//	O2Model.corpus = Corpus(CiteMainModel.cexString.get,"\t")
+			//O2Controller.updateUserMessage(s"Got data from main controller: ${O2Model.corpus.citedWorks.size} cited works.",0)
+			println("skipped passOhco2Data")
 		}
 
-		val remoteCall = Ajax.get(libUrl).onSuccess { case xhr =>
-			CiteMainModel.cexString := xhr.responseText
-			reportCEXLoad
-			passOhco2Data
-		}
+		CiteMainController.loadRemoteLibrary(libUrl)
+
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
 
@@ -50,31 +40,22 @@ object CiteMainController {
 		js.timers.setTimeout(9000){ CiteMainModel.userMessageVisibility := "app_hidden" }
 	}
 
+	def loadRemoteLibrary(url: String):Unit = {
+		Ajax.get(url).onSuccess { case xhr =>
+			CiteMainController.updateUserMessage("Got remote library.",0)
+			val contents:String = xhr.responseText
+			O2Model.updateRepository(contents)
+		}
+	}
+
 	def loadLocalLibrary(e: Event):Unit = {
-		println(s"will load ${e}")
 		val reader = new org.scalajs.dom.raw.FileReader()
+		CiteMainController.updateUserMessage("Loading local library.",0)
 		reader.readAsText(e.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement].files(0))
 		reader.onload = (e: Event) => {
-			//			val contents = reader.result.asInstanceOf[String]
-			val tinyTexts = """#!ctsdata
-			urn:cts:greekLit:tlg5026.msA.hmt:1.4.lemma#<div xmlns="http://www.tei-c.org/ns/1.0" n="lemma"> <p> θεά</p></div>
-			urn:cts:greekLit:tlg5026.msA.hmt:1.4.comment#<div xmlns="http://www.tei-c.org/ns/1.0" n="comment"> <p> οὕτως εἴωθε τὴν <persName n="urn:cite:hmt:pers.pers6"> Μοῦσαν</persName> καλεῖν· ἀμέλει καὶ ἐν <title> Ὀδυσσεία</title> · <cit> <q> ἄνδρα μοι ἔννεπε <persName n="urn:cite:hmt:pers.pers6"> Μοῦσα</persName> <ref type="urn">
-			#!ctscatalog
-			urn#citationScheme#groupName#workTitle#versionLabel#exemplarLabel#online
-			urn:cts:greekLit:tlg5026.msA.hmt:#book/scholion/part#Scholia to the Iliad#Main scholia of the Venetus A#HMT project edition##true
-			"""
+			val contents = reader.result.asInstanceOf[String]
 
-			/* CRASHER BELOW!! */
-			val testUrn = CtsUrn("urn:cts:greekLit:auth.work:1.1")
-			println(testUrn.toString)
-			println(tinyTexts)
-
-			val reader = CiteExchangeReader(tinyTexts,"#")
-			//val textRepo = reader.textRepository
-			//println(s"Texts: ${tr.catalog.size}")
-			//println(s"Texts: ${tr.corpus.size}")
-
-			//CiteMainController.updateUserMessage(s"Loaded file of size ${contents.size}",0)
+			O2Model.updateRepository(contents)
 		}
 	}
 

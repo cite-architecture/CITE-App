@@ -28,7 +28,6 @@ object O2View {
 	// HTML Div: main div for text work
   @dom
   def o2div = {
-
 		val urnValidatingKeyUpHandler = { event: KeyboardEvent =>
 			(event.currentTarget, event.keyCode) match {
 				case (input: html.Input, KeyCode.Enter) => {
@@ -50,9 +49,10 @@ object O2View {
 
 			{ o2messageDiv.bind }
 
-			<p id="o2_urnInput">
+			<p id="o2_urnInputP">
 				<input
 					class={ s"${O2Controller.validUrnInField.bind}" }
+					id="o2_urnInput"
 					size={ 40 }
 					type="text"
 					value={ O2Model.urn.bind.toString }
@@ -60,7 +60,7 @@ object O2View {
 				</input>
 				<span class={ s"${O2Controller.validUrnInField.bind}" } id="o2_validUrnFlag"></span>
 				<br/>
-				<span>Current: { O2Model.urn.bind.toString } </span>
+				<span> { O2Model.urn.bind.toString } </span>
 			</p>
 
 				{ passageContainer.bind }
@@ -102,12 +102,34 @@ def citedWorksContainer = {
 	<div id="o2_citedWorksContainer">
 	<h2>Cited Works</h2>
 	<ul>
-		<li class="app_clickable">Herodotus, Histories, English</li>
-		<li class="app_clickable">Herodotus, Histories, Greek</li>
-		<li class="app_clickable">Plutarch, Life of Pericles, Greek</li>
-		<li class="app_clickable">Ammianus Marcelinus, Rerum Gestarum, Latin</li>
+	{
+		for (urn <- O2Model.citedWorks) yield {
+			<li>
+				{ workUrnSpan( urn, O2Model.textRepository.catalog.label(urn) ).bind }
+			</li>
+		}
+	}
 	</ul>
 	</div>
+}
+
+/* General-use functions for making clickable URNs */
+@dom
+def workUrnSpan(urn:CtsUrn, s:String) = {
+	<span
+			class="app_clickable"
+			onclick={ event: Event => O2Controller.insertFirstNodeUrn(urn)  }>
+	 { s }
+	</span>
+}
+
+@dom
+def passageUrnSpan(urn:CtsUrn, s:String) = {
+	<span
+			class="app_clickable"
+			onclick={ event: Event => println(s"Passage-click: ${urn}") }>
+	 { s }
+	</span>
 }
 
 /* Analytical Tools Div */

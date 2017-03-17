@@ -20,6 +20,4 @@ object CiteMainModel {
 		val userAlert = Var("default")
 	  val userMessageVisibility = Var("")
 
-		val cexString = Var("")
-
 }
