@@ -56,7 +56,7 @@ object CiteMainView {
 			<div class="app_tabs">
 
 				<div class="app_tab">
-					<input type="radio" id="tab-1" name="tab-group-1" checked={ false }/>
+					<input type="radio" id="tab-1" name="tab-group-1" checked={ true }/>
 					<label class="tab_label" for="tab-1">Browse Texts</label>
 						<div class="content">
 						 { textView.bind }
@@ -64,7 +64,7 @@ object CiteMainView {
 				</div>
 
 				<div class="app_tab">
-					<input type="radio" id="tab-2" name="tab-group-1" checked={ true }/>
+					<input type="radio" id="tab-2" name="tab-group-1" checked={ false }/>
 					<label class="tab_label" for="tab-2">Explore Texts</label>
 						<div class="content">
 						 { ngramView.bind }
