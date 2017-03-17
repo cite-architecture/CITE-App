@@ -93,6 +93,12 @@ div.app_sidebarDiv h2 {
 	min-height: 220px;
 }
 
+/* NGram &c. stuff */
+
+#ngram_container, #ngram_urns_container {
+	max-width: 500px;
+}
+
 /* OHCO2 Stuff */
 #o2_validUrnFlag {
 	font-size: 80%;
@@ -112,7 +118,7 @@ div.app_sidebarDiv h2 {
 	list-style-type: decimal;
 }
 
-#o2_reportingCurrentUrn {
+.app_reportingCurrentUrn {
 	font-size: 80%;
 	color: #777;
 	padding-top: 0;
@@ -172,7 +178,7 @@ header {
 
 footer {
 	font-size: 80%;
-	bottom: -300px;
+	bottom: -200px;
 	position: absolute;
 	padding-right: 60px;
 }

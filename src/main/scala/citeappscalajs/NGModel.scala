@@ -14,20 +14,16 @@ import edu.holycross.shot.citeenv._
 import scala.scalajs.js.annotation.JSExport
 
 @JSExport
-object O2Model {
+object NGModel {
 
-	val passage = Vars.empty[CitableNode]
 	val urn = Var(CtsUrn("urn:cts:ns:group.work.version.exemplar:passage"))
+	val shortWorkLabel = Var("default")
+
+	val citedWorks = Vars.empty[CtsUrn]
 
 	val userMessage = Var("")
 	val userAlert = Var("default")
 	val userMessageVisibility = Var("")
-
-	var textRepository: TextRepository = null
-	val citedWorks = Vars.empty[CtsUrn]
-
-	val currentNext = Var[Option[CtsUrn]](None)
-	val currentPrev = Var[Option[CtsUrn]](None)
 
 	/* Values for NGrams */
 	val nGramThreshold = Var(3)
@@ -40,31 +36,30 @@ object O2Model {
 
 	/* Some methods for working the model */
 
-	def getPrevNextUrn(urn:CtsUrn):Unit = {
-		O2Model.currentPrev := O2Model.textRepository.corpus.prevUrn(urn)
-		O2Model.currentNext := O2Model.textRepository.corpus.nextUrn(urn)
-	}
-
-
 	@dom
-	def getPassage(newUrn: CtsUrn):Unit = {
-		val tempCorpus: Corpus = O2Model.textRepository.corpus ~~ newUrn
-		O2Model.passage.get.clear
-		for ( cn <- tempCorpus.nodes ) {
-			O2Model.passage.get += cn
+	def updateShortWorkLabel = {
+		if ( O2Model.textRepository == null){
+					NGModel.shortWorkLabel := "- no selected text -"
+		} else {
+			val longS:String = O2Model.textRepository.catalog.label(NGModel.urn.get)
+			if (longS.size > 50){
+				val shortS:String = longS.take(24) + " … " + longS.takeRight(23)
+				NGModel.shortWorkLabel := shortS
+			} else {
+				NGModel.shortWorkLabel := longS
+			}
 		}
 	}
-
-
-
 
 	@dom
 	def updateCitedWorks = {
-		O2Model.citedWorks.get.clear
+		NGModel.citedWorks.get.clear
+		// N.b. The textRepository remains with the Ohco2 Model.
 		for ( cw <- O2Model.textRepository.corpus.citedWorks){
-			O2Model.citedWorks.get += cw
+			NGModel.citedWorks.get += cw
 		}
 	}
+
 
 
 }

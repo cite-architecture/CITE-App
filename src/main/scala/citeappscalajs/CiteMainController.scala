@@ -44,7 +44,7 @@ object CiteMainController {
 		Ajax.get(url).onSuccess { case xhr =>
 			CiteMainController.updateUserMessage("Got remote library.",0)
 			val contents:String = xhr.responseText
-			O2Model.updateRepository(contents)
+			CiteMainController.updateRepository(contents)
 		}
 	}
 
@@ -55,8 +55,39 @@ object CiteMainController {
 		reader.onload = (e: Event) => {
 			val contents = reader.result.asInstanceOf[String]
 
-			O2Model.updateRepository(contents)
+			CiteMainController.updateRepository(contents)
 		}
+	}
+
+	@dom
+	def updateRepository(cexString: String, columnDelimiter: String = "\t") = {
+
+		try {
+			val raw = cexString.split("#!").toVector.filter(_.nonEmpty)
+			val sections = raw.map(_.split("\n")).map(v => (v.head,v.drop(1).toVector))
+			val ctsCatalogLines = sections.filter(_._1 == "ctscatalog").flatMap(_._2)
+			val catalog = Catalog(ctsCatalogLines.mkString("\n"),columnDelimiter)
+			val ctsDataLines = sections.filter(_._1 == "ctsdata").flatMap(_._2)
+			val corpus = Corpus(ctsDataLines.mkString("\n"),columnDelimiter)
+			CiteMainController.updateUserMessage(s"Created new corpus",0)
+
+			O2Model.textRepository = TextRepository(corpus, catalog)
+
+			CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepository.catalog.size } works.",0)
+
+			O2Model.updateCitedWorks
+			NGModel.updateCitedWorks
+
+			O2Controller.preloadUrn
+			NGController.preloadUrn
+
+
+		} catch  {
+			case e: Exception => {
+				O2Controller.updateUserMessage(s"${e}",2)
+			}
+		}
+
 	}
 
 }
