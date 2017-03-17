@@ -104,6 +104,22 @@ div.app_sidebarDiv h2 {
 	list-style-type: decimal;
 }
 
+#o2_reportingCurrentUrn {
+	font-size: 80%;
+	color: #777;
+	padding-top: 0;
+	margin-top: 0;
+}
+
+.o2_passageUrn {
+	color: rgb(171, 0, 0);
+	font-size: 80%;
+	padding-bottom: 3px;
+	vertical-align: baseline;
+  position: relative;
+  top: -0.4em;
+}
+
 
 /* Forms Stuff */
 
@@ -232,11 +248,13 @@ button, input{
   left: 0;
   background: white;
   right: 0;
-  bottom: 0;
+  /* bottom: 0; */
   padding-left: 20px;
   padding-right: 20px;
 	padding-top: 3px;
+	padding-bottom: 15px;
   border: 1px solid #ccc;
+
 }
 
 [type=radio]:checked ~ label {

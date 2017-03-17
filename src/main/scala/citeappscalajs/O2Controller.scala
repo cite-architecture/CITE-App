@@ -15,82 +15,103 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport
 object O2Controller {
 
-		//val o2Model = O2Model
 
-	  val validUrnInField = Var("noUrn") // Options: noUrn, invalidUrn, validUrn
+	val validUrnInField = Var(false)
 
-		def changePassage: Unit = {
-			var currentPassage = O2Model.passage.get
-			O2Model.passage := s"${currentPassage}#"
+
+	/* A lot of work gets done here */
+	def changePassage: Unit = {
+		val timeStart = new js.Date().getTime()
+		val newUrn: CtsUrn = O2Model.urn.get
+		O2Model.getPassage(newUrn)
+		O2Model.getPrevNextUrn(O2Model.urn.get)
+		val timeEnd = new js.Date().getTime()
+		O2Controller.updateUserMessage(s"Fetched text in ${(timeEnd - timeStart)/1000} seconds.",0)
+	}
+
+
+	def updateUserMessage(msg: String, alert: Int): Unit = {
+		O2Model.userMessageVisibility := "app_visible"
+		O2Model.userMessage := msg
+		alert match {
+			case 0 => O2Model.userAlert := "default"
+			case 1 => O2Model.userAlert := "notice"
+			case 2 => O2Model.userAlert := "warn"
 		}
+		js.timers.setTimeout(90000){ O2Model.userMessageVisibility := "app_hidden" }
+	}
 
-		def updateUserMessage(msg: String, alert: Int): Unit = {
-			O2Model.userMessageVisibility := "app_visible"
-			O2Model.userMessage := msg
-			alert match {
-				case 0 => O2Model.userAlert := "default"
-				case 1 => O2Model.userAlert := "notice"
-				case 2 => O2Model.userAlert := "warn"
-			}
-			js.timers.setTimeout(9000){ O2Model.userMessageVisibility := "app_hidden" }
-		}
 
-		def validateUrn(urnString: String): Unit = {
-			try{
-				val newUrn: CtsUrn = CtsUrn(urnString)
-				println(s"valid: [${urnString}]")
-
-				validUrnInField := "validUrn"
-			} catch {
-				case e: Exception => {
-					println(s"invalid: [${urnString}]")
-					validUrnInField := "invalidUrn"
-				}
-			}
-		}
-
-		def changeUrn(urnString: String): Unit = {
-			try {
-				val newUrn: CtsUrn = CtsUrn(urnString)
-				O2Model.urn := newUrn
-				//O2Model.urnPreview := O2Model.textRepository
-				validUrnInField := "validUrn"
-				updateUserMessage("Current URN changed.",0)
-			} catch {
-					case e: Exception => {
-						validUrnInField := "invalidUrn"
-						updateUserMessage("Invalid URN. Current URN not changed.",2)
-					}
+	def validateUrn(urnString: String): Unit = {
+		try{
+			val newUrn: CtsUrn = CtsUrn(urnString)
+			validUrnInField := true
+		} catch {
+			case e: Exception => {
+				validUrnInField := false
 			}
 		}
+	}
 
-		def insertFirstNodeUrn(urn: CtsUrn): Unit = {
-				val firstUrn = O2Model.textRepository.corpus.firstNode(urn).urn
-				js.Dynamic.global.document.getElementById("o2_urnInput").value = firstUrn.toString
+	def getNext:Unit = {
+		if (O2Model.currentNext.get != None){
+			changeUrn(O2Model.currentNext.get.get)
 		}
+	}
 
-		def loadTextRepository(cex: String){
-				println("Will load repository.")
+	def getPrev:Unit = {
+		if (O2Model.currentPrev.get != None){
+			changeUrn(O2Model.currentPrev.get.get)
 		}
+	}
 
-		def validateIntegerEntry(thisEvent: Event):Unit = {
-			val thisTarget = thisEvent.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]
-			val testText = thisTarget.value.toString
-			try{
-					val mo: Int = testText.toInt
-					O2Model.nGramThreshold := mo
-			} catch {
-					case e: Exception => {
-						val badMo: String = testText
-						O2Model.nGramThreshold := 3
-						O2Controller.updateUserMessage(s"Minimum Occurrances value must be an integer. '${badMo}' is not an integer.", 2)
-						js.Dynamic.global.document.getElementById("o2_ngram_minOccurrances").value =  O2Model.nGramThreshold.get.toString
-					}
+	def changeUrn(urnString: String): Unit = {
+		changeUrn(CtsUrn(urnString))
+	}
+
+
+	def changeUrn(urn: CtsUrn): Unit = {
+		try {
+			O2Model.urn := urn
+			validUrnInField := true
+			changePassage
+		} catch {
+			case e: Exception => {
+				validUrnInField := false
+				updateUserMessage("Invalid URN. Current URN not changed.",2)
+			}
 		}
 	}
 
 
-		updateUserMessage("OHCO2 Module loaded.",0)
+	def insertFirstNodeUrn(urn: CtsUrn): Unit = {
+		val firstUrn = O2Model.textRepository.corpus.firstNode(urn).urn
+		js.Dynamic.global.document.getElementById("o2_urnInput").value = firstUrn.toString
+		validUrnInField := true
+	}
 
+
+	@dom
+	def preloadUrn = {
+		O2Model.urn := O2Model.textRepository.corpus.firstNode.urn
+		O2Controller.validUrnInField := true
+	}
+
+
+	def validateIntegerEntry(thisEvent: Event):Unit = {
+		val thisTarget = thisEvent.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]
+		val testText = thisTarget.value.toString
+		try{
+			val mo: Int = testText.toInt
+			O2Model.nGramThreshold := mo
+		} catch {
+			case e: Exception => {
+				val badMo: String = testText
+				O2Model.nGramThreshold := 3
+				O2Controller.updateUserMessage(s"Minimum Occurrances value must be an integer. '${badMo}' is not an integer.", 2)
+				js.Dynamic.global.document.getElementById("o2_ngram_minOccurrances").value =  O2Model.nGramThreshold.get.toString
+			}
+		}
+	}
 
 }

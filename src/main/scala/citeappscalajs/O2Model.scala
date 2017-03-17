@@ -16,39 +16,52 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport
 object O2Model {
 
-	val passage = Var("passage")
+	val passage = Vars.empty[CitableNode]
 	val urn = Var(CtsUrn("urn:cts:ns:group.work.version.exemplar:passage"))
-	//val urnPreview = Var("")
 
 	val userMessage = Var("")
 	val userAlert = Var("default")
 	val userMessageVisibility = Var("")
 
-
 	var textRepository: TextRepository = null
 	val citedWorks = Vars.empty[CtsUrn]
 
-	//var currentLibrary = Var(Corpus)
-
-	val currentUrn =  Var(CtsUrn)
-	val currentNext =  Var(Option)
-	val currentPrev =  Var(Option)
+	val currentNext = Var[Option[CtsUrn]](None)
+	val currentPrev = Var[Option[CtsUrn]](None)
 
 	/* Values for NGrams */
 	val nGramThreshold = Var(3)
+
+
+	/* Some methods for working the model */
+
+	def getPrevNextUrn(urn:CtsUrn):Unit = {
+		O2Model.currentPrev := O2Model.textRepository.corpus.prevUrn(urn)
+		O2Model.currentNext := O2Model.textRepository.corpus.nextUrn(urn)
+	}
+
+
+	@dom
+	def getPassage(newUrn: CtsUrn):Unit = {
+		val tempCorpus: Corpus = O2Model.textRepository.corpus ~~ newUrn
+		O2Model.passage.get.clear
+		for ( cn <- tempCorpus.nodes ) {
+			O2Model.passage.get += cn
+		}
+	}
 
 
 	@dom
 	def updateRepository(cexString: String, columnDelimiter: String = "\t") = {
 
 		try {
-		  val raw = cexString.split("#!").toVector.filter(_.nonEmpty)
-		  val sections = raw.map(_.split("\n")).map(v => (v.head,v.drop(1).toVector))
-	    val ctsCatalogLines = sections.filter(_._1 == "ctscatalog").flatMap(_._2)
-	    val catalog = Catalog(ctsCatalogLines.mkString("\n"),columnDelimiter)
+			val raw = cexString.split("#!").toVector.filter(_.nonEmpty)
+			val sections = raw.map(_.split("\n")).map(v => (v.head,v.drop(1).toVector))
+			val ctsCatalogLines = sections.filter(_._1 == "ctscatalog").flatMap(_._2)
+			val catalog = Catalog(ctsCatalogLines.mkString("\n"),columnDelimiter)
 			O2Controller.updateUserMessage(s"Created catalog",0)
-	    val ctsDataLines = sections.filter(_._1 == "ctsdata").flatMap(_._2)
-	    val corpus = Corpus(ctsDataLines.mkString("\n"),columnDelimiter)
+			val ctsDataLines = sections.filter(_._1 == "ctsdata").flatMap(_._2)
+			val corpus = Corpus(ctsDataLines.mkString("\n"),columnDelimiter)
 			O2Controller.updateUserMessage(s"Created new corpus",0)
 
 			O2Model.textRepository = TextRepository(corpus, catalog)
@@ -57,15 +70,16 @@ object O2Model {
 
 			updateCitedWorks
 
-			preloadUrn
+			O2Controller.preloadUrn
 
 		} catch  {
-				case e: Exception => {
-						O2Controller.updateUserMessage(s"${e}",2)
-				}
+			case e: Exception => {
+				O2Controller.updateUserMessage(s"${e}",2)
+			}
 		}
 
 	}
+
 
 	@dom
 	def updateCitedWorks = {
@@ -74,11 +88,6 @@ object O2Model {
 			println(cw.toString)
 			O2Model.citedWorks.get += cw
 		}
-	}
-
-	@dom
-	def preloadUrn = {
-		O2Model.urn := O2Model.textRepository.corpus.firstNode.urn
 	}
 
 
