@@ -10,6 +10,13 @@ Pre-release.
 
 [GPL 3.0](https://opensource.org/licenses/gpl-3.0.html)
 
+## Using, building, testing
+
+Build with `sbt` using normal tasks for [ScalaJS projects](https://www.scala-js.org/):  `sbt fastOptJS` or `sbt fullOptJS`.
+
+
+
+
 ## Credits
 
 CITEApplication-ScalaJS, by Neel Smith and Christopher Blackwell. 
