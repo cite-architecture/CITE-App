@@ -66,7 +66,10 @@ def workUrnSpan(urn:CtsUrn, s:String) = {
 def passageUrnSpan(urn:CtsUrn, s:String) = {
 	<span
 	class="app_clickable"
-	onclick={ event: Event => println(s"Passage-click: ${urn}") }>
+	onclick={ event: Event => {
+			CiteMainController.retrieveTextPassage(urn)
+		}
+	}>
 	{ s }
 	</span>
 }

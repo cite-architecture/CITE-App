@@ -98,7 +98,7 @@ div.app_sidebarDiv h2 {
 /* NGram &c. stuff */
 
 #ngram_container, #ngram_urns_container {
-	max-width: 500px;
+	max-width: 600px;
 }
 
 #ngram_query, #ngram_urn_query {

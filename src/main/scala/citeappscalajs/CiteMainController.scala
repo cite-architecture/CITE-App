@@ -59,6 +59,11 @@ object CiteMainController {
 		}
 	}
 
+	def retrieveTextPassage(urn:CtsUrn):Unit = {
+			O2Controller.changeUrn(urn)
+			js.Dynamic.global.document.getElementById("tab-1").checked = true
+	}
+
 	@dom
 	def updateRepository(cexString: String, columnDelimiter: String = "\t") = {
 
