@@ -22,6 +22,9 @@ object CiteMainView {
 	val textView = O2View.o2div
 
 	@dom
+	def ngramView = { <p>Explore Texts Here</p> }
+
+	@dom
 	def filePicker = {
 		<span id="app_filePickerSpan">
 			<label for="app_filePicker">Choose a local <code>.cex</code> file</label>
@@ -42,18 +45,21 @@ object CiteMainView {
 
 	@dom
 	def mainDiv = {
+
 		<header>
 			{ filePicker.bind }
 			CITE Environment
+			<span id="app_header_versionInfo">version 1.0.0</span>
 		</header>
-		<article id="main_Container">
-			{ mainMessageDiv.bind }
 
+		<article id="main_Container">
+
+			{ mainMessageDiv.bind }
 			<div class="app_tabs">
 
 				<div class="app_tab">
 					<input type="radio" id="tab-1" name="tab-group-1" checked={ true }/>
-					<label class="tab_label" for="tab-1">Texts</label>
+					<label class="tab_label" for="tab-1">Browse Texts</label>
 						<div class="content">
 						 { textView.bind }
 						</div>
@@ -61,25 +67,9 @@ object CiteMainView {
 
 				<div class="app_tab">
 					<input type="radio" id="tab-2" name="tab-group-1" checked={ false }/>
-					<label class="tab_label" for="tab-2">Collections</label>
+					<label class="tab_label" for="tab-2">Explore Texts</label>
 						<div class="content">
-							<p>CITE Collections are not yet implemented.</p>
-						</div>
-				</div>
-
-				<div class="app_tab">
-					<input type="radio" id="tab-3" name="tab-group-1" checked={ false }/>
-					<label class="tab_label" for="tab-3">Images</label>
-						<div class="content">
-							<p>CITE Images are not yet implemented.</p>
-						</div>
-				</div>
-
-				<div class="app_tab">
-					<input type="radio" id="tab-4" name="tab-group-1" checked={ false }/>
-					<label class="tab_label" for="tab-4">Relations</label>
-						<div class="content">
-							<p>CITE Relations are not yet implemented.</p>
+						 { ngramView.bind }
 						</div>
 				</div>
 
@@ -91,6 +81,7 @@ object CiteMainView {
 		</footer>
 
 	}
+
 
 	@dom
 	def footer = {

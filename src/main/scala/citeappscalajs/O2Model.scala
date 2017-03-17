@@ -32,6 +32,11 @@ object O2Model {
 	/* Values for NGrams */
 	val nGramThreshold = Var(3)
 
+	val nGramResults = Var[StringHistogram](null)
+	val nGramQuery = Var("")
+
+	val nGramUrns =  Vars.empty[CtsUrn]
+	val nGramUrnQuery = Var("")
 
 	/* Some methods for working the model */
 
@@ -85,7 +90,6 @@ object O2Model {
 	def updateCitedWorks = {
 		citedWorks.get.clear
 		for ( cw <- O2Model.textRepository.corpus.citedWorks){
-			println(cw.toString)
 			O2Model.citedWorks.get += cw
 		}
 	}

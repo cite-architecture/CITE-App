@@ -44,12 +44,13 @@ object O2View {
 
 		<div id="02_sidebar" class="app_sidebarDiv">
 		{ citedWorksContainer.bind }
-		{ toolsContainter.bind }
+		{ toolsContainer.bind }
 		</div>
+
+		{ o2messageDiv.bind }
 
 		<p id="o2_reportingCurrentUrn"> { O2Model.urn.bind.toString } </p>
 
-		{ o2messageDiv.bind }
 
 		<p id="o2_urnInputP">
 		<input
@@ -62,154 +63,203 @@ object O2View {
 		</input>
 		<button
 		onclick={ event: Event => {
-				val s:String = js.Dynamic.global.document.getElementById("o2_urnInput").value.toString
-				O2Model.urn := CtsUrn(s)
-				O2Controller.changePassage
-			}
+			val s:String = js.Dynamic.global.document.getElementById("o2_urnInput").value.toString
+			O2Model.urn := CtsUrn(s)
+			O2Controller.changePassage
 		}
-		disabled={ (O2Controller.validUrnInField.bind == false) }
-		> {
-			if ( O2Controller.validUrnInField.bind == true ){
-				"Change Text"
+	}
+	disabled={ (O2Controller.validUrnInField.bind == false) }
+	> {
+		if ( O2Controller.validUrnInField.bind == true ){
+			"Change Text"
+		} else {
+			"Invalid URN"
+		}
+
+	}
+	</button>
+	<br/>
+	</p>
+
+	{ passageContainer.bind }
+	{ nGramSpace.bind }
+	{ nGramUrnSpace.bind }
+
+
+
+	</div>
+}
+
+/* Passage Container */
+@dom
+def passageContainer = {
+	<div id="o2_passageContainer">
+	{
+		for ( cNode <- O2Model.passage) yield {
+			<p>
+			<span class="o2_passageUrn">
+			{ cNode.urn.passageComponent }
+			</span>
+			{ cNode.text }
+			</p>
+		}
+	}
+	{ prevButton.bind }
+	{ nextButton.bind }
+	</div>
+}
+
+
+/* Navigation Buttons */
+@dom
+def nextButton = {
+	<button
+	class="navButton"
+	onclick={ event: Event => O2Controller.getNext }
+	disabled= {
+		(O2Model.currentNext.bind == None)
+	}
+	> → </button>
+}
+
+@dom
+def prevButton = {
+	<button
+	class="navButton"
+	onclick={ event: Event => O2Controller.getPrev }
+	disabled= {
+		(O2Model.currentPrev.bind == None)
+	}
+	> ← </button>
+}
+
+/* Cited Works List */
+@dom
+def citedWorksContainer = {
+	<div id="o2_citedWorksContainer">
+	<h2>Cited Works</h2>
+	<ul>
+	{
+		for (urn <- O2Model.citedWorks) yield {
+			<li>
+			{ workUrnSpan( urn, O2Model.textRepository.catalog.label(urn) ).bind }
+			</li>
+		}
+	}
+	</ul>
+	</div>
+}
+
+/* General-use functions for making clickable URNs */
+@dom
+def workUrnSpan(urn:CtsUrn, s:String) = {
+	<span
+	class="app_clickable"
+	onclick={ event: Event => O2Controller.insertFirstNodeUrn(urn)  }>
+	{ s }
+	</span>
+}
+
+@dom
+def passageUrnSpan(urn:CtsUrn, s:String) = {
+	<span
+	class="app_clickable"
+	onclick={ event: Event => println(s"Passage-click: ${urn}") }>
+	{ s }
+	</span>
+}
+
+/* Analytical Tools Div */
+@dom
+def  toolsContainer = {
+	<div id="o2_toolsContainer">
+	<h2>Analytical Tools</h2>
+	{ nGramForm.bind }
+	</div>
+}
+
+/* NGram Form */
+@dom
+def nGramForm = {
+	<label for="o2_ngram-nlist">N-Gram</label>
+	<select id="o2_ngram_nlist">
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+	<option value="6">6</option>
+	<option value="7">7</option>
+	<option value="8">8</option>
+	<option value="9">9</option>
+	</select>
+	<label for="o2_ngram_minOccurrances">Occurs</label>
+	<input
+	id="o2_ngram_minOccurrances"
+	type="text"
+	size={ 4 }
+	value={ O2Model.nGramThreshold.bind.toString }
+	onchange={ event: Event => O2Controller.validateIntegerEntry( event )}
+	/>
+	<br/>
+	<select id="o2_ngram_nGramScopeOption"><option value="current">Current Text</option><option value="corpus">Whole Corpus</option></select>
+	<br/>
+	<label for="o2_ngram_filterStringField">Filter String</label>
+	<input type="text" size={ 20 } id="o2_ngram_filterStringField"/>
+	<br/>
+	<label for="o2_ngram_ignorePuncBox">Ignore Punctuation</label>
+	<input type="checkbox" id="o2_ngram_ignorePuncBox" checked={ true }/>
+	<br/>
+	<input id="o2_ngram_Submit" type="Submit"></input>
+}
+
+/* N-Gram Results */
+@dom
+def nGramSpace = {
+	<div id="o2_ngram_container"
+	class={
+		if (O2Model.nGramResults.get == null){
+			"app_hidden"
+		} else {
+			 "app_visible"
+		}
+	}
+	>
+	<h2>N-Grams</h2>
+	<p id="o2_ngram_query">ngram query goes here</p>
+	<div id="o2_ngram_ngrams">
+	<p>A bunch of ngrams go here.</p>
+	</div>
+	</div>
+}
+
+/* N-Gram URNs */
+@dom
+def nGramUrnSpace = {
+	<div id="o2_ngram_urns_container"
+		class={
+			if (O2Model.nGramUrns.get.size < 1 ){
+				"app_hidden"
 			} else {
-				"Invalid URN"
-			}
-
-		}
-		</button>
-		<br/>
-		</p>
-
-		{ passageContainer.bind }
-
-
-
-		</div>
-	}
-
-	/* Passage Container */
-	@dom
-	def passageContainer = {
-		<div id="o2_passageContainer">
-		{
-			for ( cNode <- O2Model.passage) yield {
-				<p>
-				<span class="o2_passageUrn">
-				{ cNode.urn.passageComponent }
-				</span>
-				{ cNode.text }
-				</p>
+				 O2Model.nGramUrns.get.toString
 			}
 		}
-		{ prevButton.bind }
-		{ nextButton.bind }
-		</div>
-	}
-
-
-	/* Navigation Buttons */
-	@dom
-	def nextButton = {
-		<button
-			class="navButton"
-			onclick={ event: Event => O2Controller.getNext }
-			disabled= {
-					(O2Model.currentNext.bind == None)
-			}
-			> → </button>
-	}
-
-	@dom
-	def prevButton = {
-		<button
-			class="navButton"
-			onclick={ event: Event => O2Controller.getPrev }
-			disabled= {
-					(O2Model.currentPrev.bind == None)
-			}
-			> ← </button>
-	}
-
-	/* Cited Works List */
-	@dom
-	def citedWorksContainer = {
-		<div id="o2_citedWorksContainer">
-		<h2>Cited Works</h2>
-		<ul>
-		{
-			for (urn <- O2Model.citedWorks) yield {
-				<li>
-				{ workUrnSpan( urn, O2Model.textRepository.catalog.label(urn) ).bind }
-				</li>
-			}
-		}
-		</ul>
-		</div>
-	}
-
-	/* General-use functions for making clickable URNs */
-	@dom
-	def workUrnSpan(urn:CtsUrn, s:String) = {
-		<span
-		class="app_clickable"
-		onclick={ event: Event => O2Controller.insertFirstNodeUrn(urn)  }>
-		{ s }
-		</span>
-	}
-
-	@dom
-	def passageUrnSpan(urn:CtsUrn, s:String) = {
-		<span
-		class="app_clickable"
-		onclick={ event: Event => println(s"Passage-click: ${urn}") }>
-		{ s }
-		</span>
-	}
-
-	/* Analytical Tools Div */
-	@dom
-	def  toolsContainter = {
-		<div id="o2_toolsContainer">
-		<h2>Analytical Tools</h2>
-		{ nGramForm.bind }
-		</div>
-	}
-
-	/* NGram Form */
-	@dom
-	def nGramForm = {
-		<label for="o2_ngram-nlist">N-Gram</label>
-		<select id="o2_ngram_nlist">
-		<option value="1">1</option>
-		<option value="2">2</option>
-		<option value="3">3</option>
-		<option value="4">4</option>
-		<option value="5">5</option>
-		<option value="6">6</option>
-		<option value="7">7</option>
-		<option value="8">8</option>
-		<option value="9">9</option>
-		</select>
-		<label for="o2_ngram_minOccurrances">Occurs</label>
-		<input
-		id="o2_ngram_minOccurrances"
-		type="text"
-		size={ 4 }
-		value={ O2Model.nGramThreshold.bind.toString }
-		onchange={ event: Event => O2Controller.validateIntegerEntry( event )}
-		/>
-		<br/>
-		<select id="o2_ngram_nGramScopeOption"><option value="current">Current Text</option><option value="corpus">Whole Corpus</option></select>
-		<br/>
-		<label for="o2_ngram_filterStringField">Filter String</label>
-		<input type="text" size={ 20 } id="o2_ngram_filterStringField"/>
-		<br/>
-		<label for="o2_ngram_ignorePuncBox">Ignore Punctuation</label>
-		<input type="checkbox" id="o2_ngram_ignorePuncBox" checked={ true }/>
-		<br/>
-		<input id="o2_ngram_Submit" type="Submit"></input>
-	}
-
+	>
+	<h2>URNs for N-Gram</h2>
+	<div id="o2_ngram_urns">
+		<ol>
+			<li class="ngramUrn">urn</li>
+			<li class="ngramUrn">urn</li>
+			<li class="ngramUrn">urn</li>
+			<li class="ngramUrn">urn</li>
+			<li class="ngramUrn">urn</li>
+			<li class="ngramUrn">urn</li>
+			<li class="ngramUrn">urn</li>
+			<li class="ngramUrn">urn</li>
+		</ol>
+	</div>
+	</div>
+}
 
 
 }

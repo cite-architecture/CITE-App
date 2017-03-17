@@ -1,6 +1,7 @@
 
 /* Appwide Stuff */
 
+
 .app_clickable, a {
 	color: #7273af;
 	text-decoration: none;
@@ -13,7 +14,9 @@
 .app_message {
 	max-width: 500px;
 	font-size: 80%;
+	font-weight: normal;
 	min-height: 1em;
+	float: right;
 	-webkit-transition: all 1s ease-out 0s;
 	-moz-transition: all 1s ease-out 0s;
 	-ms-transition: all 1s ease-out 0s;
@@ -22,10 +25,9 @@
 }
 
 .app_message p {
-	margin-top: 3px;
-	margin-bottom: 3px;
 	padding-top: 0;
 	padding-bottom: 0;
+	margin: 0;
 }
 
 .app_message.default, #mainMessage.default {
@@ -38,13 +40,18 @@
 		color: rgb(166, 0, 0);
 }
 
+#app_header_versionInfo {
+		font-size: 80%;
+		color: #777;
+		font-weight: normal;
+}
+
 .app_hidden {
 	visibility: hidden;
 	-webkit-opacity: 0;
 	-moz-opacity: 0;
 	opacity: 0;
 }
-
 
 .app_visible {
 	visibility: visible;
@@ -60,6 +67,7 @@ div.app_sidebarDiv{
 		background-color: #fff;
 		padding: 15px;
 		padding-top: 3px;
+		padding-left: 35px;
 		min-height: 200px;
 }
 
@@ -111,6 +119,10 @@ div.app_sidebarDiv h2 {
 	margin-top: 0;
 }
 
+#o2_passageContainer {
+	padding-bottom: 5px;
+}
+
 .o2_passageUrn {
 	color: rgb(171, 0, 0);
 	font-size: 80%;
@@ -160,6 +172,9 @@ header {
 
 footer {
 	font-size: 80%;
+	bottom: -300px;
+	position: absolute;
+	padding-right: 60px;
 }
 
 h1 {
@@ -254,7 +269,7 @@ button, input{
 	padding-top: 3px;
 	padding-bottom: 15px;
   border: 1px solid #ccc;
-
+  display: none;
 }
 
 [type=radio]:checked ~ label {
@@ -266,6 +281,7 @@ button, input{
 
 [type=radio]:checked ~ label ~ .content {
   z-index: 1;
+	display: block;
 }
 
 /*
