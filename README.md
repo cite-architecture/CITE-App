@@ -4,9 +4,8 @@ An application implementing user-interaction with CITE/CTS libraries, written in
 
 ## Status
 
-A barebones, beginning of a framework
+Pre-release.
 
 ## Credits
 
-CITEApplication-ScalaJS, by Neel Smith and Christopher Blackwell. A project of the [Homer Multitext](http://www.homermultitext.org).
-
+CITEApplication-ScalaJS, by Neel Smith and Christopher Blackwell. 
