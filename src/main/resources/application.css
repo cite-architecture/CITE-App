@@ -33,9 +33,10 @@
 .app_message.default, #mainMessage.default {
 		color: #777;
 }
-.app_message.notice, #mainMessage.notice {
-	  color: rgb(0, 100, 0);
+.app_message.wait, #mainMessage.wait {
+	  color: #777;
 }
+
 .app_message.warn, #mainMessage.warn {
 		color: rgb(166, 0, 0);
 }
@@ -84,6 +85,7 @@ div.app_sidebarDiv label {
 
 div.app_sidebarDiv h2 {
 		margin-bottom: 10px;
+		margin-top: 10px;
 }
 
 /* Containers */
@@ -98,6 +100,30 @@ div.app_sidebarDiv h2 {
 #ngram_container, #ngram_urns_container {
 	max-width: 500px;
 }
+
+#ngram_query, #ngram_urn_query {
+	font-size: 80%;
+	line-height: 1em;
+	border: 1px dashed silver;
+	padding: 6px;
+	max-width: 800px;
+}
+
+.ngram_ngram {
+		margin-right: 1em;
+}
+
+div#ngram_urns ol {
+	font-size: 80%;
+	list-style-type: decimal;
+	-moz-column-count: 2;
+	-moz-column-gap: 60px;
+	-webkit-column-count: 2;
+	-webkit-column-gap: 60px;
+	column-count: 2;
+	column-gap: 60px;
+}
+
 
 /* OHCO2 Stuff */
 #o2_validUrnFlag {

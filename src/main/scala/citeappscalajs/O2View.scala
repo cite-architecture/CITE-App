@@ -64,7 +64,8 @@ object O2View {
 				onclick={ event: Event => {
 					val s:String = js.Dynamic.global.document.getElementById("o2_urnInput").value.toString
 					O2Model.urn := CtsUrn(s)
-					O2Controller.changePassage
+					O2Controller.updateUserMessage("Retrieving passage…",1)
+					js.timers.setTimeout(500){ O2Controller.changePassage }
 					}
 				}
 				disabled={ (O2Controller.validUrnInField.bind == false) }

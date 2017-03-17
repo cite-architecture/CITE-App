@@ -28,7 +28,7 @@ object NGModel {
 	/* Values for NGrams */
 	val nGramThreshold = Var(3)
 
-	val nGramResults = Var[StringHistogram](null)
+	val nGramResults = Vars.empty[StringCount]
 	val nGramQuery = Var("")
 
 	val nGramUrns =  Vars.empty[CtsUrn]
@@ -60,6 +60,41 @@ object NGModel {
 		}
 	}
 
+ def getNGram(filterString: String, n: Int, occ: Int, ignorePunc: Boolean ): StringHistogram = {
+		 getNGram(O2Model.textRepository.corpus, filterString, n, occ, ignorePunc)
+ }
 
+ def getNGram(ngUrn: CtsUrn, filterString: String, n: Int, occ: Int, ignorePunc: Boolean): StringHistogram = {
+	 val newCorpus: Corpus = O2Model.textRepository.corpus ~~ ngUrn
+	 getNGram(newCorpus, filterString, n, occ, ignorePunc)
+ }
+
+  def getNGram(ngCorpus:Corpus, filterString: String, n: Int, occ: Int, ignorePunc: Boolean ): StringHistogram = {
+
+		var hist: StringHistogram = null
+
+		if( filterString == ""){
+			hist = ngCorpus.ngramHisto(n, occ, ignorePunc)
+		} else {
+			hist = ngCorpus.ngramHisto(filterString, n, occ , ignorePunc)
+		}
+		hist
+	}
+
+ def getUrnsForNGram(s: String, ignorePunc: Boolean ): Vector[CtsUrn] ={
+	 val vurn = O2Model.textRepository.corpus.urnsForNGram(s, 1, ignorePunc)
+	 vurn
+ }
+
+ def getUrnsForNGram(ngUrn: CtsUrn, s: String, ignorePunc: Boolean ): Vector[CtsUrn] ={
+	 val newCorpus: Corpus = O2Model.textRepository.corpus ~~ ngUrn
+	 val vurn = newCorpus.urnsForNGram(s, 1, ignorePunc)
+	 vurn
+ }
+
+ def getUrnsForNGram(ngCorpus: Corpus, s: String, ignorePunc: Boolean ): Vector[CtsUrn] = {
+	 	val vurn = ngCorpus.urnsForNGram(s, 1, ignorePunc)
+		vurn
+ }
 
 }

@@ -35,7 +35,7 @@ object O2Controller {
 		O2Model.userMessage := msg
 		alert match {
 			case 0 => O2Model.userAlert := "default"
-			case 1 => O2Model.userAlert := "notice"
+			case 1 => O2Model.userAlert := "wait"
 			case 2 => O2Model.userAlert := "warn"
 		}
 		js.timers.setTimeout(90000){ O2Model.userMessageVisibility := "app_hidden" }
@@ -74,7 +74,9 @@ object O2Controller {
 		try {
 			O2Model.urn := urn
 			validUrnInField := true
-			changePassage
+			O2Controller.updateUserMessage("Retrieving passage…",1)
+			js.timers.setTimeout(500){ O2Controller.changePassage }
+
 		} catch {
 			case e: Exception => {
 				validUrnInField := false

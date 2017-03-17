@@ -34,10 +34,10 @@ object CiteMainController {
 		CiteMainModel.userMessage := msg
 		alert match {
 			case 0 => CiteMainModel.userAlert := "default"
-			case 1 => CiteMainModel.userAlert := "notice"
+			case 1 => CiteMainModel.userAlert := "wait"
 			case 2 => CiteMainModel.userAlert := "warn"
 		}
-		js.timers.setTimeout(9000){ CiteMainModel.userMessageVisibility := "app_hidden" }
+		js.timers.setTimeout(90000){ CiteMainModel.userMessageVisibility := "app_hidden" }
 	}
 
 	def loadRemoteLibrary(url: String):Unit = {

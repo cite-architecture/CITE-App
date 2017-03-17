@@ -23,7 +23,7 @@ object NGView {
 			id="ngram_message"
 			class={
 				s"app_message ${NGModel.userMessageVisibility.bind} ${NGModel.userAlert.bind}"
-		}>
+			}>
 		<p>{
 			NGModel.userMessage.bind
 			}
@@ -139,7 +139,14 @@ def nGramForm = {
 	<label for="ngram_ignorePuncBox">Ignore Punctuation</label>
 	<input type="checkbox" id="ngram_ignorePuncBox" checked={ true }/>
 	<br/>
-	<input id="ngram_Submit" type="Submit"></input>
+	<button
+		id="ngram_Submit"
+			onclick={ event: Event => {
+					NGController.updateUserMessage("Getting N-Gram. Please be patient…",1)
+					js.timers.setTimeout(500){ NGController.nGramQuery }
+				}
+			}
+		>Query for N-Grams</button>
 }
 
 
@@ -156,9 +163,25 @@ def nGramSpace = {
 	}
 	>
 	<h2>N-Grams</h2>
-	<p id="ngram_query">ngram query goes here</p>
+	<p id="ngram_query"> { NGModel.nGramQuery.bind }</p>
 	<div id="ngram_ngrams">
-	<p>A bunch of ngrams go here.</p>
+	<p> {
+		for (ng <- NGModel.nGramResults ) yield {
+			<span class="ngram_ngram">
+			({ ng.count.toString })
+				<span class="ngram_string app_clickable"
+				onclick={ event: Event => {
+
+					NGController.updateUserMessage(s"Getting URNs for '${ng.s}'. Please be patient…",1)
+
+					js.timers.setTimeout(500){ NGController.getUrnsForNGram( ng.s ) }
+				} }
+				>
+				{ ng.s }
+				</span>
+			</span>
+		}
+	}</p>
 	</div>
 	</div>
 }
@@ -166,29 +189,25 @@ def nGramSpace = {
 /* N-Gram URNs */
 @dom
 def nGramUrnSpace = {
-	<div id="ngram_urns_container"
-		class={
-			if (NGModel.nGramUrns.get.size < 1 ){
-				"app_visible"
-			} else {
-				"app_visible"
-			}
-		}
-	>
+	<div id="ngram_urns_container">
 	<h2>URNs for N-Gram</h2>
+	<p id="ngram_urn_query"> { NGModel.nGramUrnQuery.bind }</p>
 	<div id="ngram_urns">
 		<ol>
-			<li class="ngramUrn">urn</li>
-			<li class="ngramUrn">urn</li>
-			<li class="ngramUrn">urn</li>
-			<li class="ngramUrn">urn</li>
-			<li class="ngramUrn">urn</li>
-			<li class="ngramUrn">urn</li>
-			<li class="ngramUrn">urn</li>
-			<li class="ngramUrn">urn</li>
+		{
+			for (ngurn <- NGModel.nGramUrns) yield {
+				<li>
+				{
+					val s:String = s"${O2Model.textRepository.catalog.label(ngurn)}, ${ngurn.passageComponent}"
+					passageUrnSpan( ngurn, s ).bind
+				}
+				</li>
+			}
+		}
 		</ol>
 	</div>
 	</div>
 }
+
 
 }
