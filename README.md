@@ -14,7 +14,7 @@ Pre-release.
 
 Targetted for Scala 2.11.
 
-Build with `sbt` using normal tasks for [ScalaJS projects](https://www.scala-js.org/):  `sbt fastOptJS` or `sbt fullOptJS`.  Output in `target/scala-2.11/classes/` includes the `.html` file you can open in a web browser.
+Build with `sbt` using normal tasks for [ScalaJS projects](https://www.scala-js.org/doc/project/building.html):  `sbt fastOptJS` or `sbt fullOptJS`.  Output in `target/scala-2.11/classes/` includes the `.html` file you can open in a web browser.
 
 
 ## Credits
