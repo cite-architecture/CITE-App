@@ -36,6 +36,7 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 			NGController.updateUserMessage("No library loaded.",2)
 		} else {
 			NGModel.nGramResults.get.clear
+			NGModel.nGramUrns.get.clear
 			js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
 				case "current" => {
 					corpusOrUrn = NGModel.urn.get.toString
