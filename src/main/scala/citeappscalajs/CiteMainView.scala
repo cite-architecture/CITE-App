@@ -1,4 +1,4 @@
-package citeappscalajs
+package citeapp
 
 import com.thoughtworks.binding.{Binding, dom}
 import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}

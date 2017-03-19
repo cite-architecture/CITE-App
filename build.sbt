@@ -1,8 +1,8 @@
 enablePlugins(ScalaJSPlugin)
 
-name := "citeappscalajs"
+name := "citeapp"
 
-version := "0.1-SNAPSHOT"
+version := "1.0.0"
 
 scalaVersion := "2.11.8"
 
@@ -14,7 +14,7 @@ libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
   "org.scala-js" %%% "scalajs-dom" % "0.9.1",
   "edu.holycross.shot.cite" %%% "xcite" % "2.2.1",
-  "edu.holycross.shot" %%% "ohco2" % "6.12.1",
+  "edu.holycross.shot" %%% "ohco2" % "6.12.2",
   "edu.holycross.shot" %% "citeenv" % "1.1.2",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
 )

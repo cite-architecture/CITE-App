@@ -1,4 +1,4 @@
-package citeappscalajs
+package citeapp
 import com.thoughtworks.binding._
 import scala.scalajs.js
 import org.scalajs.dom.document
