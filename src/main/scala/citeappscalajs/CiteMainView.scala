@@ -31,6 +31,11 @@ object CiteMainView {
 				type="file"
 				onchange={ event: Event => CiteMainController.loadLocalLibrary( event )}
 				></input>
+				<label for="app_filePicker_delimiter">Delimiter: </label>
+				<select id="app_filePicker_delimiter">
+					<option value="TAB"> tab </option>
+					<option value="OCTOTHORP"> # </option>
+				</select>
 		</span>
 	}
 

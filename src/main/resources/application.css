@@ -181,6 +181,10 @@ div.app_sidebarDiv{
 		float: right;
 }
 
+#app_filePicker {
+	width: 175px;
+}
+
 /* appwide forms */
 div.app_sidebarDiv label {
 		padding-right: 5px;
@@ -209,7 +213,6 @@ div.app_sidebarDiv h2 {
 	line-height: 1em;
 	border: 1px dashed silver;
 	padding: 6px;
-	max-width: 800px;
 }
 
 .ngram_ngram {
