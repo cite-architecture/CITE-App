@@ -2,7 +2,7 @@ package citeapp
 import com.thoughtworks.binding._
 import scala.scalajs.js
 import org.scalajs.dom.document
-import org.scalajs.dom.raw.Event
+import org.scalajs.dom.raw._
 import org.scalajs.dom.ext.Ajax
 import scala.concurrent
 .ExecutionContext
@@ -94,5 +94,6 @@ object CiteMainController {
 		}
 
 	}
+
 
 }

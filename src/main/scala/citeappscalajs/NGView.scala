@@ -195,6 +195,7 @@ def nGramUrnSpace = {
 	<div id="ngram_urns_container">
 	<h2>URNs for N-Gram</h2>
 	<p id="ngram_urn_query"> { NGModel.nGramUrnQuery.bind }</p>
+	<p>{ nGramUrnDownload.bind }</p>
 	<div id="ngram_urns">
 		<ol>
 		{
@@ -208,8 +209,21 @@ def nGramUrnSpace = {
 			}
 		}
 		</ol>
+
 	</div>
 	</div>
+}
+
+/* Download link for NGram URNs */
+@dom
+def nGramUrnDownload = {
+	<a
+		id="ngram_urns_download"
+		data:download="ngram-urns"
+		href = {
+			"data:text/plain;charset=utf-8," + scala.scalajs.js.URIUtils.encodeURIComponent("urns here")
+		}
+		>Download N-Grams URNs</a>
 }
 
 

@@ -90,19 +90,14 @@ object O2View {
 @dom
 def passageContainer = {
 	<div id="o2_passageContainer">
-	{
-		for ( cNode <- O2Model.passage) yield {
-			<p>
-			<span class="o2_passageUrn">
-			{ cNode.urn.passageComponent }
-			</span>
-			{ cNode.text }
-			</p>
-		}
-	}
-	{ prevButton.bind }
-	{ nextButton.bind }
+		<div id="o2_xmlPassageContainer"></div>
+		<div id="o2_navButtonContainer">
+			{ prevButton.bind }
+			{ nextButton.bind }
+		</div>
+
 	</div>
+
 }
 
 
