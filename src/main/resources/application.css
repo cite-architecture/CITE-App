@@ -1,6 +1,109 @@
+/* Text Formatting */
+
+div.p {
+	display: block;
+	padding-bottom: 0.5em;
+}
+
+unclear {
+	border-bottom: 2px dotted black;
+}
+
+add {
+	color: red;
+	vertical-align: super;
+}
+
+choice {
+	color: #09f;
+}
+choice:before {
+	content: "( ";
+}
+
+choice:after {
+	content: " )";
+}
+
+corr {
+	color: green;
+}
+
+choice corr:before{
+	content: "→";
+}
+
+
+del {
+	text-decoration: line-through;
+	color: red;
+}
+expan {
+	color: green;
+}
+
+expan:before {
+	content: "(";
+}
+
+expan:after {
+	content: ")";
+}
+
+gap {
+	background: white;
+	border-top: 1px solid #aab;
+	border-left: 1px solid #aab;
+	color: grey;
+	font-size: 80%;
+}
+q:before {
+	content: "“";
+}
+
+q:after {
+	content: "”";
+}
+
+quote:before {
+	content: "“";
+}
+
+quote:after {
+	content: "”";
+}
+
+w {
+	border: 1px solid #BBF;
+	padding: 3px;
+}
+
+sic {
+	color: navy;
+}
+
+sic:after{
+	content: " [sic]";
+}
+
+supplied:before {
+	content: "[";
+}
+
+supplied:after {
+	content: "]";
+}
+
+speaker {
+	font-weight: bold;
+}
+
+speaker:after {
+	content: " — ";
+}
+
 
 /* Appwide Stuff */
-
 
 .app_clickable, a {
 	color: #7273af;
@@ -64,7 +167,7 @@
 div.app_sidebarDiv{
 		font-size: 80%;
 		float: right;
-		max-width: 500px;
+		max-width: 33%;
 		background-color: #fff;
 		padding: 15px;
 		padding-top: 3px;
@@ -98,7 +201,7 @@ div.app_sidebarDiv h2 {
 /* NGram &c. stuff */
 
 #ngram_container, #ngram_urns_container {
-	max-width: 600px;
+	max-width: 66%;
 }
 
 #ngram_query, #ngram_urn_query {
@@ -106,7 +209,6 @@ div.app_sidebarDiv h2 {
 	line-height: 1em;
 	border: 1px dashed silver;
 	padding: 6px;
-	max-width: 800px;
 }
 
 .ngram_ngram {
@@ -155,10 +257,29 @@ div#ngram_urns ol {
 	padding-bottom: 5px;
 }
 
+div.o2_textColumn {
+	margin-right: 1em;
+}
+
+div.o2_2_cols{
+	float:left;
+	min-width: 20%;
+	width: 30%;
+}
+
+div.o2_1_cols{
+
+}
+
+div#o2_navButtonContainer{
+	clear: both;
+}
+
 .o2_passageUrn {
 	color: rgb(171, 0, 0);
 	font-size: 80%;
 	padding-bottom: 3px;
+	margin-right: 3px;
 	vertical-align: baseline;
   position: relative;
   top: -0.4em;
