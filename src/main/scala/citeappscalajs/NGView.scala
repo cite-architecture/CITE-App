@@ -56,6 +56,8 @@ def workUrnSpan(urn:CtsUrn, s:String) = {
 	onclick={ event: Event => {
 		NGModel.urn := urn.dropPassage
 		NGModel.updateShortWorkLabel
+		NGController.clearResults
+
 	}
 }>
 	{ s }

@@ -61,6 +61,15 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 
 	}
 
+	def clearResults: Unit = {
+		NGModel.nGramResults.get.clear
+		NGModel.nGramUrns.get.clear
+
+		NGModel.nGramQuery := ""
+		NGModel.nGramUrnQuery := ""
+
+	}
+
 	def getUrnsForNGram(s: String): Unit = {
 		val timeStart = new js.Date().getTime()
 		val occ:Int = js.Dynamic.global.document.getElementById("ngram_minOccurrances").value.toString.toInt
