@@ -181,6 +181,10 @@ div.app_sidebarDiv{
 		float: right;
 }
 
+#app_filePicker {
+	width: 175px;
+}
+
 /* appwide forms */
 div.app_sidebarDiv label {
 		padding-right: 5px;

@@ -50,12 +50,16 @@ object CiteMainController {
 
 	def loadLocalLibrary(e: Event):Unit = {
 		val reader = new org.scalajs.dom.raw.FileReader()
+		val delimiter:String = {
+			val delimiterChoice = js.Dynamic.global.document.getElementById("app_filePicker_delimiter").value.toString
+			if (delimiterChoice == "TAB" ){ val d = "\t"; d } else { val d = "#"; d }
+		}
 		CiteMainController.updateUserMessage("Loading local library.",0)
 		reader.readAsText(e.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement].files(0))
 		reader.onload = (e: Event) => {
 			val contents = reader.result.asInstanceOf[String]
-
-			CiteMainController.updateRepository(contents)
+			println(s"Callig update with delimiter: ${delimiter}")
+			CiteMainController.updateRepository(contents,delimiter)
 		}
 	}
 
@@ -66,6 +70,7 @@ object CiteMainController {
 
 	@dom
 	def updateRepository(cexString: String, columnDelimiter: String = "\t") = {
+		println(s"doing update with delimiter:${columnDelimiter}")
 
 		try {
 			val raw = cexString.split("#!").toVector.filter(_.nonEmpty)
@@ -89,7 +94,7 @@ object CiteMainController {
 
 		} catch  {
 			case e: Exception => {
-				O2Controller.updateUserMessage(s"${e}",2)
+				CiteMainController.updateUserMessage(s"${e}",2)
 			}
 		}
 
