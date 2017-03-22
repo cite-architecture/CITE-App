@@ -60,6 +60,10 @@ object O2Model {
 			//val xml = new org.scalajs.dom.raw.DOMParser().parseFromString( cn.text, "text/xml" )
 			val citString:String = s"""<span class="o2_passageUrn">${cn.urn.passageComponent}</span>"""
 			val txtString:String = cn.text
+
+			val rtlCheckk:Boolean = O2Model.checkForRTL(cn.text)
+			println(s"rtl language = ${rtlCheck}")
+
 			val elString:String = """<div class="p">""" + citString + txtString + "</div>"
 			wholePassageElement += elString
 			//O2Model.passage.get += cn
@@ -69,6 +73,9 @@ object O2Model {
 
 	}
 
+def checkForRTL(s:String):Boolean = {
+		val pattern = "^[\u0591-\u06FF\s]+$".r
+}
 
 
 
