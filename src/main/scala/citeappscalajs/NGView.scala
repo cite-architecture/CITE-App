@@ -67,7 +67,7 @@ def workUrnSpan(urn:CtsUrn, s:String) = {
 @dom
 def passageUrnSpan(urn:CtsUrn, s:String) = {
 	<span
-	class="app_clickable"
+	class="app_clickable app_urn"
 	onclick={ event: Event => {
 			CiteMainController.retrieveTextPassage(urn)
 		}
@@ -254,50 +254,30 @@ def nGramSpace = {
 @dom
 def nGramUrnSpace = {
 	<div id="ngram_urns_container">
-	<h2>Citation Results</h2>
-	<p id="ngram_urn_query"> { NGModel.nGramUrnQuery.bind }</p>
-	<div id="ngram_urns">
-		{ nGramUrnOList.bind }
-	</div>
-	<div id="search_urns">
-		{ searchUrnOList.bind }
-	</div>
+		<h2>Citation Results</h2>
+		<p id="ngram_urn_query"> { NGModel.nGramUrnQuery.bind }</p>
+		<div id="ngram_urns">
+			{ citationResultsList.bind }
+		</div>
 	</div>
 }
 
 
 /* NGram URN Results List */
 @dom
-def nGramUrnOList = {
+def citationResultsList = {
 		<ol>
 		{
-			for (ngurn <- NGModel.nGramUrns) yield {
+			for (ng <- NGModel.citationResults) yield {
 				<li>
 				{
-					val s:String = s"${O2Model.textRepository.catalog.label(ngurn)}, ${ngurn.passageComponent}"
-					passageUrnSpan( ngurn, s ).bind
+					val s:String = s"${O2Model.textRepository.catalog.label(ng.urn.get)}, ${ng.urn.get.passageComponent}"
+
+					passageUrnSpan( ng.urn.get, s ).bind
 				}
-				</li>
-			}
-		}
-		</ol>
-}
 
-/* Search URN Results List */
-@dom
-def searchUrnOList = {
-		<ol>
-		{
-			for (sr <- NGModel.searchResults) yield {
-				<li>
-				{
-					val s:String = s"${O2Model.textRepository.catalog.label(sr.urn.get)}, ${sr.urn.get.passageComponent}"
+				{ s"  “${ng.kwic.get}”" }
 
-					passageUrnSpan( sr.urn.get, s ).bind
-
-				}
-				<br/>
-				{ s"${sr.kwic.get}" }
 				</li>
 			}
 		}

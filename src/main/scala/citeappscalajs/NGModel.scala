@@ -25,20 +25,19 @@ object NGModel {
 	val userAlert = Var("default")
 	val userMessageVisibility = Var("")
 
+	/* for holding search results */
+  case class SearchResult(urn: Var[CtsUrn], kwic: Var[String])
+	val citationResults =  Vars.empty[SearchResult]
+
 	/* Values for NGrams */
 	val nGramThreshold = Var(3)
 
 	val nGramResults = Vars.empty[StringCount]
 	val nGramQuery = Var("")
 
-	val nGramUrns =  Vars.empty[CtsUrn]
 	val nGramUrnQuery = Var("")
 
 	/* Values for Search */
-
-  case class SearchResult(urn: Var[CtsUrn], kwic: Var[String])
-
-	val searchResults = Vars.empty[SearchResult]
 	val tokenSearchProximity = Var(3)
 
 	/* Some methods for working the model */
