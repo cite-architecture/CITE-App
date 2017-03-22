@@ -62,7 +62,7 @@ object O2Model {
 			val txtString:String = cn.text
 
 			val rtlCheckk:Boolean = O2Model.checkForRTL(cn.text)
-			println(s"rtl language = ${rtlCheck}")
+			println(s"""rtl language = ${O2Model.checkForRTL(cn.text(0).toString)}""")
 
 			val elString:String = """<div class="p">""" + citString + txtString + "</div>"
 			wholePassageElement += elString
@@ -74,7 +74,9 @@ object O2Model {
 	}
 
 def checkForRTL(s:String):Boolean = {
-		val pattern = "^[\u0591-\u06FF\s]+$".r
+		val isRtl = false
+		val pattern = "^[\u0591-\u06FF ]+$".r
+		isRtl
 }
 
 
