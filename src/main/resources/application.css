@@ -224,8 +224,8 @@ div.app_sidebarDiv h2 {
 		margin-right: 1em;
 }
 
-div#ngram_urns ol {
-	font-size: 80%;
+div#ngram_urns ol, div#search_urns ol {
+	font-size: 90%;
 	list-style-type: decimal;
 	-moz-column-count: 2;
 	-moz-column-gap: 60px;
