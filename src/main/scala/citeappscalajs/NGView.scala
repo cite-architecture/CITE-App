@@ -254,7 +254,7 @@ def nGramSpace = {
 @dom
 def nGramUrnSpace = {
 	<div id="ngram_urns_container">
-	<h2>URN Results</h2>
+	<h2>Citation Results</h2>
 	<p id="ngram_urn_query"> { NGModel.nGramUrnQuery.bind }</p>
 	<div id="ngram_urns">
 		{ nGramUrnOList.bind }
