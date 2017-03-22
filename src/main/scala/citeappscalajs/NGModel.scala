@@ -66,6 +66,9 @@ object NGModel {
 		}
 	}
 
+
+	/* NGram Searching */
+
  def getNGram(filterString: String, n: Int, occ: Int, ignorePunc: Boolean ): StringHistogram = {
 		 getNGram(O2Model.textRepository.corpus, filterString, n, occ, ignorePunc)
  }
@@ -102,5 +105,8 @@ object NGModel {
 	 	val vurn = ngCorpus.urnsForNGram(s, 1, ignorePunc)
 		vurn
  }
+
+/* String and Token Finding */
+
 
 }
