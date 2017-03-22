@@ -215,6 +215,7 @@ div.app_sidebarDiv h2 {
 	max-width: 66%;
 }
 
+
 #ngram_query, #ngram_urn_query {
 	font-size: 80%;
 	line-height: 1.2em;
@@ -227,15 +228,15 @@ div.app_sidebarDiv h2 {
 		margin-right: 1em;
 }
 
-div#ngram_urns ol, div#search_urns ol {
+div#ngram_urns ol.cols, div#search_urns ol.cols {
 	font-size: 90%;
 	list-style-type: decimal;
 	-moz-column-count: 2;
-	-moz-column-gap: 60px;
+	-moz-column-gap: 50px;
 	-webkit-column-count: 2;
-	-webkit-column-gap: 60px;
+	-webkit-column-gap: 50px;
 	column-count: 2;
-	column-gap: 60px;
+	column-gap: 50px;
 }
 
 

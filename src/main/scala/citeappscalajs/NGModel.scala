@@ -38,7 +38,7 @@ object NGModel {
 	val nGramUrnQuery = Var("")
 
 	/* Values for Search */
-	val tokenSearchProximity = Var(3)
+	val tokenSearchProximity = Var(20)
 
 	/* Some methods for working the model */
 

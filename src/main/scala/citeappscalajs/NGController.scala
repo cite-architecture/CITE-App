@@ -64,6 +64,8 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 
 	}
 
+
+
 	def stringSearchQuery:Unit = {
 
 		NGController.clearResults
@@ -101,13 +103,69 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 		NGController.updateUserMessage(s"Found ${NGModel.citationResults.get.size} URNs in ${(timeEnd - timeStart)/1000} seconds.",0)
 	}
 
+
+
 	def tokenSearchQuery:Unit = {
 
 		NGController.clearResults
 
 			val searchString: String = js.Dynamic.global.document.getElementById("tokenSearch_Input").value.toString
-			println(s"Searching for ${searchString}")
+			val searchVector:Vector[String] = searchString.split(" ").toVector
+			val prox = NGModel.tokenSearchProximity.get
+			var kindOfSearch: String = ""
+			var tempCorpus:Corpus = null
+			var foundCorpus:Corpus = null
+
+
+			var corpusOrUrn:String = ""
+			NGController.updateUserMessage(s"""Searching for the ${searchVector.size} token(s) in "${searchString}". Please be patient…""",0)
+			val timeStart = new js.Date().getTime()
+
+			if (O2Model.textRepository == null){
+				NGController.updateUserMessage("No library loaded.",2)
+			} else {
+				NGModel.citationResults.get.clear
+				js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
+					case "current" => {
+						corpusOrUrn = NGModel.urn.get.toString
+						tempCorpus = O2Model.textRepository.corpus ~~ NGModel.urn.get
+					}
+					case _ => {
+						corpusOrUrn = "whole corpus"
+						tempCorpus = O2Model.textRepository.corpus
+				}
+			}
+		}
+
+		// If there is only one token, do findToken
+		searchVector.size match {
+			case 0 => {
+				NGController.updateUserMessage(s"No token entered.",2)
+				foundCorpus = null
+			}
+			case 1 => {
+				foundCorpus = tempCorpus.findToken(searchVector(0))
+				kindOfSearch = "findToken"
+			}
+			case _ => {
+				foundCorpus = tempCorpus.findTokensWithin(searchVector,prox)
+				kindOfSearch = "findTokensWithin"
+			}
+		}
+
+		if ((tempCorpus != null) && (foundCorpus != null)){
+			for (n <- foundCorpus.nodes){
+					NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(searchString,30)))
+			}
+		}
+
+		val timeEnd = new js.Date().getTime()
+		NGModel.nGramUrnQuery := s"""Peformed “${kindOfSearch}”. Found ${NGModel.citationResults.get.size} URNs containing the ${searchVector.size} token(s) in "${searchString}", within ${prox} words of each other, in ${(timeEnd - timeStart)/1000} seconds; searched in "${corpusOrUrn}"."""
+
+		NGController.updateUserMessage(s"Found ${NGModel.citationResults.get.size} URNs in ${(timeEnd - timeStart)/1000} seconds.",0)
 	}
+
+
 
 	def clearResults: Unit = {
 		NGModel.nGramResults.get.clear
@@ -117,6 +175,8 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 		NGModel.nGramUrnQuery := ""
 
 	}
+
+
 
 	def getUrnsForNGram(s: String): Unit = {
 		val timeStart = new js.Date().getTime()

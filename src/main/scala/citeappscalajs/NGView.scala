@@ -205,7 +205,7 @@ def tokenSearchForm = {
 	<button
 		id="tokenSearch_Submit"
 			onclick={ event: Event => {
-					NGController.updateUserMessage("Searching for token. Please be patient…",1)
+					NGController.updateUserMessage("Conducting token search. Please be patient…",1)
 					js.timers.setTimeout(500){ NGController.tokenSearchQuery }
 				}
 			}
@@ -266,7 +266,8 @@ def nGramUrnSpace = {
 /* NGram URN Results List */
 @dom
 def citationResultsList = {
-		<ol>
+		<ol class={ if ( NGModel.citationResults.bind.size > 10 ){ "cols" } else { "" } } >
+
 		{
 			for (ng <- NGModel.citationResults) yield {
 				<li>
