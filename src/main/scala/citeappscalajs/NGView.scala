@@ -102,8 +102,20 @@ def passageUrnSpan(urn:CtsUrn, s:String) = {
 @dom
 def  toolsContainer = {
 	<div id="ngram_toolsContainer">
+
+	<h2>Scope for Exploration</h2>
+	<select id="ngram_nGramScopeOption">
+			<option value="current"> { NGModel.shortWorkLabel.bind }</option>
+			<option value="corpus">Whole Corpus</option>
+	</select>
+
+	<br/>
 	<h2>N-Gram Tools</h2>
 	{ nGramForm.bind }
+	<h2>String Search</h2>
+	{ stringSearchForm.bind }
+	<h2>Token Search</h2>
+	{ tokenSearchForm.bind }
 	</div>
 }
 
@@ -128,18 +140,16 @@ def nGramForm = {
 	type="text"
 	size={ 4 }
 	value={ NGModel.nGramThreshold.bind.toString }
-	onchange={ event: Event => NGController.validateIntegerEntry( event )}
+	onchange={ event: Event => NGController.validateThresholdEntry( event )}
 	/>
 	<br/>
 
-<select id="ngram_nGramScopeOption">
-		<option value="current"> { NGModel.shortWorkLabel.bind }</option>
-		<option value="corpus">Whole Corpus</option>
-</select>
-
-	<br/>
 	<label for="ng_ngram_filterStringField">Filter String</label>
-	<input type="text" size={ 20 } id="ngram_filterStringField"/>
+	<input
+		type="text"
+		placeholder="String to filter results"
+		size={ 20 }
+		id="ngram_filterStringField"/>
 	<br/>
 	<label for="ngram_ignorePuncBox">Ignore Punctuation</label>
 	<input type="checkbox" id="ngram_ignorePuncBox" checked={ true }/>
@@ -152,6 +162,54 @@ def nGramForm = {
 				}
 			}
 		>Query for N-Grams</button>
+}
+
+/* String Search Form */
+@dom
+def stringSearchForm = {
+	<label for="stringSearch_Input">String Search:</label>
+	<input
+		type="text"
+		size={ 20 }
+		placeholder="String to find"
+		id="stringSearch_Input"/>
+	<button
+		id="stringSearch_Submit"
+			onclick={ event: Event => {
+					NGController.updateUserMessage("Searching for string. Please be patient…",1)
+					js.timers.setTimeout(500){ NGController.stringSearchQuery }
+				}
+			}
+		>Search</button>
+}
+
+/* Token Search Form */
+@dom
+def tokenSearchForm = {
+	<p>Enter one or more word-tokens, separated by a space:</p>
+	<label for="tokenSearch_Input">Token Search:</label>
+	<input
+		type="text"
+		placeholder="word1 word2 word3"
+		size={ 40 }
+		id="tokenSearch_Input"/>
+	<br/>
+	<label for="tokenSearch_proximityInput">Proximity:</label>
+	<input
+	id="tokenSearch_proximityInput"
+	type="text"
+	size={ 4 }
+	value={ NGModel.tokenSearchProximity.bind.toString }
+	onchange={ event: Event => NGController.validateProximityEntry( event )}
+	/>
+	<button
+		id="tokenSearch_Submit"
+			onclick={ event: Event => {
+					NGController.updateUserMessage("Searching for token. Please be patient…",1)
+					js.timers.setTimeout(500){ NGController.tokenSearchQuery }
+				}
+			}
+		>Search</button>
 }
 
 
@@ -191,14 +249,26 @@ def nGramSpace = {
 	</div>
 }
 
+
 /* N-Gram URNs */
 @dom
 def nGramUrnSpace = {
 	<div id="ngram_urns_container">
-	<h2>URNs for N-Gram</h2>
+	<h2>URN Results</h2>
 	<p id="ngram_urn_query"> { NGModel.nGramUrnQuery.bind }</p>
-	<p>{ nGramUrnDownload.bind }</p>
 	<div id="ngram_urns">
+		{ nGramUrnOList.bind }
+	</div>
+	<div id="search_urns">
+		{ searchUrnOList.bind }
+	</div>
+	</div>
+}
+
+
+/* NGram URN Results List */
+@dom
+def nGramUrnOList = {
 		<ol>
 		{
 			for (ngurn <- NGModel.nGramUrns) yield {
@@ -211,12 +281,33 @@ def nGramUrnSpace = {
 			}
 		}
 		</ol>
-
-	</div>
-	</div>
 }
 
+/* Search URN Results List */
+@dom
+def searchUrnOList = {
+		<ol>
+		{
+			for (sr <- NGModel.searchResults) yield {
+				<li>
+				{
+					val s:String = s"${O2Model.textRepository.catalog.label(sr.urn.get)}, ${sr.urn.get.passageComponent}"
+
+					passageUrnSpan( sr.urn.get, s ).bind
+
+				}
+				<br/>
+				{ s"${sr.kwic.get}" }
+				</li>
+			}
+		}
+		</ol>
+}
+
+
 /* Download link for NGram URNs */
+/* Will enable when we figure out what this should look like */
+/*
 @dom
 def nGramUrnDownload = {
 	<a
@@ -227,6 +318,7 @@ def nGramUrnDownload = {
 		}
 		>Download N-Grams URNs</a>
 }
+*/
 
 
 }

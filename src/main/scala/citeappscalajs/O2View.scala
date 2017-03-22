@@ -147,7 +147,11 @@ def citedWorksContainer = {
 def workUrnSpan(urn:CtsUrn, s:String) = {
 	<span
 	class="app_clickable"
-	onclick={ event: Event => O2Controller.insertFirstNodeUrn(urn)  }>
+	onclick={ event: Event => {
+		O2Controller.insertFirstNodeUrn(urn)
+		O2Model.clearPassage
+		}
+	}>
 	{ s }
 	</span>
 }

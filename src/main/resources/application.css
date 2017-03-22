@@ -175,6 +175,10 @@ div.app_sidebarDiv{
 		min-height: 200px;
 }
 
+div.app_sidebarDiv h2 {
+	padding-top: 5px;
+}
+
 #app_filePickerSpan {
 		font-weight: normal;
 		font-size: 65%;
@@ -213,6 +217,7 @@ div.app_sidebarDiv h2 {
 	line-height: 1em;
 	border: 1px dashed silver;
 	padding: 6px;
+	max-width: 80%;
 }
 
 .ngram_ngram {
@@ -375,7 +380,7 @@ div {
 p {
 }
 
-button, input{
+input{
 	/* Optical justification FTW */
 	margin-left: -1px;
 }

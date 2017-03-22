@@ -33,14 +33,6 @@ object O2Model {
 	val currentNext = Var[Option[CtsUrn]](None)
 	val currentPrev = Var[Option[CtsUrn]](None)
 
-	/* Values for NGrams */
-	val nGramThreshold = Var(3)
-
-	val nGramResults = Var[StringHistogram](null)
-	val nGramQuery = Var("")
-
-	val nGramUrns =  Vars.empty[CtsUrn]
-	val nGramUrnQuery = Var("")
 
 	/* Some methods for working the model */
 
@@ -49,6 +41,11 @@ object O2Model {
 		O2Model.currentNext := O2Model.textRepository.corpus.nextUrn(urn)
 	}
 
+
+	@dom
+	def clearPassage:Unit = {
+		O2Model.xmlPassage.innerHTML = ""
+	}
 
 	@dom
 	def getPassage(newUrn: CtsUrn):Unit = {

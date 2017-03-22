@@ -55,15 +55,55 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 
 		val timeEnd = new js.Date().getTime()
 
-		NGModel.nGramQuery := s"Fetched ${NGModel.nGramResults.get.size} N-Grams in ${(timeEnd - timeStart)/1000} seconds: n = ${n}; threshold = ${occ}; ignore-punctuation = ${ignorePunc}; filtered-by = '${filterString}'; queried on '${corpusOrUrn}'."
+		NGModel.nGramQuery := s"""Fetched ${NGModel.nGramResults.get.size} N-Grams in ${(timeEnd - timeStart)/1000} seconds: n = ${n}; threshold = ${occ}; ignore-punctuation = ${ignorePunc}; filtered-by = '${filterString}'; queried on "${corpusOrUrn}"."""
 
 		NGController.updateUserMessage(s"Fetched ${NGModel.nGramResults.get.size} NGrams in ${(timeEnd - timeStart)/1000} seconds.",0)
 
 	}
 
+	def stringSearchQuery:Unit = {
+			val searchString: String = js.Dynamic.global.document.getElementById("stringSearch_Input").value.toString
+			var corpusOrUrn:String = ""
+			NGController.updateUserMessage(s"""Searching for "${searchString}". Please be patient…""",0)
+			val timeStart = new js.Date().getTime()
+
+			if (O2Model.textRepository == null){
+				NGController.updateUserMessage("No library loaded.",2)
+			} else {
+				NGModel.searchResults.get.clear
+				js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
+					case "current" => {
+						corpusOrUrn = NGModel.urn.get.toString
+						// do search on current text
+						val tempCorpus = O2Model.textRepository.corpus ~~ NGModel.urn.get
+						for (n <- tempCorpus.find(searchString).nodes){
+								NGModel.searchResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(searchString,20)))
+						}
+					}
+					case _ => {
+						corpusOrUrn = "whole corpus"
+						for (n <- O2Model.textRepository.corpus.find(searchString).nodes){
+								NGModel.searchResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(searchString,30)))
+						}
+					}
+				}
+			}
+
+		val timeEnd = new js.Date().getTime()
+		NGModel.nGramUrnQuery := s"""Found ${NGModel.searchResults.get.size} URNs containing "${searchString}"  in ${(timeEnd - timeStart)/1000} seconds; searched in "${corpusOrUrn}"."""
+
+		NGController.updateUserMessage(s"Found ${NGModel.searchResults.get.size} URNs in ${(timeEnd - timeStart)/1000} seconds.",0)
+	}
+
+	def tokenSearchQuery:Unit = {
+			val searchString: String = js.Dynamic.global.document.getElementById("tokenSearch_Input").value.toString
+			println(s"Searching for ${searchString}")
+	}
+
 	def clearResults: Unit = {
 		NGModel.nGramResults.get.clear
 		NGModel.nGramUrns.get.clear
+		NGModel.searchResults.get.clear
 
 		NGModel.nGramQuery := ""
 		NGModel.nGramUrnQuery := ""
@@ -123,7 +163,7 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 		NGModel.updateShortWorkLabel
 	}
 
-	def validateIntegerEntry(thisEvent: Event):Unit = {
+	def validateThresholdEntry(thisEvent: Event):Unit = {
 		val thisTarget = thisEvent.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]
 		val testText = thisTarget.value.toString
 		try{
@@ -135,6 +175,21 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 				NGModel.nGramThreshold := 3
 				NGController.updateUserMessage(s"Minimum Occurrances value must be an integer. '${badMo}' is not an integer.", 2)
 				js.Dynamic.global.document.getElementById("ngram_minOccurrances").value =  NGModel.nGramThreshold.get.toString
+			}
+		}
+	}
+	def validateProximityEntry(thisEvent: Event):Unit = {
+		val thisTarget = thisEvent.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]
+		val testText = thisTarget.value.toString
+		try{
+			val mo: Int = testText.toInt
+			NGModel.tokenSearchProximity := mo
+		} catch {
+			case e: Exception => {
+				val badMo: String = testText
+				NGModel.tokenSearchProximity := 3
+				NGController.updateUserMessage(s"Proximity value must be an integer. '${badMo}' is not an integer.", 2)
+				js.Dynamic.global.document.getElementById("tokenSearch_proximityInput").value =  NGModel.tokenSearchProximity.get.toString
 			}
 		}
 	}

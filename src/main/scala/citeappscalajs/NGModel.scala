@@ -34,6 +34,13 @@ object NGModel {
 	val nGramUrns =  Vars.empty[CtsUrn]
 	val nGramUrnQuery = Var("")
 
+	/* Values for Search */
+
+  case class SearchResult(urn: Var[CtsUrn], kwic: Var[String])
+
+	val searchResults = Vars.empty[SearchResult]
+	val tokenSearchProximity = Var(3)
+
 	/* Some methods for working the model */
 
 	@dom

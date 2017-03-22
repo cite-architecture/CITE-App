@@ -100,20 +100,4 @@ object O2Controller {
 	}
 
 
-	def validateIntegerEntry(thisEvent: Event):Unit = {
-		val thisTarget = thisEvent.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]
-		val testText = thisTarget.value.toString
-		try{
-			val mo: Int = testText.toInt
-			O2Model.nGramThreshold := mo
-		} catch {
-			case e: Exception => {
-				val badMo: String = testText
-				O2Model.nGramThreshold := 3
-				O2Controller.updateUserMessage(s"Minimum Occurrances value must be an integer. '${badMo}' is not an integer.", 2)
-				js.Dynamic.global.document.getElementById("o2_ngram_minOccurrances").value =  O2Model.nGramThreshold.get.toString
-			}
-		}
-	}
-
 }
