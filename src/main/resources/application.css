@@ -229,14 +229,14 @@ div.app_sidebarDiv h2 {
 }
 
 div#ngram_urns ol.cols, div#search_urns ol.cols {
-	font-size: 90%;
+	font-size: 80%;
 	list-style-type: decimal;
 	-moz-column-count: 2;
 	-moz-column-gap: 50px;
 	-webkit-column-count: 2;
 	-webkit-column-gap: 50px;
 	column-count: 2;
-	column-gap: 50px;
+	column-gap: 70px;
 }
 
 

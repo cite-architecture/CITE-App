@@ -107,6 +107,18 @@ object NGModel {
  }
 
 /* String and Token Finding */
+def findString(urn:CtsUrn, s:String):Corpus = {
+		val tempCorpus = O2Model.textRepository.corpus ~~ NGModel.urn.get
+		val foundCorpus = tempCorpus.find(s)
+		foundCorpus
+}
+
+def findString(s:String):Corpus = {
+		val foundCorpus = O2Model.textRepository.corpus.find(s)
+		foundCorpus
+}
+
+
 
 
 }
