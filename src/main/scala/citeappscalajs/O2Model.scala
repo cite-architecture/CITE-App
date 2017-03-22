@@ -20,6 +20,7 @@ object O2Model {
 	//val passage = Vars.empty[CitableNode]
 	//var xmlPassage = new org.scalajs.dom.raw.DOMParser().parseFromString( "<cts:passage></cts:passage>", "text/xml" )
 	var xmlPassage = js.Dynamic.global.document.createElement("div")
+	val isRtlPassage = Var(false)
 
 	val urn = Var(CtsUrn("urn:cts:ns:group.work.version.exemplar:passage"))
 
@@ -61,8 +62,7 @@ object O2Model {
 			val citString:String = s"""<span class="o2_passageUrn">${cn.urn.passageComponent}</span>"""
 			val txtString:String = cn.text
 
-			val rtlCheckk:Boolean = O2Model.checkForRTL(cn.text)
-			println(s"""rtl language = ${O2Model.checkForRTL(cn.text(0).toString)}""")
+			O2Model.isRtlPassage := O2Model.checkForRTL(cn.text)
 
 			val elString:String = """<div class="p">""" + citString + txtString + "</div>"
 			wholePassageElement += elString
@@ -74,8 +74,10 @@ object O2Model {
 	}
 
 def checkForRTL(s:String):Boolean = {
-		val isRtl = false
-		val pattern = "^[\u0591-\u06FF ]+$".r
+		val arabicBlock = "[\u0600-\u06FF]".r
+		val hebrewBlock = "[\u0591-\u05F4]".r
+		println(s)
+		var isRtl:Boolean = ((arabicBlock findAllIn s).nonEmpty || (hebrewBlock findAllIn s).nonEmpty)
 		isRtl
 }
 

@@ -270,6 +270,10 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 	padding-bottom: 5px;
 }
 
+#o2_xmlPassageContainer.rtl {
+	direction: rtl;
+}
+
 div.o2_textColumn {
 	margin-right: 1em;
 }
@@ -292,7 +296,8 @@ div#o2_navButtonContainer{
 	color: rgb(171, 0, 0);
 	font-size: 80%;
 	padding-bottom: 3px;
-	margin-right: 3px;
+	margin-right: 4px;
+	margin-left: 4px;
 	vertical-align: baseline;
   position: relative;
   top: -0.4em;
