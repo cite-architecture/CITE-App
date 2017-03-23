@@ -288,6 +288,7 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 #o2_passageContainer {
 	padding-bottom: 5px;
 	min-height: 100px;
+	max-width: 66%;
 }
 
 .rtl {
