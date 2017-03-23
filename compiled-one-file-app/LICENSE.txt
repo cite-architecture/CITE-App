@@ -32,8 +32,7 @@ The English text of Plutarch is from the Perseus Digital Library, <http://www.pe
 
 ## Latin Texts
 
-The Latin texts from the College of the Holy Cross, distritubed under the terms of a Creative Commons Attribution 3.0 Licence.
-
+The Latin Texts are from Holy Cross Free Latin and Greek editions, distributed under the terms of the  Creative Commons 3 Attribution-Share-Alike License, derived from Tesserae project edition (http://tesserae.caset.buffalo.edu/sources.php) derived from Perseus project edition (http://www.perseus.tufts.edu/hopper/collection?collection=Perseus%3Acollection%3AGreco-Roman)
 
 
 
