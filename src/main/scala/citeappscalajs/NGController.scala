@@ -101,9 +101,9 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 			}
 
 		val timeEnd = new js.Date().getTime()
-		NGModel.nGramUrnQuery := s"""Found ${NGModel.citationResults.get.size} URNs containing "${searchString}"  in ${(timeEnd - timeStart)/1000} seconds; searched in "${corpusOrUrn}"."""
+		NGModel.nGramUrnQuery := s"""Found ${NGModel.citationResults.get.size} passages containing "${searchString}"  in ${(timeEnd - timeStart)/1000} seconds; searched in "${corpusOrUrn}"."""
 
-		NGController.updateUserMessage(s"Found ${NGModel.citationResults.get.size} URNs in ${(timeEnd - timeStart)/1000} seconds.",0)
+		NGController.updateUserMessage(s"Found ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds.",0)
 	}
 
 
@@ -163,9 +163,9 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 	}
 
 	val timeEnd = new js.Date().getTime()
-	NGModel.nGramUrnQuery := s"""Peformed “${kindOfSearch}”. Found ${NGModel.citationResults.get.size} URNs containing the ${searchVector.size} token(s) in "${searchString}", within ${prox} words of each other, in ${(timeEnd - timeStart)/1000} seconds; searched in "${corpusOrUrn}"."""
+	NGModel.nGramUrnQuery := s"""Peformed “${kindOfSearch}”. Found ${NGModel.citationResults.get.size} passages containing the ${searchVector.size} token(s) in "${searchString}", within ${prox} words of each other, in ${(timeEnd - timeStart)/1000} seconds; searched in "${corpusOrUrn}"."""
 
-	NGController.updateUserMessage(s"Found ${NGModel.citationResults.get.size} URNs in ${(timeEnd - timeStart)/1000} seconds.",0)
+	NGController.updateUserMessage(s"Found ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds.",0)
 }
 
 
@@ -215,9 +215,9 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 
 		val timeEnd = new js.Date().getTime()
 
-		NGModel.nGramUrnQuery := s"Fetched ${NGModel.citationResults.get.size} URNs in ${(timeEnd - timeStart)/1000} seconds: threshold = ${occ}; ignore-punctuation = ${ignorePunc}; queried on '${corpusOrUrn}'."
+		NGModel.nGramUrnQuery := s"Fetched ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds: threshold = ${occ}; ignore-punctuation = ${ignorePunc}; queried on '${corpusOrUrn}'."
 
-		NGController.updateUserMessage(s"Fetched ${NGModel.citationResults.get.size} URNs  in ${(timeEnd - timeStart)/1000} seconds.",0)
+		NGController.updateUserMessage(s"Fetched ${NGModel.citationResults.get.size} passages  in ${(timeEnd - timeStart)/1000} seconds.",0)
 
 	}
 

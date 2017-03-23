@@ -58,7 +58,6 @@ object CiteMainController {
 		reader.readAsText(e.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement].files(0))
 		reader.onload = (e: Event) => {
 			val contents = reader.result.asInstanceOf[String]
-			println(s"Callig update with delimiter: ${delimiter}")
 			CiteMainController.updateRepository(contents,delimiter)
 		}
 	}
@@ -70,7 +69,6 @@ object CiteMainController {
 
 	@dom
 	def updateRepository(cexString: String, columnDelimiter: String = "\t") = {
-		println(s"doing update with delimiter:${columnDelimiter}")
 
 		try {
 			val raw = cexString.split("#!").toVector.filter(_.nonEmpty)

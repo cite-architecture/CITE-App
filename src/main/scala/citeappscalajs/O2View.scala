@@ -90,12 +90,12 @@ object O2View {
 @dom
 def passageContainer = {
 	<div id="o2_passageContainer">
-		<div id="o2_xmlPassageContainer"
-			class={
-					if (O2Model.isRtlPassage.bind){ "rtl" } else { "ltr" }
-			}
-		></div>
-		<div id="o2_navButtonContainer">
+		<div id="o2_navButtonContainer_top">
+			{ prevButton.bind }
+			{ nextButton.bind }
+		</div>
+		<div id="o2_xmlPassageContainer"></div>
+		<div id="o2_navButtonContainer_bottom">
 			{ prevButton.bind }
 			{ nextButton.bind }
 		</div>

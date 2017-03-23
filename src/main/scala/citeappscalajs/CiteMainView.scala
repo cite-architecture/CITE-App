@@ -52,7 +52,7 @@ object CiteMainView {
 		<header>
 			{ filePicker.bind }
 			CITE Environment
-			<span id="app_header_versionInfo">version 1.0.0</span>
+			<span id="app_header_versionInfo">version 1.1.0</span>
 		</header>
 
 		<article id="main_Container">

@@ -64,7 +64,8 @@ object O2Model {
 
 			O2Model.isRtlPassage := O2Model.checkForRTL(cn.text)
 
-			val elString:String = """<div class="p">""" + citString + txtString + "</div>"
+			val divClass =	if (O2Model.isRtlPassage.get){ "rtl" } else { "ltr" }
+			val elString:String = s"""<div class="p ${divClass}">""" + citString + txtString + "</div>"
 			wholePassageElement += elString
 			//O2Model.passage.get += cn
 		}

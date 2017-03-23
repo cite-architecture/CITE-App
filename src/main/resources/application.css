@@ -259,6 +259,25 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 	list-style-type: decimal;
 }
 
+
+#o2_citedWorksContainer ul li {
+	line-height: 1.2em;
+	height: 2.4em;
+	white-space: nowrap;
+	overflow: hidden;
+	width: auto;
+	list-style-position:inside;
+	text-overflow: ellipsis;
+	margin-bottom: 1em;
+}
+
+#o2_citedWorksContainer ul li:hover {
+	line-height: 1.2em;
+	white-space: normal;
+	height: auto;
+	overflow: auto;
+}
+
 .app_reportingCurrentUrn {
 	font-size: 80%;
 	color: #777;
@@ -268,9 +287,10 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 
 #o2_passageContainer {
 	padding-bottom: 5px;
+	min-height: 100px;
 }
 
-#o2_xmlPassageContainer.rtl {
+.rtl {
 	direction: rtl;
 }
 
@@ -288,8 +308,11 @@ div.o2_1_cols{
 
 }
 
-div#o2_navButtonContainer{
+div#o2_navButtonContainer_bottom{
 	clear: both;
+}
+div#o2_navButtonContainer_top{
+	padding-bottom: 15px;
 }
 
 .o2_passageUrn {
