@@ -2,7 +2,7 @@
 
 A single-page browser application implementing user-interaction with CITE/CTS libraries, written in [Scala.js](http://www.scala-js.org/).
 
-## Current release: 1.0
+## Current version: 1.0
 
 See [release notes](releases.md).
 
