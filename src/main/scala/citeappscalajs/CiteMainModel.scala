@@ -18,6 +18,6 @@ object CiteMainModel {
 
 		val userMessage = Var("Main loaded.")
 		val userAlert = Var("default")
-	  val userMessageVisibility = Var("")
+	  val userMessageVisibility = Var("app_hidden")
 
 }

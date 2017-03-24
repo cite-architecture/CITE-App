@@ -123,28 +123,32 @@ speaker:after {
 	font-weight: normal;
 	min-height: 1em;
 	float: right;
-	-webkit-transition: all 1s ease-out 0s;
-	-moz-transition: all 1s ease-out 0s;
-	-ms-transition: all 1s ease-out 0s;
-	-o-transition: all 1s ease-out 0s;
-	transition: all 1s ease-out 0s;
+	-webkit-transition: all 0.5s ease-out 0s;
+	-moz-transition: all 0.5s ease-out 0s;
+	-ms-transition: all 0.5s ease-out 0s;
+	-o-transition: all 0.5s ease-out 0s;
+	transition: all 0.5s ease-out 0s;
 }
 
+
 .app_message p {
-	padding-top: 0;
-	padding-bottom: 0;
+	padding: 5px;
+	line-height: 1.2em;
 	margin: 0;
 }
 
 .app_message.default, #mainMessage.default {
-		color: #777;
+	border: 1px solid rgba(50, 161, 52, 0.5);
+	background-color: rgba(50, 161, 52, 0.2);
 }
 .app_message.wait, #mainMessage.wait {
-	  color: #777;
+	border: 1px solid rgba(247, 231, 131, 0.5);
+	background-color: rgba(247, 231, 131, 0.2);
 }
 
 .app_message.warn, #mainMessage.warn {
-		color: rgb(166, 0, 0);
+	border: 1px solid rgba(161, 50, 52, 0.5);
+	background-color: rgba(161, 50, 52, 0.2);
 }
 
 #app_header_versionInfo {
@@ -195,6 +199,7 @@ div.app_sidebarDiv h2 {
 /* appwide forms */
 div.app_sidebarDiv label {
 		padding-right: 5px;
+		padding-left: 0;
 }
 
 div.app_sidebarDiv h2 {
@@ -255,12 +260,13 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 		color: green;
 }
 
-#o2_citedWorksContainer ul {
+#o2_citedWorksContainer ul, #ngram_citedWorksContainer ul {
 	list-style-type: decimal;
+	padding-left: 0;
 }
 
 
-#o2_citedWorksContainer ul li {
+#o2_citedWorksContainer ul li, #ngram_citedWorksContainer ul li {
 	line-height: 1.2em;
 	height: 2.4em;
 	white-space: nowrap;
@@ -325,6 +331,90 @@ div#o2_navButtonContainer_top{
 	vertical-align: baseline;
   position: relative;
   top: -0.4em;
+}
+
+/* Drop Down Menu Stuff */
+
+.dropdown {
+	position: relative;
+    display: inline-block;
+    border-top: 1px solid #eee;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #bbb;
+    border-bottom: 1px solid #aaa;
+    width: 50%;
+    padding-left: 13px;
+    padding-right: 12px;
+}
+
+.dropdown.empty {
+		border: 1px solid #eee;
+		color: #ccc;
+}
+
+.dropdown.empty:before, .dropdown.empty:hover:before {
+	content: "▲";
+	color: #eee;
+}
+
+.dropdown.empty:hover {
+	background-color: #fff;
+}
+
+.dropdown:hover {
+	background-color: #f8f8f8;
+	border-bottom: 1px solid #f8f8f8;
+}
+
+.dropdown:before {
+	content: "▲";
+	color: rgb(96, 160, 236);
+}
+
+.dropdown:hover:before {
+	content: "▼";
+	color: rgb(96, 160, 236);
+}
+
+.dropdown-content {
+    display: none;
+		font-size: 80%;
+    position: absolute;
+		left: 0;
+    background-color: #f8f8f8;
+		border-top: 1px solid #f8f8f8;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #bbb;
+    border-bottom: 1px solid #aaa;
+    min-width: 160px;
+    /* box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.3); */
+    width: 300px;
+		/*
+    padding-left: 12px;
+    padding-right: 12px;
+		*/
+    z-index: 1;
+}
+
+.dropdown-content p {
+	padding: 3px 15px ;
+	line-height: 1.2em;
+}
+
+.dropdown-content p:hover {
+	background-color: #ededed;
+}
+
+.dropdown-content p:active {
+	background-color: rgba(50, 161, 52, 0.2);
+}
+
+.dropdown.empty:hover .dropdown-content {
+		display: none;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
 }
 
 

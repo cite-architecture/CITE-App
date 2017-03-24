@@ -31,6 +31,42 @@ object NGView {
 		</div>
 	}
 
+/* Previous Searches */
+@dom
+def previousSearchMenu = {
+	<div
+		class={
+			{ if (NGModel.pastQueries.bind.size < 1) { "dropdown empty" } else {"dropdown"} }
+		}
+
+	>
+			<span>Previous Searches</span>
+			{ NGView.previousSearches.bind }
+	</div>
+}
+
+
+@dom
+def previousSearches = {
+	<div class="dropdown-content">
+		{
+			for ( q <- NGModel.pastQueries) yield {
+					<p
+							onclick={ event: Event => {
+								js.timers.setTimeout(600){
+									NGController.loadQuery(q)
+									NGController.executeQuery(q)
+								}
+							}
+							}
+					>
+					{ q.toString}
+					</p>
+			}
+		}
+	</div>
+}
+
 /* Cited Works List */
 @dom
 def citedWorksContainer = {
@@ -83,6 +119,7 @@ def passageUrnSpan(urn:CtsUrn, s:String) = {
 		<div id="ngram_Container">
 
 		<div id="ngram_sidebar" class="app_sidebarDiv">
+		{ NGView.previousSearchMenu.bind }
 		{ NGView.toolsContainer.bind }
 		{ NGView.citedWorksContainer.bind }
 		</div>

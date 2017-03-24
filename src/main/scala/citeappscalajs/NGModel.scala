@@ -23,7 +23,47 @@ object NGModel {
 
 	val userMessage = Var("")
 	val userAlert = Var("default")
-	val userMessageVisibility = Var("")
+	val userMessageVisibility = Var("app_hidden")
+
+	/* For recording queries */
+
+	class CtsQuery( urn:Option[CtsUrn]) {
+		override def toString:String = {
+			val s:String = s"Generic query on ${urn}."
+			s
+		}
+	}
+
+	case class NGramQuery(n:Integer, t:Integer, fs: String, ip: Boolean, urn:Option[CtsUrn] ) extends CtsQuery(urn){
+		// this.getClass.getName will yield 'citeapp.NGModel$NGramQuery'
+		override def toString:String = {
+			val scope:String = urn match{ case Some(u) => u.toString; case _ => "whole corpus"}
+			val s = s"""NGram Query: n=${n}; threshold = ${t}; ignore-punctuation=${ip}; filtered by "${fs}"; scope=${ scope }."""
+			s
+		}
+
+	}
+
+	case class StringSearch(fs: String, urn:Option[CtsUrn] ) extends CtsQuery(urn) {
+		override def toString:String = {
+			val scope:String = urn match{ case Some(u) => u.toString; case _ => "whole corpus"}
+			val s = s"""String Search: "${fs}"; scope=${ scope }."""
+			s
+		}
+
+	}
+
+
+	case class TokenSearch(tt: Vector[String], p:Integer, urn:Option[CtsUrn]) extends CtsQuery(urn){
+		override def toString:String = {
+			val scope:String = urn match{ case Some(u) => u.toString; case _ => "whole corpus"}
+			val s = s"""Token Search: "${tt.mkString(", ")}"; proximity=${p}; scope=${ scope }."""
+			s
+		}
+	}
+
+	//var pastQueries: Array[CtsQuery] = null
+	val pastQueries = Vars.empty[CtsQuery]
 
 	/* for holding search results */
   case class SearchResult(urn: Var[CtsUrn], kwic: Var[String])

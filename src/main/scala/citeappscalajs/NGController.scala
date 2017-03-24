@@ -15,52 +15,96 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport
 object NGController {
 
-/*
-wholeCorpus.getNGram(currentUrn.dropPassage, filterString, n, occ, ignorePunc)
-wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
-*/
 
-	def nGramQuery:Unit = {
+	def constructNGramQueryObject:NGModel.NGramQuery = {
 
-		NGController.clearResults
-
-		// This is ugly as hell, but what are you going to do… HTML forms.
 		val n:Int = js.Dynamic.global.document.getElementById("ngram_nlist").value.toString.toInt
 		val occ:Int = js.Dynamic.global.document.getElementById("ngram_minOccurrances").value.toString.toInt
 		val ignorePuncString: String = js.Dynamic.global.document.getElementById("ngram_ignorePuncBox").checked.toString
 		val ignorePunc: Boolean = (ignorePuncString == "true")
 		val filterString: String = js.Dynamic.global.document.getElementById("ngram_filterStringField").value.toString
+		val corpusOrUrn:Option[CtsUrn] = js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
+			case "current" => { Some(NGModel.urn.get.dropPassage) }
+			case _ => { None }
+		}
 
-		var corpusOrUrn:String = ""
+		val ngq = NGModel.NGramQuery(n, occ, filterString, ignorePunc, corpusOrUrn )
+		ngq
+
+	}
+
+	def loadQuery(q:NGModel.NGramQuery) = {
+		js.Dynamic.global.document.getElementById("ngram_nlist").value = q.n.toString
+		js.Dynamic.global.document.getElementById("ngram_minOccurrances").value = q.t.toString
+		js.Dynamic.global.document.getElementById("ngram_ignorePuncBox").checked = q.ip.toString
+		js.Dynamic.global.document.getElementById("ngram_filterStringField").value = q.fs
+		q.urn match {
+				case Some(urn) => {
+					NGModel.urn := urn
+					js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "current"
+				}
+				case None => js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "corpus"
+		}
+	}
+
+	def executeQuery(q:NGModel.NGramQuery) = {
+		NGController.clearResults
 		NGController.updateUserMessage("Getting N-Gram. Please be patient…",0)
 		val timeStart = new js.Date().getTime()
-
-		if (O2Model.textRepository == null){
-			NGController.updateUserMessage("No library loaded.",2)
-		} else {
-			NGModel.nGramResults.get.clear
-			NGModel.citationResults.get.clear
-			js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
-				case "current" => {
-					corpusOrUrn = NGModel.urn.get.toString
-					for ( sc <- NGModel.getNGram(NGModel.urn.get, filterString, n, occ, ignorePunc).histogram ) {
-						NGModel.nGramResults.get += sc
-					}
+		NGModel.nGramResults.get.clear
+		NGModel.citationResults.get.clear
+		q.urn match {
+			case Some(urn) => {
+				for ( sc <- NGModel.getNGram(urn, q.fs, q.n, q.t, q.ip).histogram ) {
+					NGModel.nGramResults.get += sc
 				}
-				case _ => {
-					corpusOrUrn = "whole corpus"
-					for ( sc <- NGModel.getNGram(filterString, n, occ, ignorePunc).histogram ) {
-						NGModel.nGramResults.get += sc
-					}
+			}
+			case _ => {
+				for ( sc <- NGModel.getNGram(q.fs, q.n, q.t, q.ip).histogram ) {
+					NGModel.nGramResults.get += sc
 				}
 			}
 		}
 
 		val timeEnd = new js.Date().getTime()
 
-		NGModel.nGramQuery := s"""Fetched ${NGModel.nGramResults.get.size} N-Grams in ${(timeEnd - timeStart)/1000} seconds: n = ${n}; threshold = ${occ}; ignore-punctuation = ${ignorePunc}; filtered-by = '${filterString}'; queried on "${corpusOrUrn}"."""
+		NGModel.nGramQuery := s"""${q.toString} Time: ${(timeEnd - timeStart)/1000} seconds. Results: ${NGModel.nGramResults.get.size}."""
 
 		NGController.updateUserMessage(s"Fetched ${NGModel.nGramResults.get.size} NGrams in ${(timeEnd - timeStart)/1000} seconds.",0)
+	}
+
+	def executeQuery(q:NGModel.CtsQuery):Unit = {
+		q.getClass.getName match {
+			case "citeapp.NGModel$NGramQuery" => {
+				NGController.executeQuery(q.asInstanceOf[NGModel.NGramQuery])
+			}
+			case _ => println("Execute Query ???")
+		}
+	}
+
+	def loadQuery(q:NGModel.CtsQuery):Unit = {
+		q.getClass.getName match {
+			case "citeapp.NGModel$NGramQuery" => {
+				NGController.loadQuery(q.asInstanceOf[NGModel.NGramQuery])
+			}
+			case _ => println("Load Query ???")
+		}
+	}
+
+	def nGramQuery:Unit = {
+
+		NGController.clearResults
+
+		val newQuery = NGController.constructNGramQueryObject
+
+		if (O2Model.textRepository == null){
+			NGController.updateUserMessage("No library loaded.",2)
+		} else {
+			NGModel.pastQueries.get += newQuery
+			NGController.executeQuery(newQuery)
+		}
+
+
 
 	}
 
@@ -229,7 +273,7 @@ wholeCorpus.getNGram(filterString, n, occ, ignorePunc)
 			case 1 => NGModel.userAlert := "wait"
 			case 2 => NGModel.userAlert := "warn"
 		}
-		js.timers.setTimeout(900000){ NGModel.userMessageVisibility := "app_hidden" }
+		js.timers.setTimeout(4000){ NGModel.userMessageVisibility := "app_hidden" }
 	}
 
 	@dom

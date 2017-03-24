@@ -26,7 +26,7 @@ object O2Model {
 
 	val userMessage = Var("")
 	val userAlert = Var("default")
-	val userMessageVisibility = Var("")
+	val userMessageVisibility = Var("app_hidden")
 
 	var textRepository: TextRepository = null
 	val citedWorks = Vars.empty[CtsUrn]

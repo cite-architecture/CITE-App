@@ -24,7 +24,7 @@ object CiteMainController {
 			println("skipped passOhco2Data")
 		}
 
-		CiteMainController.loadRemoteLibrary(libUrl)
+		// CiteMainController.loadRemoteLibrary(libUrl)
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
@@ -37,7 +37,7 @@ object CiteMainController {
 			case 1 => CiteMainModel.userAlert := "wait"
 			case 2 => CiteMainModel.userAlert := "warn"
 		}
-		js.timers.setTimeout(90000){ CiteMainModel.userMessageVisibility := "app_hidden" }
+		js.timers.setTimeout(4000){ CiteMainModel.userMessageVisibility := "app_hidden" }
 	}
 
 	def loadRemoteLibrary(url: String):Unit = {
