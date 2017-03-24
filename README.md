@@ -4,6 +4,8 @@ A single-page browser application implementing user-interaction with CITE/CTS li
 
 ## Current release: 1.0
 
+See [release notes](releases.md).
+
 Work on version 1.1 is available in the `v.1.1.0` branch.
 
 ## License
