@@ -1,3 +1,3 @@
 # Release notes
 
-No releases yet.
+**1.0**: initial release.
