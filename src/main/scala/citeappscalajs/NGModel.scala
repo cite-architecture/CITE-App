@@ -62,7 +62,6 @@ object NGModel {
 		}
 	}
 
-	//var pastQueries: Array[CtsQuery] = null
 	val pastQueries = Vars.empty[CtsQuery]
 
 	/* for holding search results */
@@ -73,9 +72,8 @@ object NGModel {
 	val nGramThreshold = Var(3)
 
 	val nGramResults = Vars.empty[StringCount]
-	val nGramQuery = Var("")
-
-	val nGramUrnQuery = Var("")
+	val nGramQueryReport = Var("")
+	val otherQueryReport = Var("")
 
 	/* Values for Search */
 	val tokenSearchProximity = Var(20)
@@ -100,6 +98,8 @@ object NGModel {
 	@dom
 	def updateCitedWorks = {
 		NGModel.citedWorks.get.clear
+		NGController.clearResults
+		NGController.clearInputs
 		// N.b. The textRepository remains with the Ohco2 Model.
 		for ( cw <- O2Model.textRepository.corpus.citedWorks){
 			NGModel.citedWorks.get += cw

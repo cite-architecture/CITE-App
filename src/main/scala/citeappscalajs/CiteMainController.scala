@@ -18,13 +18,8 @@ object CiteMainController {
 	@JSExport
 	def main(libUrl: String): Unit = {
 
-		def passOhco2Data: Unit = {
-		//	O2Model.corpus = Corpus(CiteMainModel.cexString.get,"\t")
-			//O2Controller.updateUserMessage(s"Got data from main controller: ${O2Model.corpus.citedWorks.size} cited works.",0)
-			println("skipped passOhco2Data")
-		}
-
-		// CiteMainController.loadRemoteLibrary(libUrl)
+		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
+		js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl) }
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
@@ -37,7 +32,7 @@ object CiteMainController {
 			case 1 => CiteMainModel.userAlert := "wait"
 			case 2 => CiteMainModel.userAlert := "warn"
 		}
-		js.timers.setTimeout(4000){ CiteMainModel.userMessageVisibility := "app_hidden" }
+		js.timers.setTimeout(6000){ CiteMainModel.userMessageVisibility := "app_hidden" }
 	}
 
 	def loadRemoteLibrary(url: String):Unit = {
@@ -85,6 +80,8 @@ object CiteMainController {
 
 			O2Model.updateCitedWorks
 			NGModel.updateCitedWorks
+			NGController.clearResults
+			NGController.clearHistory
 
 			O2Controller.preloadUrn
 			NGController.preloadUrn

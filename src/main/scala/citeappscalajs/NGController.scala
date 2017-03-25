@@ -16,8 +16,30 @@ import scala.scalajs.js.annotation.JSExport
 object NGController {
 
 
-	def constructNGramQueryObject:NGModel.NGramQuery = {
+	def constructStringSearchObject:NGModel.StringSearch = {
+		val s: String = js.Dynamic.global.document.getElementById("stringSearch_Input").value.toString
+		val corpusOrUrn:Option[CtsUrn] = js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
+			case "current" => { Some(NGModel.urn.get.dropPassage) }
+			case _ => { None }
+		}
+		val ssq = NGModel.StringSearch(s, corpusOrUrn)
+		ssq
+	}
 
+	def constructTokenSearchObject:NGModel.TokenSearch = {
+		val s: String = js.Dynamic.global.document.getElementById("tokenSearch_Input").value.toString
+		val prox = NGModel.tokenSearchProximity.get
+		val searchVector:Vector[String] = s.split(" ").toVector
+		val corpusOrUrn:Option[CtsUrn] = js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
+			case "current" => { Some(NGModel.urn.get.dropPassage) }
+			case _ => { None }
+		}
+		val tsq = NGModel.TokenSearch(searchVector, prox, corpusOrUrn)
+		tsq
+	}
+
+
+	def constructNGramQueryObject:NGModel.NGramQuery = {
 		val n:Int = js.Dynamic.global.document.getElementById("ngram_nlist").value.toString.toInt
 		val occ:Int = js.Dynamic.global.document.getElementById("ngram_minOccurrances").value.toString.toInt
 		val ignorePuncString: String = js.Dynamic.global.document.getElementById("ngram_ignorePuncBox").checked.toString
@@ -33,7 +55,36 @@ object NGController {
 
 	}
 
+	def loadQuery(q:NGModel.StringSearch) = {
+		NGController.clearInputs
+		NGController.clearResults
+		js.Dynamic.global.document.getElementById("stringSearch_Input").value = q.fs
+		q.urn match {
+				case Some(urn) => {
+					NGModel.urn := urn
+					js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "current"
+				}
+				case None => js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "corpus"
+		}
+	}
+
+	def loadQuery(q:NGModel.TokenSearch) = {
+		NGController.clearInputs
+		NGController.clearResults
+		js.Dynamic.global.document.getElementById("tokenSearch_Input").value = q.tt.mkString(" ")
+		NGModel.tokenSearchProximity := q.p
+		q.urn match {
+				case Some(urn) => {
+					NGModel.urn := urn
+					js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "current"
+				}
+				case None => js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "corpus"
+		}
+	}
+
 	def loadQuery(q:NGModel.NGramQuery) = {
+		NGController.clearInputs
+		NGController.clearResults
 		js.Dynamic.global.document.getElementById("ngram_nlist").value = q.n.toString
 		js.Dynamic.global.document.getElementById("ngram_minOccurrances").value = q.t.toString
 		js.Dynamic.global.document.getElementById("ngram_ignorePuncBox").checked = q.ip.toString
@@ -47,9 +98,88 @@ object NGController {
 		}
 	}
 
+def executeQuery(q:NGModel.StringSearch) = {
+		NGController.clearResults
+		NGController.updateUserMessage(s"""Searching for string "${q.fs}". Please be patient…""",1)
+		val timeStart = new js.Date().getTime()
+		NGModel.nGramResults.get.clear
+		NGModel.citationResults.get.clear
+		q.urn match {
+			case Some(urn) => {
+				val tempCorpus = NGModel.findString(NGModel.urn.get, q.fs)
+				for (n <- tempCorpus.nodes){
+						NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(q.fs,20)))
+				}
+			}
+			case _ => {
+				val tempCorpus = NGModel.findString(q.fs)
+				for (n <- tempCorpus.nodes){
+						NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(q.fs,30)))
+				}
+			}
+		}
+		val timeEnd = new js.Date().getTime()
+		NGModel.otherQueryReport := s"""${q.toString} Time: ${(timeEnd - timeStart)/1000} seconds. Results: ${NGModel.citationResults.get.size}."""
+		NGController.updateUserMessage(s"Found ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds.",0)
+	}
+
+
+
+def executeQuery(q:NGModel.TokenSearch):Unit = {
+		NGController.clearResults
+		NGController.updateUserMessage(s"""Searching for tokens "${q.tt.mkString(" ")}". Please be patient…""",1)
+		val timeStart = new js.Date().getTime()
+		NGModel.nGramResults.get.clear
+		NGModel.citationResults.get.clear
+
+		var tempCorpus:Corpus = null
+		var foundCorpus:Corpus = null
+
+		if (O2Model.textRepository == null){
+			NGController.updateUserMessage("No library loaded.",2)
+		} else {
+		q.urn match {
+			case Some(urn) => {
+					tempCorpus = O2Model.textRepository.corpus ~~ NGModel.urn.get
+				}
+				case _ => {
+					tempCorpus = O2Model.textRepository.corpus
+			}
+		}
+	}
+
+	// If there is only one token, do findToken
+	q.tt.size match {
+		case 0 => {
+			NGController.updateUserMessage(s"No token entered.",2)
+			foundCorpus = null
+		}
+		case 1 => {
+			foundCorpus = tempCorpus.findToken(q.tt(0))
+		}
+		case _ => {
+			foundCorpus = tempCorpus.findTokensWithin(q.tt,q.p)
+		}
+	}
+
+	if ((tempCorpus != null) && (foundCorpus != null)){
+		for (n <- foundCorpus.nodes){
+				NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(q.tt(0),30)))
+		}
+	}
+
+	val timeEnd = new js.Date().getTime()
+	NGModel.otherQueryReport := s"""${q.toString} Time: ${(timeEnd - timeStart)/1000}. Found: ${NGModel.citationResults.get.size}."""
+
+	NGController.updateUserMessage(s"Found ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds.",0)
+}
+
+
+
+
 	def executeQuery(q:NGModel.NGramQuery) = {
 		NGController.clearResults
-		NGController.updateUserMessage("Getting N-Gram. Please be patient…",0)
+		NGController.updateUserMessage("Getting N-Grams. Please be patient…",0)
 		val timeStart = new js.Date().getTime()
 		NGModel.nGramResults.get.clear
 		NGModel.citationResults.get.clear
@@ -65,11 +195,8 @@ object NGController {
 				}
 			}
 		}
-
 		val timeEnd = new js.Date().getTime()
-
-		NGModel.nGramQuery := s"""${q.toString} Time: ${(timeEnd - timeStart)/1000} seconds. Results: ${NGModel.nGramResults.get.size}."""
-
+		NGModel.nGramQueryReport := s"""${q.toString} Time: ${(timeEnd - timeStart)/1000} seconds. Results: ${NGModel.nGramResults.get.size}."""
 		NGController.updateUserMessage(s"Fetched ${NGModel.nGramResults.get.size} NGrams in ${(timeEnd - timeStart)/1000} seconds.",0)
 	}
 
@@ -78,7 +205,13 @@ object NGController {
 			case "citeapp.NGModel$NGramQuery" => {
 				NGController.executeQuery(q.asInstanceOf[NGModel.NGramQuery])
 			}
-			case _ => println("Execute Query ???")
+			case "citeapp.NGModel$StringSearch" => {
+				NGController.executeQuery(q.asInstanceOf[NGModel.StringSearch])
+			}
+			case "citeapp.NGModel$TokenSearch" => {
+				NGController.executeQuery(q.asInstanceOf[NGModel.TokenSearch])
+			}
+			case _ => NGController.updateUserMessage("Unrecognized type of search!",2)
 		}
 	}
 
@@ -87,15 +220,40 @@ object NGController {
 			case "citeapp.NGModel$NGramQuery" => {
 				NGController.loadQuery(q.asInstanceOf[NGModel.NGramQuery])
 			}
-			case _ => println("Load Query ???")
+			case "citeapp.NGModel$StringSearch" => {
+				NGController.loadQuery(q.asInstanceOf[NGModel.StringSearch])
+			}
+			case "citeapp.NGModel$TokenSearch" => {
+				NGController.loadQuery(q.asInstanceOf[NGModel.TokenSearch])
+			}
+			case _ => NGController.updateUserMessage("Unrecognized type of search!",2)
 		}
 	}
 
 	def nGramQuery:Unit = {
-
-		NGController.clearResults
-
 		val newQuery = NGController.constructNGramQueryObject
+		if (O2Model.textRepository == null){
+			NGController.updateUserMessage("No library loaded.",2)
+		} else {
+			NGModel.pastQueries.get += newQuery
+			NGController.executeQuery(newQuery)
+		}
+	}
+
+	def tokenSearchQuery:Unit = {
+		val newQuery = NGController.constructTokenSearchObject
+		if (O2Model.textRepository == null){
+			NGController.updateUserMessage("No library loaded.",2)
+		} else {
+			NGModel.pastQueries.get += newQuery
+			NGController.executeQuery(newQuery)
+		}
+	}
+
+
+
+	def stringSearchQuery:Unit = {
+		val newQuery = NGController.constructStringSearchObject
 
 		if (O2Model.textRepository == null){
 			NGController.updateUserMessage("No library loaded.",2)
@@ -103,127 +261,27 @@ object NGController {
 			NGModel.pastQueries.get += newQuery
 			NGController.executeQuery(newQuery)
 		}
-
-
-
 	}
-
-
-
-	def stringSearchQuery:Unit = {
-
-		NGController.clearResults
-
-			val searchString: String = js.Dynamic.global.document.getElementById("stringSearch_Input").value.toString
-			var corpusOrUrn:String = ""
-			NGController.updateUserMessage(s"""Searching for "${searchString}". Please be patient…""",0)
-			val timeStart = new js.Date().getTime()
-
-			if (O2Model.textRepository == null){
-				NGController.updateUserMessage("No library loaded.",2)
-			} else {
-				NGModel.citationResults.get.clear
-				js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
-					case "current" => {
-						corpusOrUrn = NGModel.urn.get.toString
-						// do search on current text
-						//val tempCorpus = O2Model.textRepository.corpus ~~ NGModel.urn.get
-						//for (n <- tempCorpus.find(searchString).nodes){
-						val tempCorpus = NGModel.findString(NGModel.urn.get, searchString)
-						for (n <- tempCorpus.nodes){
-								NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(searchString,20)))
-						}
-					}
-					case _ => {
-						corpusOrUrn = "whole corpus"
-						val tempCorpus = NGModel.findString(searchString)
-						for (n <- tempCorpus.nodes){
-								NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(searchString,30)))
-						}
-					}
-				}
-			}
-
-		val timeEnd = new js.Date().getTime()
-		NGModel.nGramUrnQuery := s"""Found ${NGModel.citationResults.get.size} passages containing "${searchString}"  in ${(timeEnd - timeStart)/1000} seconds; searched in "${corpusOrUrn}"."""
-
-		NGController.updateUserMessage(s"Found ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds.",0)
-	}
-
-
-
-	def tokenSearchQuery:Unit = {
-
-		NGController.clearResults
-
-		val searchString: String = js.Dynamic.global.document.getElementById("tokenSearch_Input").value.toString
-		val searchVector:Vector[String] = searchString.split(" ").toVector
-		val prox = NGModel.tokenSearchProximity.get
-		var kindOfSearch: String = ""
-		var tempCorpus:Corpus = null
-		var foundCorpus:Corpus = null
-
-
-		var corpusOrUrn:String = ""
-		NGController.updateUserMessage(s"""Searching for the ${searchVector.size} token(s) in "${searchString}". Please be patient…""",0)
-		val timeStart = new js.Date().getTime()
-
-		if (O2Model.textRepository == null){
-			NGController.updateUserMessage("No library loaded.",2)
-		} else {
-			NGModel.citationResults.get.clear
-			js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
-				case "current" => {
-					corpusOrUrn = NGModel.urn.get.toString
-					tempCorpus = O2Model.textRepository.corpus ~~ NGModel.urn.get
-				}
-				case _ => {
-					corpusOrUrn = "whole corpus"
-					tempCorpus = O2Model.textRepository.corpus
-			}
-		}
-	}
-
-	// If there is only one token, do findToken
-	searchVector.size match {
-		case 0 => {
-			NGController.updateUserMessage(s"No token entered.",2)
-			foundCorpus = null
-		}
-		case 1 => {
-			foundCorpus = tempCorpus.findToken(searchVector(0))
-			kindOfSearch = "findToken"
-		}
-		case _ => {
-			foundCorpus = tempCorpus.findTokensWithin(searchVector,prox)
-			kindOfSearch = "findTokensWithin"
-		}
-	}
-
-	if ((tempCorpus != null) && (foundCorpus != null)){
-		for (n <- foundCorpus.nodes){
-				NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(searchString,30)))
-		}
-	}
-
-	val timeEnd = new js.Date().getTime()
-	NGModel.nGramUrnQuery := s"""Peformed “${kindOfSearch}”. Found ${NGModel.citationResults.get.size} passages containing the ${searchVector.size} token(s) in "${searchString}", within ${prox} words of each other, in ${(timeEnd - timeStart)/1000} seconds; searched in "${corpusOrUrn}"."""
-
-	NGController.updateUserMessage(s"Found ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds.",0)
-}
-
 
 
 	def clearResults: Unit = {
 		NGModel.nGramResults.get.clear
 		NGModel.citationResults.get.clear
-
-		NGModel.nGramQuery := ""
-		NGModel.nGramUrnQuery := ""
-
+		NGModel.nGramQueryReport := ""
+		NGModel.otherQueryReport := ""
 	}
 
+	def clearInputs: Unit = {
+		/*
+		js.Dynamic.global.document.getElementById("ngram_filterStringField").value = ""
+		js.Dynamic.global.document.getElementById("stringSearch_Input").value = ""
+		js.Dynamic.global.document.getElementById("tokenSearch_Input").value = ""
+		*/
+	}
 
+	def clearHistory:Unit = {
+		NGModel.pastQueries.get.clear
+	}
 
 	def getUrnsForNGram(s: String): Unit = {
 		val timeStart = new js.Date().getTime()
@@ -231,7 +289,7 @@ object NGController {
 		val ignorePuncString: String = js.Dynamic.global.document.getElementById("ngram_ignorePuncBox").checked.toString
 		val ignorePunc: Boolean = (ignorePuncString == "true")
 		var corpusOrUrn:String = ""
-		NGController.updateUserMessage("Getting N-Gram. Please be patient…",0)
+		NGController.updateUserMessage("Getting N-Grams. Please be patient…",0)
 
 		if (O2Model.textRepository == null){
 			NGController.updateUserMessage("No library loaded.",2)
@@ -259,7 +317,7 @@ object NGController {
 
 		val timeEnd = new js.Date().getTime()
 
-		NGModel.nGramUrnQuery := s"Fetched ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds: threshold = ${occ}; ignore-punctuation = ${ignorePunc}; queried on '${corpusOrUrn}'."
+		NGModel.otherQueryReport := s"Fetched ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds: threshold = ${occ}; ignore-punctuation = ${ignorePunc}; queried on '${corpusOrUrn}'."
 
 		NGController.updateUserMessage(s"Fetched ${NGModel.citationResults.get.size} passages  in ${(timeEnd - timeStart)/1000} seconds.",0)
 
@@ -273,7 +331,7 @@ object NGController {
 			case 1 => NGModel.userAlert := "wait"
 			case 2 => NGModel.userAlert := "warn"
 		}
-		js.timers.setTimeout(4000){ NGModel.userMessageVisibility := "app_hidden" }
+		js.timers.setTimeout(6000){ NGModel.userMessageVisibility := "app_hidden" }
 	}
 
 	@dom

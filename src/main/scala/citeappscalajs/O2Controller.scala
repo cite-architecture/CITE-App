@@ -38,7 +38,7 @@ object O2Controller {
 			case 1 => O2Model.userAlert := "wait"
 			case 2 => O2Model.userAlert := "warn"
 		}
-		js.timers.setTimeout(90000){ O2Model.userMessageVisibility := "app_hidden" }
+		js.timers.setTimeout(6000){ O2Model.userMessageVisibility := "app_hidden" }
 	}
 
 

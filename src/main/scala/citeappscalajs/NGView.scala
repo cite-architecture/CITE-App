@@ -194,7 +194,7 @@ def nGramForm = {
 	<button
 		id="ngram_Submit"
 			onclick={ event: Event => {
-					NGController.updateUserMessage("Getting N-Gram. Please be patient…",1)
+					NGController.updateUserMessage("Getting N-Grams. Please be patient…",1)
 					js.timers.setTimeout(500){ NGController.nGramQuery }
 				}
 			}
@@ -263,7 +263,7 @@ def nGramSpace = {
 	}
 	>
 	<h2>N-Grams</h2>
-	<p id="ngram_query"> { NGModel.nGramQuery.bind }</p>
+	<p id="ngram_query"> { NGModel.nGramQueryReport.bind }</p>
 	<div id="ngram_ngrams">
 	<p> {
 		for (ng <- NGModel.nGramResults ) yield {
@@ -292,7 +292,7 @@ def nGramSpace = {
 def nGramUrnSpace = {
 	<div id="ngram_urns_container">
 		<h2>Citation Results</h2>
-		<p id="ngram_urn_query"> { NGModel.nGramUrnQuery.bind }</p>
+		<p id="ngram_urn_query"> { NGModel.otherQueryReport.bind }</p>
 		<div id="ngram_urns">
 			{ citationResultsList.bind }
 		</div>
