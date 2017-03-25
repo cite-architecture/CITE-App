@@ -15,13 +15,27 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport
 object NGController {
 
-
-	def constructStringSearchObject:NGModel.StringSearch = {
-		val s: String = js.Dynamic.global.document.getElementById("stringSearch_Input").value.toString
+	def returnCorpusScope: Option[CtsUrn] = {
 		val corpusOrUrn:Option[CtsUrn] = js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
 			case "current" => { Some(NGModel.urn.get.dropPassage) }
 			case _ => { None }
 		}
+		corpusOrUrn
+	}
+
+	def setCorpusScope(qurn:Option[CtsUrn]):Unit = {
+		qurn match {
+				case Some(urn) => {
+					NGModel.urn := urn
+					js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "current"
+				}
+				case None => js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "corpus"
+		}
+	}
+
+	def constructStringSearchObject:NGModel.StringSearch = {
+		val s: String = js.Dynamic.global.document.getElementById("stringSearch_Input").value.toString
+		val corpusOrUrn:Option[CtsUrn] = NGController.returnCorpusScope
 		val ssq = NGModel.StringSearch(s, corpusOrUrn)
 		ssq
 	}
@@ -30,10 +44,7 @@ object NGController {
 		val s: String = js.Dynamic.global.document.getElementById("tokenSearch_Input").value.toString
 		val prox = NGModel.tokenSearchProximity.get
 		val searchVector:Vector[String] = s.split(" ").toVector
-		val corpusOrUrn:Option[CtsUrn] = js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
-			case "current" => { Some(NGModel.urn.get.dropPassage) }
-			case _ => { None }
-		}
+		val corpusOrUrn:Option[CtsUrn] = NGController.returnCorpusScope
 		val tsq = NGModel.TokenSearch(searchVector, prox, corpusOrUrn)
 		tsq
 	}
@@ -45,10 +56,7 @@ object NGController {
 		val ignorePuncString: String = js.Dynamic.global.document.getElementById("ngram_ignorePuncBox").checked.toString
 		val ignorePunc: Boolean = (ignorePuncString == "true")
 		val filterString: String = js.Dynamic.global.document.getElementById("ngram_filterStringField").value.toString
-		val corpusOrUrn:Option[CtsUrn] = js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
-			case "current" => { Some(NGModel.urn.get.dropPassage) }
-			case _ => { None }
-		}
+		val corpusOrUrn:Option[CtsUrn] = NGController.returnCorpusScope
 
 		val ngq = NGModel.NGramQuery(n, occ, filterString, ignorePunc, corpusOrUrn )
 		ngq
@@ -59,13 +67,7 @@ object NGController {
 		NGController.clearInputs
 		NGController.clearResults
 		js.Dynamic.global.document.getElementById("stringSearch_Input").value = q.fs
-		q.urn match {
-				case Some(urn) => {
-					NGModel.urn := urn
-					js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "current"
-				}
-				case None => js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "corpus"
-		}
+		NGController.setCorpusScope(q.urn)
 	}
 
 	def loadQuery(q:NGModel.TokenSearch) = {
@@ -73,13 +75,7 @@ object NGController {
 		NGController.clearResults
 		js.Dynamic.global.document.getElementById("tokenSearch_Input").value = q.tt.mkString(" ")
 		NGModel.tokenSearchProximity := q.p
-		q.urn match {
-				case Some(urn) => {
-					NGModel.urn := urn
-					js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "current"
-				}
-				case None => js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "corpus"
-		}
+		NGController.setCorpusScope(q.urn)
 	}
 
 	def loadQuery(q:NGModel.NGramQuery) = {
@@ -89,13 +85,7 @@ object NGController {
 		js.Dynamic.global.document.getElementById("ngram_minOccurrances").value = q.t.toString
 		js.Dynamic.global.document.getElementById("ngram_ignorePuncBox").checked = q.ip.toString
 		js.Dynamic.global.document.getElementById("ngram_filterStringField").value = q.fs
-		q.urn match {
-				case Some(urn) => {
-					NGModel.urn := urn
-					js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "current"
-				}
-				case None => js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "corpus"
-		}
+		NGController.setCorpusScope(q.urn)
 	}
 
 def executeQuery(q:NGModel.StringSearch) = {

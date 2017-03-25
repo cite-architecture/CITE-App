@@ -22,7 +22,11 @@ object O2Model {
 	var xmlPassage = js.Dynamic.global.document.createElement("div")
 	val isRtlPassage = Var(false)
 
+	// urn is what the user requested
 	val urn = Var(CtsUrn("urn:cts:ns:group.work.version.exemplar:passage"))
+	// displayUrn is what will be shown
+	val displayUrn = Var(CtsUrn("urn:cts:ns:group.work.version.exemplar:passage"))
+	val versionsForCurrentUrn = Var(1)
 
 	val userMessage = Var("")
 	val userAlert = Var("default")
@@ -36,20 +40,41 @@ object O2Model {
 
 
 	/* Some methods for working the model */
+	def versionsForUrn(urn:CtsUrn):Int = {
+		println ("got here")
+		var versions = 0
+		if (O2Model.textRepository != null){
+				println ("and got here")
+				val s = s"urn:cts:${urn.namespace}:${urn.textGroup}.${urn.work}:"
+				val versionVector = O2Model.textRepository.catalog.entriesForUrn(CtsUrn(s))
+				versions = versionVector.size
+		}
+		versions
+	}
 
 	def getPrevNextUrn(urn:CtsUrn):Unit = {
 		O2Model.currentPrev := O2Model.textRepository.corpus.prevUrn(urn)
 		O2Model.currentNext := O2Model.textRepository.corpus.nextUrn(urn)
 	}
 
+	def collapseToWorkUrn(urn:CtsUrn):CtsUrn = {
+		val s = s"urn:cts:${urn.namespace}:${urn.textGroup}.${urn.work}:${urn.passageComponent}"
+		val u = CtsUrn(s)
+		u
+	}
+
+	def displayNewPassage(urn:CtsUrn):Unit = {
+			O2Model.displayPassage(urn)
+	}
 
 	@dom
 	def clearPassage:Unit = {
 		O2Model.xmlPassage.innerHTML = ""
+		O2Model.versionsForCurrentUrn := 0
 	}
 
 	@dom
-	def getPassage(newUrn: CtsUrn):Unit = {
+	def displayPassage(newUrn: CtsUrn):Unit = {
 		val tempCorpus: Corpus = O2Model.textRepository.corpus ~~ newUrn
 		//O2Model.passage.get.clear
 		O2Model.xmlPassage.innerHTML = ""
@@ -77,7 +102,6 @@ object O2Model {
 def checkForRTL(s:String):Boolean = {
 		val arabicBlock = "[\u0600-\u06FF]".r
 		val hebrewBlock = "[\u0591-\u05F4]".r
-		println(s)
 		var isRtl:Boolean = ((arabicBlock findAllIn s).nonEmpty || (hebrewBlock findAllIn s).nonEmpty)
 		isRtl
 }

@@ -23,7 +23,8 @@ object O2Controller {
 	def changePassage: Unit = {
 		val timeStart = new js.Date().getTime()
 		val newUrn: CtsUrn = O2Model.urn.get
-		O2Model.getPassage(newUrn)
+		O2Model.versionsForCurrentUrn := O2Model.versionsForUrn(newUrn)
+		O2Model.displayPassage(newUrn)
 		O2Model.getPrevNextUrn(O2Model.urn.get)
 		val timeEnd = new js.Date().getTime()
 		O2Controller.updateUserMessage(s"Fetched text in ${(timeEnd - timeStart)/1000} seconds.",0)
@@ -66,6 +67,7 @@ object O2Controller {
 	}
 
 	def changeUrn(urnString: String): Unit = {
+		O2Model.versionsForCurrentUrn := 0
 		changeUrn(CtsUrn(urnString))
 	}
 
@@ -73,9 +75,12 @@ object O2Controller {
 	def changeUrn(urn: CtsUrn): Unit = {
 		try {
 			O2Model.urn := urn
+			O2Model.displayUrn := urn
 			validUrnInField := true
 			O2Controller.updateUserMessage("Retrieving passage…",1)
-			js.timers.setTimeout(500){ O2Controller.changePassage }
+			js.timers.setTimeout(500){
+				O2Controller.changePassage
+			}
 
 		} catch {
 			case e: Exception => {
