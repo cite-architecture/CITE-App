@@ -41,10 +41,8 @@ object O2Model {
 
 	/* Some methods for working the model */
 	def versionsForUrn(urn:CtsUrn):Int = {
-		println ("got here")
 		var versions = 0
 		if (O2Model.textRepository != null){
-				println ("and got here")
 				val s = s"urn:cts:${urn.namespace}:${urn.textGroup}.${urn.work}:"
 				val versionVector = O2Model.textRepository.catalog.entriesForUrn(CtsUrn(s))
 				versions = versionVector.size
@@ -81,16 +79,25 @@ object O2Model {
 
 		var wholePassageElement:String = ""
 
+		var currentVersionUrnStr = ""
+
 		// set up columns
 		for ( cn <- tempCorpus.nodes ) {
-			//val xml = new org.scalajs.dom.raw.DOMParser().parseFromString( cn.text, "text/xml" )
+
+			var descEl = ""
+			if (cn.urn.dropPassage.toString != currentVersionUrnStr ){
+				currentVersionUrnStr = cn.urn.dropPassage.toString
+				val desc = O2Model.textRepository.catalog.label(cn.urn)
+				descEl = s"""<span class="o2_versionDescription ltr">${desc} : ${cn.urn.dropPassage.toString}</span>"""
+			}
 			val citString:String = s"""<span class="o2_passageUrn">${cn.urn.passageComponent}</span>"""
-			val txtString:String = cn.text
+
+			val txtString:String = """<p class="o2_passage">""" + citString + cn.text + "</p>"
 
 			O2Model.isRtlPassage := O2Model.checkForRTL(cn.text)
 
 			val divClass =	if (O2Model.isRtlPassage.get){ "rtl" } else { "ltr" }
-			val elString:String = s"""<div class="p ${divClass}">""" + citString + txtString + "</div>"
+			val elString:String = s"""<div class="p ${divClass}">""" + descEl + txtString + "</div>"
 			wholePassageElement += elString
 			//O2Model.passage.get += cn
 		}

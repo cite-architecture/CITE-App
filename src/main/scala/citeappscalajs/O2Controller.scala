@@ -67,7 +67,6 @@ object O2Controller {
 	}
 
 	def changeUrn(urnString: String): Unit = {
-		O2Model.versionsForCurrentUrn := 0
 		changeUrn(CtsUrn(urnString))
 	}
 

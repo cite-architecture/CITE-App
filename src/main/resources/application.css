@@ -224,6 +224,19 @@ select#ngram_nGramScopeOption {
 	max-width: 66%;
 }
 
+.o2_versionDescription {
+	display: block;
+	font-size: 80%;
+	color: #888;
+	line-height: 1.1em;
+	padding-bottom: 15px;
+	padding-top: 15px;
+}
+
+p.o2_passage {
+	margin: 0;
+	padding: 0;
+}
 
 #ngram_query, #ngram_urn_query {
 	font-size: 80%;
@@ -303,6 +316,10 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 
 .rtl {
 	direction: rtl;
+}
+
+.ltr {
+	direction: ltr;
 }
 
 div.o2_textColumn {
