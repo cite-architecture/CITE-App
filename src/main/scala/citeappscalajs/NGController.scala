@@ -26,7 +26,7 @@ object NGController {
 	def setCorpusScope(qurn:Option[CtsUrn]):Unit = {
 		qurn match {
 				case Some(urn) => {
-					NGModel.urn := urn
+					NGModel.urn := urn.dropPassage
 					js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "current"
 				}
 				case None => js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "corpus"
@@ -285,29 +285,30 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 			NGController.updateUserMessage("No library loaded.",2)
 		} else {
 			NGModel.citationResults.get.clear
-			js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
-				case "current" => {
-					corpusOrUrn = NGModel.urn.get.toString
-					val tempVector = NGModel.getUrnsForNGram(NGModel.urn.get, s,ignorePunc)
-					val tempCorpus = O2Model.textRepository.corpus ~~ tempVector
-					for ( n <- tempCorpus.nodes) {
-							NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(s,30)))
+			// begin
+			val corpusOrUrn:Option[CtsUrn] = NGController.returnCorpusScope
+			NGController.returnCorpusScope match {
+					case Some(urn:CtsUrn) => {
+						val tempVector = NGModel.getUrnsForNGram(urn, s,ignorePunc)
+						val tempCorpus = O2Model.textRepository.corpus ~~ tempVector
+						for ( n <- tempCorpus.nodes) {
+								NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(s,30)))
+						}
 					}
-				}
-				case _ => {
-					corpusOrUrn = "whole corpus"
-					val tempVector = NGModel.getUrnsForNGram(s,ignorePunc)
-					val tempCorpus = O2Model.textRepository.corpus ~~ tempVector
-					for ( n <- tempCorpus.nodes) {
-							NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(s,30)))
+					case None => {
+						val tempVector = NGModel.getUrnsForNGram(s,ignorePunc)
+						val tempCorpus = O2Model.textRepository.corpus ~~ tempVector
+						for ( n <- tempCorpus.nodes) {
+								NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(s,30)))
+						}
 					}
-				}
 			}
+			// end
 		}
 
 		val timeEnd = new js.Date().getTime()
 
-		NGModel.otherQueryReport := s"Fetched ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds: threshold = ${occ}; ignore-punctuation = ${ignorePunc}; queried on '${corpusOrUrn}'."
+		NGModel.otherQueryReport := s"""Fetched ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds: threshold = ${occ}; ignore-punctuation = ${ignorePunc}; queried on '${corpusOrUrn match { case Some(urn:CtsUrn) => urn case _ => "Whole Corpus" }}'."""
 
 		NGController.updateUserMessage(s"Fetched ${NGModel.citationResults.get.size} passages  in ${(timeEnd - timeStart)/1000} seconds.",0)
 
