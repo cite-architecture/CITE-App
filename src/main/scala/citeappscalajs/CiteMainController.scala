@@ -32,7 +32,7 @@ object CiteMainController {
 			case 1 => CiteMainModel.userAlert := "wait"
 			case 2 => CiteMainModel.userAlert := "warn"
 		}
-		js.timers.setTimeout(6000){ CiteMainModel.userMessageVisibility := "app_hidden" }
+		js.timers.setTimeout(20000){ CiteMainModel.userMessageVisibility := "app_hidden" }
 	}
 
 	def loadRemoteLibrary(url: String):Unit = {

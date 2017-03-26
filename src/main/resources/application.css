@@ -297,7 +297,7 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 #o2_citedWorksContainer ul li:hover {
 	line-height: 1.2em;
 	white-space: normal;
-	height: auto;
+	max-height: 800px;
 	overflow: auto;
 }
 
