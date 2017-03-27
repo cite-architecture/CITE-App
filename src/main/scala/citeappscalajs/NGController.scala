@@ -286,7 +286,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 		} else {
 			NGModel.citationResults.get.clear
 			// begin
-			val corpusOrUrn:Option[CtsUrn] = NGController.returnCorpusScope
+			//val corpusOrUrn:Option[CtsUrn] = NGController.returnCorpusScope
 			NGController.returnCorpusScope match {
 					case Some(urn:CtsUrn) => {
 						val tempVector = NGModel.getUrnsForNGram(urn, s,ignorePunc)
@@ -308,7 +308,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 
 		val timeEnd = new js.Date().getTime()
 
-		NGModel.otherQueryReport := s"""Fetched ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds: threshold = ${occ}; ignore-punctuation = ${ignorePunc}; queried on '${corpusOrUrn match { case Some(urn:CtsUrn) => urn case _ => "Whole Corpus" }}'."""
+		NGModel.otherQueryReport := s"""Fetched ${NGModel.citationResults.get.size} passages in ${(timeEnd - timeStart)/1000} seconds: threshold = ${occ}; ignore-punctuation = ${ignorePunc}; queried on '${ NGController.returnCorpusScope match { case Some(urn:CtsUrn) => urn.toString; case _ => "Whole Corpus" }}'."""
 
 		NGController.updateUserMessage(s"Fetched ${NGModel.citationResults.get.size} passages  in ${(timeEnd - timeStart)/1000} seconds.",0)
 
