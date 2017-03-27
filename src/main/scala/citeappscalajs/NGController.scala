@@ -96,7 +96,7 @@ def executeQuery(q:NGModel.StringSearch) = {
 		NGModel.citationResults.get.clear
 		q.urn match {
 			case Some(urn) => {
-				val tempCorpus = NGModel.findString(NGModel.urn.get, q.fs)
+				val tempCorpus = NGModel.findString(NGModel.urn.get.dropPassage, q.fs)
 				for (n <- tempCorpus.nodes){
 						NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(q.fs,20)))
 				}
