@@ -2,17 +2,17 @@
 
 A single-page browser application implementing user-interaction with CITE/CTS libraries, written in [Scala.js](http://www.scala-js.org/).
 
-## Current version: 1.0
+## Current version: 1.1.0
 
 See [release notes](releases.md).
 
-Work on version 1.1 is available in the `v.1.1.0` branch.
+Version 1.1.0 is available in the `master` branch.
 
 ## License
 
 [GPL 3.0](https://opensource.org/licenses/gpl-3.0.html)
 
-
+CITE Application, by default, downloads a sample corpus of texts. Licensing and attribution for those texts is available [here](https://raw.githubusercontent.com/Eumaeus/cts-demo-corpus/master/CEX-Files/LICENSE.txt).
 
 ## Using
 
@@ -27,4 +27,4 @@ Build with `sbt` using normal tasks for [ScalaJS projects](https://www.scala-js.
 
 ## Credits
 
-CITEApplication, by Neel Smith and Christopher Blackwell.
+CITEApplication, © 2017, Neel Smith and Christopher Blackwell. Available for use, modification, and distribution under the terms of the [GPL 3.0](https://opensource.org/licenses/gpl-3.0.html) license. Based on the CITE and CTS protocols, by Neel Smith and Christopher Blackwell.
