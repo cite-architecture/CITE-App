@@ -20,4 +20,6 @@ object CiteMainModel {
 		val userAlert = Var("default")
 	  val userMessageVisibility = Var("app_hidden")
 
+		var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
+
 }

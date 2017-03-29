@@ -322,7 +322,8 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 			case 1 => NGModel.userAlert := "wait"
 			case 2 => NGModel.userAlert := "warn"
 		}
-		js.timers.setTimeout(6000){ NGModel.userMessageVisibility := "app_hidden" }
+		js.timers.clearTimeout(NGModel.msgTimer)
+		NGModel.msgTimer = js.timers.setTimeout(6000){ NGModel.userMessageVisibility := "app_hidden" }
 	}
 
 	@dom

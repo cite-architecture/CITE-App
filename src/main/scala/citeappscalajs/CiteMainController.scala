@@ -32,7 +32,8 @@ object CiteMainController {
 			case 1 => CiteMainModel.userAlert := "wait"
 			case 2 => CiteMainModel.userAlert := "warn"
 		}
-		js.timers.setTimeout(20000){ CiteMainModel.userMessageVisibility := "app_hidden" }
+		js.timers.clearTimeout(CiteMainModel.msgTimer)
+		CiteMainModel.msgTimer = js.timers.setTimeout(20000){ CiteMainModel.userMessageVisibility := "app_hidden" }
 	}
 
 	def loadRemoteLibrary(url: String):Unit = {
@@ -82,6 +83,7 @@ object CiteMainController {
 			NGModel.updateCitedWorks
 			NGController.clearResults
 			NGController.clearHistory
+			O2Model.clearPassage
 
 			O2Controller.preloadUrn
 			NGController.preloadUrn

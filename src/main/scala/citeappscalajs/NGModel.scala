@@ -16,6 +16,8 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport
 object NGModel {
 
+	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
+
 	val urn = Var(CtsUrn("urn:cts:ns:group.work.version.exemplar:passage"))
 	val shortWorkLabel = Var("default")
 

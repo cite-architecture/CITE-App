@@ -17,6 +17,8 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport
 object O2Model {
 
+	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
+
 	//val passage = Vars.empty[CitableNode]
 	//var xmlPassage = new org.scalajs.dom.raw.DOMParser().parseFromString( "<cts:passage></cts:passage>", "text/xml" )
 	var xmlPassage = js.Dynamic.global.document.createElement("div")
