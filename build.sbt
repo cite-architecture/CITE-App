@@ -4,6 +4,8 @@ name := "citeapp"
 
 version := "1.0.0"
 
+//scalacOptions := Seq("-unchecked", "-deprecation")
+
 scalaVersion := "2.11.8"
 
 resolvers += Resolver.jcenterRepo

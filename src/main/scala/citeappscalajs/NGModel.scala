@@ -23,16 +23,60 @@ object NGModel {
 
 	val userMessage = Var("")
 	val userAlert = Var("default")
-	val userMessageVisibility = Var("")
+	val userMessageVisibility = Var("app_hidden")
+
+	/* For recording queries */
+
+	class CtsQuery( urn:Option[CtsUrn]) {
+		override def toString:String = {
+			val s:String = s"Generic query on ${urn}."
+			s
+		}
+	}
+
+	case class NGramQuery(n:Integer, t:Integer, fs: String, ip: Boolean, urn:Option[CtsUrn] ) extends CtsQuery(urn){
+		// this.getClass.getName will yield 'citeapp.NGModel$NGramQuery'
+		override def toString:String = {
+			val scope:String = urn match{ case Some(u) => u.toString; case _ => "whole corpus"}
+			val s = s"""NGram Query: n=${n}; threshold = ${t}; ignore-punctuation=${ip}; filtered by "${fs}"; scope=${ scope }."""
+			s
+		}
+
+	}
+
+	case class StringSearch(fs: String, urn:Option[CtsUrn] ) extends CtsQuery(urn) {
+		override def toString:String = {
+			val scope:String = urn match{ case Some(u) => u.toString; case _ => "whole corpus"}
+			val s = s"""String Search: "${fs}"; scope=${ scope }."""
+			s
+		}
+
+	}
+
+
+	case class TokenSearch(tt: Vector[String], p:Integer, urn:Option[CtsUrn]) extends CtsQuery(urn){
+		override def toString:String = {
+			val scope:String = urn match{ case Some(u) => u.toString; case _ => "whole corpus"}
+			val s = s"""Token Search: "${tt.mkString(", ")}"; proximity=${p}; scope=${ scope }."""
+			s
+		}
+	}
+
+	val pastQueries = Vars.empty[CtsQuery]
+
+	/* for holding search results */
+  case class SearchResult(urn: Var[CtsUrn], kwic: Var[String])
+	val citationResults =  Vars.empty[SearchResult]
 
 	/* Values for NGrams */
 	val nGramThreshold = Var(3)
 
 	val nGramResults = Vars.empty[StringCount]
-	val nGramQuery = Var("")
+	val nGramQueryReport = Var("")
+	val otherQueryReport = Var("")
 
-	val nGramUrns =  Vars.empty[CtsUrn]
-	val nGramUrnQuery = Var("")
+	/* Values for Search */
+	val tokenSearchProximity = Var(20)
 
 	/* Some methods for working the model */
 
@@ -54,11 +98,16 @@ object NGModel {
 	@dom
 	def updateCitedWorks = {
 		NGModel.citedWorks.get.clear
+		NGController.clearResults
+		NGController.clearInputs
 		// N.b. The textRepository remains with the Ohco2 Model.
 		for ( cw <- O2Model.textRepository.corpus.citedWorks){
 			NGModel.citedWorks.get += cw
 		}
 	}
+
+
+	/* NGram Searching */
 
  def getNGram(filterString: String, n: Int, occ: Int, ignorePunc: Boolean ): StringHistogram = {
 		 getNGram(O2Model.textRepository.corpus, filterString, n, occ, ignorePunc)
@@ -96,5 +145,20 @@ object NGModel {
 	 	val vurn = ngCorpus.urnsForNGram(s, 1, ignorePunc)
 		vurn
  }
+
+/* String and Token Finding */
+def findString(urn:CtsUrn, s:String):Corpus = {
+		val tempCorpus = O2Model.textRepository.corpus ~~ NGModel.urn.get
+		val foundCorpus = tempCorpus.find(s)
+		foundCorpus
+}
+
+def findString(s:String):Corpus = {
+		val foundCorpus = O2Model.textRepository.corpus.find(s)
+		foundCorpus
+}
+
+
+
 
 }

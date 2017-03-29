@@ -60,24 +60,10 @@ object O2View {
 		value={ O2Model.urn.bind.toString }
 		onkeyup={ urnValidatingKeyUpHandler }>
 		</input>
-		<button
-				onclick={ event: Event => {
-					val s:String = js.Dynamic.global.document.getElementById("o2_urnInput").value.toString
-					O2Model.urn := CtsUrn(s)
-					O2Controller.updateUserMessage("Retrieving passage…",1)
-					js.timers.setTimeout(500){ O2Controller.changePassage }
-					}
-				}
-				disabled={ (O2Controller.validUrnInField.bind == false) }
-	> {
-		if ( O2Controller.validUrnInField.bind == true ){
-			"Retrieve Passage"
-		} else {
-			"Invalid URN"
-		}
 
-	}
-	</button>
+	{ O2View.retrievePassageButton.bind }
+	{ O2View.seeAllVersionsButton.bind }
+
 	<br/>
 	</p>
 
@@ -86,23 +72,57 @@ object O2View {
 	</div>
 }
 
+@dom
+def retrievePassageButton = {
+	<button
+			onclick={ event: Event => {
+				val s:String = js.Dynamic.global.document.getElementById("o2_urnInput").value.toString
+				O2Model.urn := CtsUrn(s)
+				O2Controller.updateUserMessage("Retrieving passage…",1)
+				js.timers.setTimeout(500){ O2Controller.changePassage }
+				}
+			}
+			disabled={ (O2Controller.validUrnInField.bind == false) }
+> {
+	if ( O2Controller.validUrnInField.bind == true ){
+		"Retrieve Passage"
+	} else {
+		"Invalid URN"
+	}
+
+}
+</button>
+}
+
+@dom
+def seeAllVersionsButton = {
+	<button
+		disabled = { if (O2Model.versionsForCurrentUrn.bind > 1) false else true }
+		onclick = { event: Event => {
+				O2Model.displayUrn := O2Model.collapseToWorkUrn(O2Model.urn.get)
+				O2Model.displayNewPassage(O2Model.displayUrn.get)
+		}}
+	>
+		See All Versions of Passage
+	</button>
+}
+
 /* Passage Container */
 @dom
 def passageContainer = {
 	<div id="o2_passageContainer">
-	{
-		for ( cNode <- O2Model.passage) yield {
-			<p>
-			<span class="o2_passageUrn">
-			{ cNode.urn.passageComponent }
-			</span>
-			{ cNode.text }
-			</p>
-		}
-	}
-	{ prevButton.bind }
-	{ nextButton.bind }
+		<div id="o2_navButtonContainer_top">
+			{ prevButton.bind }
+			{ nextButton.bind }
+		</div>
+		<div id="o2_xmlPassageContainer"></div>
+		<div id="o2_navButtonContainer_bottom">
+			{ prevButton.bind }
+			{ nextButton.bind }
+		</div>
+
 	</div>
+
 }
 
 
@@ -152,7 +172,11 @@ def citedWorksContainer = {
 def workUrnSpan(urn:CtsUrn, s:String) = {
 	<span
 	class="app_clickable"
-	onclick={ event: Event => O2Controller.insertFirstNodeUrn(urn)  }>
+	onclick={ event: Event => {
+		O2Controller.insertFirstNodeUrn(urn)
+		O2Model.clearPassage
+		}
+	}>
 	{ s }
 	</span>
 }
