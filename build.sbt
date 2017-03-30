@@ -1,4 +1,4 @@
-enablePlugins(ScalaJSPlugin)
+enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
 name := "citeapp"
 
@@ -38,7 +38,10 @@ spa := {
 
   val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n")
 
-  val newFile = template1.replaceAll("TEMPLATE1",version.value)
+  val newFile = "compiled-one-file-app/cite-" + version.value + ".html"
   new PrintWriter(newFile) { write(template1Text + js + template2Text); close }
   println("Runnable single-page app is in " + newFile)
 }
+
+buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion)
+buildInfoPackage := "citeapp"
