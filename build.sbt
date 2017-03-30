@@ -4,13 +4,11 @@ name := "citeapp"
 
 version := "1.1.0"
 
-//scalacOptions := Seq("-unchecked", "-deprecation")
-
 scalaVersion := "2.11.8"
 
 resolvers += Resolver.jcenterRepo
 resolvers += Resolver.bintrayRepo("neelsmith", "maven")
-resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases") //add resolver
+resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases")
 
 libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
@@ -23,17 +21,12 @@ libraryDependencies ++= Seq(
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
-
-
-lazy val spa = taskKey[Unit]("Assemble single-page app")
+lazy val spa = taskKey[Unit]("Assemble single-page app from html templates and generated CSS and JS output")
 
 import scala.io.Source
 import java.io.PrintWriter
 spa := {
-
-
   val compileFirst = (fullOptJS in Compile).value
-
 
   val junk = "//# sourceMappingURL=citeapp-opt.js.map"
   val js = Source.fromFile("target/scala-2.11/citeapp-opt.js").getLines.mkString("\n").replaceAll(junk,"")
@@ -45,11 +38,7 @@ spa := {
 
   val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n")
 
-
   val newFile = template1.replaceAll("TEMPLATE1",version.value)
-  println("Output will be in " + newFile)
-  //(spaText)
-
-
   new PrintWriter(newFile) { write(template1Text + js + template2Text); close }
+  println("Runnable single-page app is in " + newFile)
 }
