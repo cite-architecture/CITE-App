@@ -22,3 +22,18 @@ libraryDependencies ++= Seq(
 )
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+
+
+
+lazy val spa = taskKey[Unit]("Assemble single-page app")
+
+spa := {
+  val compileFirst = (fullOptJS in Compile).value
+  println ("SPA")
+}
+/*
+spa := {
+  val fullOpt = compile:fullOptJS
+  println("FINISHED COMPILE! Now assemble SPA...")
+}
+*/
