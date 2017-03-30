@@ -2,7 +2,7 @@
 urn	citationScheme	groupName	workTitle	versionLabel	exemplarLabel	online
 urn:cts:greekLit:tlg5026.msA.hmt:	book/comment/section	Scholia Vetera in Iliadem	msA Main	Homer Multitext		true
 urn:cts:greekLit:tlg5026.msAext.hmt:	book/comment/section	Scholia Vetera in Iliadem	msA Exterior	Homer Multitext		true
-urn:cts:greekLit:tlg5026.msAil.hmt:	book/comment/section	Scholia Vetera in Iliade	msA Interlinear	Homer Multitext		true
+urn:cts:greekLit:tlg5026.msAil.hmt:	book/comment/section	Scholia Vetera in Iliadem	msA Interlinear	Homer Multitext		true
 urn:cts:greekLit:tlg5026.msAim.hmt:	book/comment/section	Scholia Vetera in Iliadem	msA Intermarginal	Homer Multitext		true
 urn:cts:greekLit:tlg5026.msAint.hmt:	book/comment/section	Scholia Vetera in Iliadem	msA Interior	Homer Multitext		true
 #!ctsdata
