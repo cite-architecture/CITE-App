@@ -27,13 +27,29 @@ addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.fu
 
 lazy val spa = taskKey[Unit]("Assemble single-page app")
 
+import scala.io.Source
+import java.io.PrintWriter
 spa := {
+
+
   val compileFirst = (fullOptJS in Compile).value
-  println ("SPA")
+
+
+  val junk = "//# sourceMappingURL=citeapp-opt.js.map"
+  val js = Source.fromFile("target/scala-2.11/citeapp-opt.js").getLines.mkString("\n").replaceAll(junk,"")
+
+  val css = Source.fromFile("target/scala-2.11/classes/application.css").getLines.mkString("\n")
+
+  val template1 = "src/main/resources/cite-TEMPLATE1.html"
+  val template1Text = Source.fromFile(template1).getLines.mkString("\n").replaceAll("ACTUALVERSION", version.value).replaceAll("ACTUALCSS",css)
+
+  val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n")
+
+
+  val newFile = template1.replaceAll("TEMPLATE1",version.value)
+  println("Output will be in " + newFile)
+  //(spaText)
+
+
+  new PrintWriter(newFile) { write(template1Text + js + template2Text); close }
 }
-/*
-spa := {
-  val fullOpt = compile:fullOptJS
-  println("FINISHED COMPILE! Now assemble SPA...")
-}
-*/
