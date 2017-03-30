@@ -12,7 +12,7 @@ Version 1.1.0 is available in the `master` branch.
 
 [GPL 3.0](https://opensource.org/licenses/gpl-3.0.html)
 
-CITE Application, by default, downloads a sample corpus of texts. Licensing and attribution for those texts is available [here](https://raw.githubusercontent.com/Eumaeus/cts-demo-corpus/master/CEX-Files/LICENSE.txt).
+CITE Application, by default, downloads a sample corpus of texts. Licensing and attribution for those texts is available [here](https://raw.githubusercontent.com/Eumaeus/cts-demo-corpus/master/CEX-Files/LICENSE.markdown).
 
 ## Using
 
