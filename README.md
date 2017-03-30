@@ -12,7 +12,7 @@ Version 1.1.0 is available in the `master` branch.
 
 [GPL 3.0](https://opensource.org/licenses/gpl-3.0.html)
 
-CITE Application, by default, downloads a sample corpus of texts. Licensing and attribution for those texts is available [here](https://raw.githubusercontent.com/Eumaeus/cts-demo-corpus/master/CEX-Files/LICENSE.markdown).
+CITE Application, by default, downloads a sample corpus of texts. Licensing and attribution for those texts is available [here](https://github.com/Eumaeus/cts-demo-corpus/blob/master/CEX-Files/LICENSE.markdown).
 
 ## Using
 
@@ -20,9 +20,9 @@ CITE Application is a single web page you can open in a browser.  A precompiled 
 
 ## Building, testing
 
-CITE Application is targetted for Scala 2.11.
+CITE Application is targetted for Scala 2.11.You can use normal `sbt` using normal tasks for [ScalaJS projects](https://www.scala-js.org/doc/project/building.html) such as  `sbt fastOptJS` or `sbt fullOptJS`.
 
-Build with `sbt` using normal tasks for [ScalaJS projects](https://www.scala-js.org/doc/project/building.html):  `sbt fastOptJS` or `sbt fullOptJS`.  Output in `target/scala-2.11/classes/` includes the `.html` file you can open in a web browser.
+In addition, the project defines a custom `spa` task that builds a single-page application named `cite-VERSION.html` (where `VERSION` is the current version defined in `build.sbt`), in the `compiled-one-file-app` directory.
 
 
 ## Credits
