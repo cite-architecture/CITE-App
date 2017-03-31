@@ -1,6 +1,6 @@
 # Licensing on Works
 
-Below is detailed licensing for the works included in the file `million.cex`.
+##Below is detailed licensing for the works included in the file `million.cex`.
 
 ## Quran
 
@@ -32,7 +32,12 @@ The English text of Plutarch is from the Perseus Digital Library, <http://www.pe
 
 ## Latin Texts
 
-The Latin Texts are from Holy Cross Free Latin and Greek editions, distributed under the terms of the  Creative Commons 3 Attribution-Share-Alike License, derived from Tesserae project edition (http://tesserae.caset.buffalo.edu/sources.php) derived from Perseus project edition (http://www.perseus.tufts.edu/hopper/collection?collection=Perseus%3Acollection%3AGreco-Roman)
+The Latin Texts are from Holy Cross Free Latin and Greek editions, distributed under the terms of the Creative Commons 3 Attribution-Share-Alike License, derived from Tesserae project edition (http://tesserae.caset.buffalo.edu/sources.php) derived from Perseus project edition (http://www.perseus.tufts.edu/hopper/collection?collection=Perseus%3Acollection%3AGreco-Roman)
 
+## Licensing on Latin texts from CroALa
 
+All Latin texts from CroALa, the Croatiae auctores Latini bibliotheca electronica, Neven Jovanović, editor, <http://croala.ffzg.unizg.hr> are reproduced here in derivative versions, according to the terms of the Creative Commons Attribution 4.0 International License <https://creativecommons.org/licenses/by/4.0/>
 
+## Licensing on Homer Multitext texts
+
+All texts from the Homer Multitext, Casey Dué and Mary Ebbott, edd., <http://www.homermultitext.org>, are redistributed according to the terms of the Creative Commons Attribution, Non-Commercial 4.0 License <https://creativecommons.org/licenses/by-nc/4.0/>.
