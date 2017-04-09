@@ -1,6 +1,6 @@
 # Licensing on Works
 
-##Below is detailed licensing for the works included in the file `million.cex`.
+## Below is detailed licensing for the works included in the file `million.cex`.
 
 ## Quran
 
