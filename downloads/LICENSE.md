@@ -4,8 +4,7 @@
 
 ## Quran
 
-The text of the Quran is version 1.0.2 from <http://tanzil.net>, distributed under the terms of a Creative Commons Attribution 3.0 License.
-To quote their terms of use:
+The text of the Quran is version 1.0.2 from <http://tanzil.net>, distributed under the terms of a Creative Commons Attribution 3.0 License.  To quote their terms of use:
 
     Permission is granted to copy and distribute verbatim copies
     of this text, but CHANGING IT IS NOT ALLOWED.
