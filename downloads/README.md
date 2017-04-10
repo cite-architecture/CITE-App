@@ -1,18 +1,16 @@
 # CITEApp Download
 
-This is a compiled, optimized version of the CITEApp, with the `.css` and `.js` included in the `.html` file.
+This directory includes compiled, optimized versions of the CITEApp, including all necessary CSS and  javascript in a single `.html` file.
 
 ## Running
 
-- Download this file.
-- Double-click on `cite.html` to open it in a browser.
+- Double-click on `cite-VERSION.html` to open it in a browser.
 - If there is an active internet connection, the app will automatically fetch a digital library in `.cex` form.
 
 ## Running (Offline)
 
-- Download this file.
-- Get the sample `.cex` libraries from [here](https://github.com/Eumaeus/cts-demo-corpus/tree/master/CEX-Files).
-- Double-click on `cite.html` to open it in a browser.
+- Prepare a `.cex` file to load, or get sample `.cex` libraries from [here](https://github.com/Eumaeus/cts-demo-corpus/tree/master/CEX-Files).
+- Double-click on `cite-VERSION.html` to open it in a browser.
 - Use the `Choose File` button at the to select and open a `.cex` file.
 
 ## Reference
