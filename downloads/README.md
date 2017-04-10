@@ -1,6 +1,6 @@
 # CITEApp Download
 
-This is a compiled, optimized version of the CITEApp, with the `.css` and `.js` included in the `.html` file.
+This directory includes compiled, optimized versions of the CITEApp, including all necessary CSS and  javascript in a single `.html` file.
 
 ## Running
 
