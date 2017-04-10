@@ -1,3 +1,7 @@
+#!citerepo
+name	Homer Multitext project, orthographically normalized edition of scholia
+version	2017.1
+license	Creative Commons Attribution Share-Alike
 #!ctscatalog
 urn	citationScheme	groupName	workTitle	versionLabel	exemplarLabel	online
 urn:cts:greekLit:tlg5026.msA.hmt:	book/comment/section	Scholia Vetera in Iliadem	msA Main	Homer Multitext		true
