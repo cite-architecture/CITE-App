@@ -9,6 +9,7 @@ import scala.concurrent
 .Implicits
 .global
 import edu.holycross.shot.cite._
+import edu.holycross.shot.scm._
 import edu.holycross.shot.ohco2._
 import scala.scalajs.js.annotation.JSExport
 
@@ -67,27 +68,30 @@ object CiteMainController {
 	def updateRepository(cexString: String, columnDelimiter: String = "\t") = {
 
 		try {
-			val raw = cexString.split("#!").toVector.filter(_.nonEmpty)
-			val sections = raw.map(_.split("\n")).map(v => (v.head,v.drop(1).toVector))
-			val ctsCatalogLines = sections.filter(_._1 == "ctscatalog").flatMap(_._2)
-			val catalog = Catalog(ctsCatalogLines.mkString("\n"),columnDelimiter)
-			val ctsDataLines = sections.filter(_._1 == "ctsdata").flatMap(_._2)
-			val corpus = Corpus(ctsDataLines.mkString("\n"),columnDelimiter)
-			CiteMainController.updateUserMessage(s"Created new corpus",0)
+			val repo:CiteRepository = CiteRepository(cexString, columnDelimiter)
+			val mdString = s"Repository: ${repo.name}. Version: ${repo.version}. License: ${repo.license}"
 
-			O2Model.textRepository = TextRepository(corpus, catalog)
 
-			CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepository.catalog.size } works.",0)
+			repo.textRepository match {
+				case Some(tr) => {
+					CiteMainModel.currentLibraryMetadataString := mdString
+					CiteMainController.updateUserMessage(s"Created new corpus. ${mdString}",0)
+					O2Model.textRepository = tr
+					CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepository.catalog.size } works.",0)
 
-			O2Model.updateCitedWorks
-			NGModel.updateCitedWorks
-			NGController.clearResults
-			NGController.clearHistory
-			O2Model.clearPassage
+					O2Model.updateCitedWorks
+					NGModel.updateCitedWorks
+					NGController.clearResults
+					NGController.clearHistory
+					O2Model.clearPassage
 
-			O2Controller.preloadUrn
-			NGController.preloadUrn
-
+					O2Controller.preloadUrn
+					NGController.preloadUrn
+				}
+				case None => {
+					CiteMainController.updateUserMessage("Chosen repository does not seem to include a TextRepository",2)
+				}
+			}
 
 		} catch  {
 			case e: Exception => {
