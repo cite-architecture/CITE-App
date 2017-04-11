@@ -1,6 +1,6 @@
 # CITE Application
 
-A single-page browser application implementing user-interaction with CITE/CTS libraries, written in [Scala.js](http://www.scala-js.org/).
+A single-page browser application for exploring citable resources, written in [Scala.js](http://www.scala-js.org/).
 
 ## Current version: 1.1.0
 
