@@ -38,7 +38,7 @@ spa := {
 
   val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n")
 
-  val newFile = "compiled-one-file-app/cite-" + version.value + ".html"
+  val newFile = "downloads/cite-" + version.value + ".html"
   new PrintWriter(newFile) { write(template1Text + js + template2Text); close }
   println("Runnable single-page app is in " + newFile)
 }
