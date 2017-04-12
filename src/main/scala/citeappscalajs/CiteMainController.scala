@@ -17,10 +17,7 @@ import scala.scalajs.js.annotation.JSExport
 object CiteMainController {
 
 	@JSExport
-	def main(libUrl: String): Unit = {
-
-		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
-		js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl) }
+	def main(): Unit = {
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
@@ -37,13 +34,6 @@ object CiteMainController {
 		CiteMainModel.msgTimer = js.timers.setTimeout(20000){ CiteMainModel.userMessageVisibility := "app_hidden" }
 	}
 
-	def loadRemoteLibrary(url: String):Unit = {
-		Ajax.get(url).onSuccess { case xhr =>
-			CiteMainController.updateUserMessage("Got remote library.",0)
-			val contents:String = xhr.responseText
-			CiteMainController.updateRepository(contents)
-		}
-	}
 
 	def loadLocalLibrary(e: Event):Unit = {
 		val reader = new org.scalajs.dom.raw.FileReader()
