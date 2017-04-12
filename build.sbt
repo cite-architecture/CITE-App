@@ -2,7 +2,7 @@ enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
 name := "citeapp"
 
-version := "1.2.0"
+version := "1.2.1"
 
 scalaVersion := "2.11.8"
 
@@ -28,6 +28,10 @@ lazy val spa = taskKey[Unit]("Assemble single-page app from html templates and g
 import scala.io.Source
 import java.io.PrintWriter
 spa := {
+
+	val defaultLibraryUrl = "https://raw.githubusercontent.com/Eumaeus/cts-demo-corpus/master/CEX-Files/hmt-scholia-onormal.cex"
+	val defaultLibraryDelimiter = "#"
+
   val compileFirst = (fullOptJS in Compile).value
 
   val junk = "//# sourceMappingURL=citeapp-opt.js.map"
@@ -38,7 +42,10 @@ spa := {
   val template1 = "src/main/resources/cite-TEMPLATE1.html"
   val template1Text = Source.fromFile(template1).getLines.mkString("\n").replaceAll("ACTUALVERSION", version.value).replaceAll("ACTUALCSS",css)
 
-  val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n")
+
+	val urlPlaceholder = "DEFAULTLIBRARYURL"
+	val delimiterPlaceholder = "DEFAULTLIBRARYDELIMITER"
+  val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n").replaceAll(urlPlaceholder,defaultLibraryUrl).replaceAll(delimiterPlaceholder,defaultLibraryDelimiter)
 
   val newFile = "downloads/cite-" + version.value + ".html"
   new PrintWriter(newFile) { write(template1Text + js + template2Text); close }

@@ -17,10 +17,36 @@ import scala.scalajs.js.annotation.JSExport
 object CiteMainController {
 
 	@JSExport
-	def main(): Unit = {
+	def main(libUrl: String, libDelim: String): Unit = {
+
+		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
+		js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl, libDelim) }
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
+
+	def loadRemoteLibrary(url: String, libDelim: String):Unit = {
+
+		val xhr = new XMLHttpRequest()
+		xhr.open("GET", url )
+		xhr.onload = { (e: Event) =>
+			if (xhr.status == 200) {
+				val contents:String = xhr.responseText
+				CiteMainController.updateRepository(contents, libDelim)
+			} else {
+				CiteMainController.updateUserMessage(s"Request for remote library failed with code ${xhr.status}",2)
+			}
+		}
+		xhr.send()
+
+		/*
+		Ajax.get(url).onSuccess { case xhr =>
+		CiteMainController.updateUserMessage("Got remote library.",0)
+		val contents:String = xhr.responseText
+		CiteMainController.updateRepository(contents, libDelim)
+	}
+	*/
+}
 
 	def updateUserMessage(msg: String, alert: Int): Unit = {
 		CiteMainModel.userMessageVisibility := "app_visible"
@@ -61,7 +87,6 @@ object CiteMainController {
 			val repo:CiteRepository = CiteRepository(cexString, columnDelimiter)
 			val mdString = s"Repository: ${repo.name}. Version: ${repo.version}. License: ${repo.license}"
 
-
 			repo.textRepository match {
 				case Some(tr) => {
 					CiteMainModel.currentLibraryMetadataString := mdString
@@ -85,7 +110,7 @@ object CiteMainController {
 
 		} catch  {
 			case e: Exception => {
-				CiteMainController.updateUserMessage(s"${e}",2)
+				CiteMainController.updateUserMessage(s"""${e}. You might check to be sure you specified the correct delimiter (<tab> or "#").""",2)
 			}
 		}
 
