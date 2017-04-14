@@ -53,6 +53,7 @@ object CiteMainView {
 			{ filePicker.bind }
 			CITE Environment
 			<span id="app_header_versionInfo">version { BuildInfo.version }</span>
+			<span id="app_help_link">[ <a target="_blank" href="https://github.com/cite-architecture/CITE-App/wiki/CITE-App-Help-and-Tips">Online Help</a> ]</span>
 		</header>
 
 		<article id="main_Container">

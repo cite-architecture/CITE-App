@@ -109,9 +109,10 @@ object O2Model {
 	}
 
 def checkForRTL(s:String):Boolean = {
+		val sStart = s.take(10)
 		val arabicBlock = "[\u0600-\u06FF]".r
 		val hebrewBlock = "[\u0591-\u05F4]".r
-		var isRtl:Boolean = ((arabicBlock findAllIn s).nonEmpty || (hebrewBlock findAllIn s).nonEmpty)
+		var isRtl:Boolean = ((arabicBlock findAllIn sStart).nonEmpty || (hebrewBlock findAllIn sStart).nonEmpty)
 		isRtl
 }
 

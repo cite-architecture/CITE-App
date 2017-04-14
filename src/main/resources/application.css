@@ -105,6 +105,14 @@ speaker:after {
 
 /* Appwide Stuff */
 
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
 .app_clickable, a {
 	color: #7273af;
 	text-decoration: none;
@@ -116,6 +124,13 @@ speaker:after {
 
 .app_urn {
 }
+
+#app_help_link{
+	font-size: 80%;
+	color: #777;
+	font-weight: normal;
+}
+
 
 .app_message {
 	max-width: 500px;

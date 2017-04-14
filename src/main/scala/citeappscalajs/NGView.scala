@@ -268,7 +268,7 @@ def nGramSpace = {
 	<p> {
 		for (ng <- NGModel.nGramResults ) yield {
 			<span class="ngram_ngram">
-			({ ng.count.toString })
+			({ (ng.count - 1).toString })
 				<span class="ngram_string app_clickable"
 				onclick={ event: Event => {
 
