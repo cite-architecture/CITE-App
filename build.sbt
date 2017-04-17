@@ -15,8 +15,8 @@ libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
   "org.scala-js" %%% "scalajs-dom" % "0.9.1",
   "edu.holycross.shot.cite" %%% "xcite" % "2.2.3",
-  "edu.holycross.shot" %%% "ohco2" % "7.0.1",
-  "edu.holycross.shot" %%% "scm" % "1.3.3",
+  "edu.holycross.shot" %%% "ohco2" % "8.0.0",
+  "edu.holycross.shot" %%% "scm" % "2.1.1",
   "edu.holycross.shot" %% "citeenv" % "1.1.2",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
 )
@@ -29,7 +29,7 @@ import scala.io.Source
 import java.io.PrintWriter
 spa := {
 
-	val defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/hmt-scholia-onormal.cex"
+	val defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/libraries/hmt-scholia-onormal.cex"
 	val defaultLibraryDelimiter = "#"
 
   val compileFirst = (fullOptJS in Compile).value

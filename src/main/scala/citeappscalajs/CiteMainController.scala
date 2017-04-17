@@ -84,8 +84,9 @@ object CiteMainController {
 	def updateRepository(cexString: String, columnDelimiter: String = "\t") = {
 
 		try {
-			val repo:CiteRepository = CiteRepository(cexString, columnDelimiter)
-			val mdString = s"Repository: ${repo.name}. Version: ${repo.version}. License: ${repo.license}"
+			val repo:CiteLibrary = CiteLibrary(cexString, columnDelimiter)
+			println("got here okay.")
+			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
 
 			repo.textRepository match {
 				case Some(tr) => {
