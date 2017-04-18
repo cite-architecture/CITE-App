@@ -6,8 +6,6 @@ A single-page browser application for exploring citable resources, written in [S
 
 See [release notes](releases.md).
 
-Version 1.1.0 is available in the `master` branch.
-
 ## License
 
 [GPL 3.0](https://opensource.org/licenses/gpl-3.0.html)
