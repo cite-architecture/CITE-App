@@ -9,6 +9,7 @@ import scala.concurrent
 .Implicits
 .global
 import edu.holycross.shot.cite._
+import edu.holycross.shot.scm._
 import edu.holycross.shot.ohco2._
 import scala.scalajs.js.annotation.JSExport
 
@@ -16,13 +17,36 @@ import scala.scalajs.js.annotation.JSExport
 object CiteMainController {
 
 	@JSExport
-	def main(libUrl: String): Unit = {
+	def main(libUrl: String, libDelim: String): Unit = {
 
 		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
-		js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl) }
+		js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl, libDelim) }
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
+
+	def loadRemoteLibrary(url: String, libDelim: String):Unit = {
+
+		val xhr = new XMLHttpRequest()
+		xhr.open("GET", url )
+		xhr.onload = { (e: Event) =>
+			if (xhr.status == 200) {
+				val contents:String = xhr.responseText
+				CiteMainController.updateRepository(contents, libDelim)
+			} else {
+				CiteMainController.updateUserMessage(s"Request for remote library failed with code ${xhr.status}",2)
+			}
+		}
+		xhr.send()
+
+		/*
+		Ajax.get(url).onSuccess { case xhr =>
+		CiteMainController.updateUserMessage("Got remote library.",0)
+		val contents:String = xhr.responseText
+		CiteMainController.updateRepository(contents, libDelim)
+	}
+	*/
+}
 
 	def updateUserMessage(msg: String, alert: Int): Unit = {
 		CiteMainModel.userMessageVisibility := "app_visible"
@@ -36,13 +60,6 @@ object CiteMainController {
 		CiteMainModel.msgTimer = js.timers.setTimeout(20000){ CiteMainModel.userMessageVisibility := "app_hidden" }
 	}
 
-	def loadRemoteLibrary(url: String):Unit = {
-		Ajax.get(url).onSuccess { case xhr =>
-			CiteMainController.updateUserMessage("Got remote library.",0)
-			val contents:String = xhr.responseText
-			CiteMainController.updateRepository(contents)
-		}
-	}
 
 	def loadLocalLibrary(e: Event):Unit = {
 		val reader = new org.scalajs.dom.raw.FileReader()
@@ -67,31 +84,34 @@ object CiteMainController {
 	def updateRepository(cexString: String, columnDelimiter: String = "\t") = {
 
 		try {
-			val raw = cexString.split("#!").toVector.filter(_.nonEmpty)
-			val sections = raw.map(_.split("\n")).map(v => (v.head,v.drop(1).toVector))
-			val ctsCatalogLines = sections.filter(_._1 == "ctscatalog").flatMap(_._2)
-			val catalog = Catalog(ctsCatalogLines.mkString("\n"),columnDelimiter)
-			val ctsDataLines = sections.filter(_._1 == "ctsdata").flatMap(_._2)
-			val corpus = Corpus(ctsDataLines.mkString("\n"),columnDelimiter)
-			CiteMainController.updateUserMessage(s"Created new corpus",0)
+			val repo:CiteLibrary = CiteLibrary(cexString, columnDelimiter)
+			println("got here okay.")
+			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
 
-			O2Model.textRepository = TextRepository(corpus, catalog)
+			repo.textRepository match {
+				case Some(tr) => {
+					CiteMainModel.currentLibraryMetadataString := mdString
+					CiteMainController.updateUserMessage(s"Created new corpus. ${mdString}",0)
+					O2Model.textRepository = tr
+					CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepository.catalog.size } works.",0)
 
-			CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepository.catalog.size } works.",0)
+					O2Model.updateCitedWorks
+					NGModel.updateCitedWorks
+					NGController.clearResults
+					NGController.clearHistory
+					O2Model.clearPassage
 
-			O2Model.updateCitedWorks
-			NGModel.updateCitedWorks
-			NGController.clearResults
-			NGController.clearHistory
-			O2Model.clearPassage
-
-			O2Controller.preloadUrn
-			NGController.preloadUrn
-
+					O2Controller.preloadUrn
+					NGController.preloadUrn
+				}
+				case None => {
+					CiteMainController.updateUserMessage("Chosen repository does not seem to include a TextRepository",2)
+				}
+			}
 
 		} catch  {
 			case e: Exception => {
-				CiteMainController.updateUserMessage(s"${e}",2)
+				CiteMainController.updateUserMessage(s"""${e}. You might check to be sure you specified the correct delimiter (<tab> or "#").""",2)
 			}
 		}
 

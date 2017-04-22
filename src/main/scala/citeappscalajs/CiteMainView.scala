@@ -33,8 +33,8 @@ object CiteMainView {
 				></input>
 				<label for="app_filePicker_delimiter">Delimiter: </label>
 				<select id="app_filePicker_delimiter">
-					<option value="TAB"> tab </option>
 					<option value="OCTOTHORP"> # </option>
+					<option value="TAB"> tab </option>
 				</select>
 		</span>
 	}
@@ -53,6 +53,7 @@ object CiteMainView {
 			{ filePicker.bind }
 			CITE Environment
 			<span id="app_header_versionInfo">version { BuildInfo.version }</span>
+			<span id="app_help_link">[ <a target="_blank" href="https://github.com/cite-architecture/CITE-App/wiki/CITE-App-Help-and-Tips">Online Help</a> ]</span>
 		</header>
 
 		<article id="main_Container">
@@ -88,6 +89,9 @@ object CiteMainView {
 
 	@dom
 	def footer = {
+		<p>
+		{ CiteMainModel.currentLibraryMetadataString.bind }
+		</p>
 		<p>
 		CITE/CTS is ©2002–2017 Neel Smith and Christopher Blackwell. This implementation of the <a href="http://cite-architecture.github.i">CITE</a> data models was written by Neel Smith and Christopher Blackwell using <a href="https://www.scala-lang.org">Scala</a>, <a href="http://www.scala-js.org">Scala-JS</a>, and <a href="https://github.com/ThoughtWorksInc/Binding.scala">Binding.scala</a>. Licensed under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL 3.0</a>. Sourcecode on <a href="https://github.com/cite-architecture/ScalaJS-CITE-Environment">GitHub</a>. Copyright and licensing information for the default library is available <a href="https://raw.githubusercontent.com/Eumaeus/cts-demo-corpus/master/CEX-Files/LICENSE.markdown">here</a>.
 		</p>

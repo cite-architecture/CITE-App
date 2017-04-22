@@ -2,19 +2,21 @@ enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
 name := "citeapp"
 
-version := "1.1.0"
+version := "1.2.1"
 
 scalaVersion := "2.11.8"
 
 resolvers += Resolver.jcenterRepo
 resolvers += Resolver.bintrayRepo("neelsmith", "maven")
+resolvers += "beta" at "http://beta.hpcc.uh.edu/nexus/content/repositories/releases"
 resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases")
 
 libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
   "org.scala-js" %%% "scalajs-dom" % "0.9.1",
   "edu.holycross.shot.cite" %%% "xcite" % "2.2.3",
-  "edu.holycross.shot" %%% "ohco2" % "7.0.1",
+  "edu.holycross.shot" %%% "ohco2" % "8.0.1",
+  "edu.holycross.shot" %%% "scm" % "2.1.2",
   "edu.holycross.shot" %% "citeenv" % "1.1.2",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
 )
@@ -26,6 +28,10 @@ lazy val spa = taskKey[Unit]("Assemble single-page app from html templates and g
 import scala.io.Source
 import java.io.PrintWriter
 spa := {
+
+	val defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/libraries/million.cex"
+	val defaultLibraryDelimiter = "#"
+
   val compileFirst = (fullOptJS in Compile).value
 
   val junk = "//# sourceMappingURL=citeapp-opt.js.map"
@@ -36,8 +42,10 @@ spa := {
   val template1 = "src/main/resources/cite-TEMPLATE1.html"
   val template1Text = Source.fromFile(template1).getLines.mkString("\n").replaceAll("ACTUALVERSION", version.value).replaceAll("ACTUALCSS",css)
 
-  val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n")
 
+	val urlPlaceholder = "DEFAULTLIBRARYURL"
+	val delimiterPlaceholder = "DEFAULTLIBRARYDELIMITER"
+  val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n").replaceAll(urlPlaceholder,defaultLibraryUrl).replaceAll(delimiterPlaceholder,defaultLibraryDelimiter)
   val newFile = "downloads/cite-" + version.value + ".html"
   new PrintWriter(newFile) { write(template1Text + js + template2Text); close }
   println("Runnable single-page app is in " + newFile)

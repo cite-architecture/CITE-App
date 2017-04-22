@@ -154,7 +154,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 
 	if ((tempCorpus != null) && (foundCorpus != null)){
 		for (n <- foundCorpus.nodes){
-				NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(q.tt(0),30)))
+				NGModel.citationResults.get += NGModel.SearchResult(Var(n.urn), Var(n.kwic(s" ${q.tt(0)} ",30)))
 		}
 	}
 

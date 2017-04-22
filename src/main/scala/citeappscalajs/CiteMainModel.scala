@@ -22,4 +22,6 @@ object CiteMainModel {
 
 		var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 
+		val currentLibraryMetadataString = Var("No library loaded.")
+
 }
