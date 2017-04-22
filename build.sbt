@@ -29,7 +29,7 @@ import scala.io.Source
 import java.io.PrintWriter
 spa := {
 
-	val defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/libraries/hmt-scholia-onormal.cex"
+	val defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/libraries/million.cex"
 	val defaultLibraryDelimiter = "#"
 
   val compileFirst = (fullOptJS in Compile).value
