@@ -46,7 +46,6 @@ spa := {
 	val urlPlaceholder = "DEFAULTLIBRARYURL"
 	val delimiterPlaceholder = "DEFAULTLIBRARYDELIMITER"
   val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n").replaceAll(urlPlaceholder,defaultLibraryUrl).replaceAll(delimiterPlaceholder,defaultLibraryDelimiter)
-
   val newFile = "downloads/cite-" + version.value + ".html"
   new PrintWriter(newFile) { write(template1Text + js + template2Text); close }
   println("Runnable single-page app is in " + newFile)
