@@ -21,6 +21,7 @@ object CiteMainView {
 
 	val textView = O2View.o2div
 	val ngramView = NGView.nGdiv
+	val objectView = ObjectView.objectDiv
 	val imageView = ImageView.imageDiv
 
 	@dom
@@ -79,8 +80,16 @@ object CiteMainView {
 				</div>
 
 				<div class="app_tab">
-					<input type="radio" id="tab-3" name="tab-group-1" checked={ true }/>
-					<label class="tab_label" for="tab-3">Images</label>
+					<input type="radio" id="tab-3" name="tab-group-1" checked={ false }/>
+					<label class="tab_label" for="tab-3">Objects</label>
+						<div class="content">
+						 { objectView.bind }
+						</div>
+				</div>
+
+				<div class="app_tab">
+					<input type="radio" id="tab-4" name="tab-group-1" checked={ true }/>
+					<label class="tab_label" for="tab-4">Images</label>
 						<div class="content">
 						 { imageView.bind }
 						</div>

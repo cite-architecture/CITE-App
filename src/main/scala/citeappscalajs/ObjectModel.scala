@@ -17,7 +17,7 @@ import edu.holycross.shot.citeenv._
 import scala.scalajs.js.annotation.JSExport
 
 @JSExport
-object ImageModel {
+object ObjectModel {
 
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 
@@ -34,7 +34,7 @@ object ImageModel {
 
 	/* This is how to pass data to the global JS scope */
 	/*
-	js.Dynamic.global.currentImageUrn = "urn:cts"
+	js.Dynamic.global.currentObjectUrn = "urn:cts"
 	js.Dynamic.global.roiArray = Array("one","two","three")
 	*/
 
