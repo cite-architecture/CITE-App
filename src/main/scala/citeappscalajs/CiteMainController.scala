@@ -19,8 +19,8 @@ object CiteMainController {
 	@JSExport
 	def main(libUrl: String, libDelim: String): Unit = {
 
-		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
-		js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl, libDelim) }
+		//CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
+		//js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl, libDelim) }
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}

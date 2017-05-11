@@ -2,7 +2,7 @@ enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
 name := "citeapp"
 
-version := "1.2.1"
+version := "1.3.0"
 
 scalaVersion := "2.11.8"
 
@@ -14,7 +14,7 @@ resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases")
 libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
   "org.scala-js" %%% "scalajs-dom" % "0.9.1",
-  "edu.holycross.shot.cite" %%% "xcite" % "2.2.3",
+  "edu.holycross.shot.cite" %%% "xcite" % "2.3.0",
   "edu.holycross.shot" %%% "ohco2" % "8.0.1",
   "edu.holycross.shot" %%% "scm" % "2.1.2",
   "edu.holycross.shot" %% "citeenv" % "1.1.2",
@@ -22,6 +22,9 @@ libraryDependencies ++= Seq(
 )
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+
+scalacOptions += "-P:scalajs:suppressExportDeprecations"
+scalacOptions += "-P:scalajs:suppressMissingJSGlobalDeprecations"
 
 lazy val spa = taskKey[Unit]("Assemble single-page app from html templates and generated CSS and JS output")
 
