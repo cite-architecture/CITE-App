@@ -7,7 +7,7 @@ import scala.scalajs.js._
 import js.annotation._
 import collection.mutable
 import collection.mutable._
-import scala.scalajs.js.Dynamic.global
+import scala.scalajs.js.Dynamic.{ global => g }
 import org.scalajs.dom._
 import org.scalajs.dom.ext._
 import org.scalajs.dom.raw._
@@ -66,9 +66,22 @@ object ImageController {
 
 	def changeUrn(urn: Cite2Urn): Unit = {
 		try {
-			ImageModel.urn := urn
 			ImageModel.displayUrn := urn
 			validUrnInField := true
+			g.console.log(s"Start with: ${urn}")
+			val oe = urn.objectExtensionOption
+			g.console.log(s"Extension: ${oe}")
+			oe match {
+				case Some(e) => {
+						val ve = Vector[String](e)
+						ImageModel.updateRois(urn.dropExtensions, ve)
+						ImageModel.urn := urn.dropExtensions
+						g.console.log(s"Urn without extension: ${ImageModel.urn.get.toString}")
+				}
+				case _ => {
+						ImageModel.urn := urn
+				}
+			}
 			ImageController.updateUserMessage("Retrieving image…",1)
 			js.timers.setTimeout(500){
 			ImageController.changeImage

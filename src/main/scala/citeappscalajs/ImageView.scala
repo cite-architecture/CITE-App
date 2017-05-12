@@ -44,6 +44,8 @@ object ImageView {
 
 		<div id="image_sidebar" class="app_sidebarDiv">
 		{ imageCollectionsContainer.bind }
+		{ imageSearchForm.bind }
+		{ imageSearchResults.bind }
 		</div>
 
 		{ imageMessageDiv.bind }
@@ -100,7 +102,44 @@ def imageContainer = {
 	<div id="image_imageContainer"> </div>
 }
 
+/* Search Image Properties Forms */
+@dom
+def imageSearchForm = {
+	<h2>Search Image Metadata</h2>
+	<label for="image_searchImageTextbox">Search text</label>
+	<input
+		type="text"
+		placeholder="Find text in image metadata"
+		size={ 20 }
+		id="image_searchImageTextbox"/>
+	<br/>
+	<button
+		id="image_searchSubmit"
+			onclick={ event: Event => {
+					ImageController.updateUserMessage("Searching image metadata. Please be patient…",1)
+				}
+			}
+		>Search Image Metadata</button>
+}
 
+/* Image metadata search results */
+@dom
+def imageSearchResults = {
+		<div id="image_searchResults">
+			<h2>Search Results</h2>
+			<ol>
+			{
+				for (i <- ImageModel.imageSearchResults) yield {
+					<li>
+						{ imageUrnSpan(i.urn, i.urn.toString).bind }
+						<br/>
+						{ i.label }
+					</li>
+				}
+			}
+			</ol>
+		</div>
+}
 
 /* Cited Works List */
 @dom
@@ -129,6 +168,28 @@ def workUrnSpan(urn:CtsUrn, s:String) = {
 	</span>
 }
 
+@dom
+def passageUrnSpan(urn:CtsUrn, s:String) = {
+	<span
+	class="app_clickable app_urn"
+	onclick={ event: Event => {
+			CiteMainController.retrieveTextPassage(urn)
+		}
+	}>
+	{ s }
+	</span>
+}
 
+@dom
+def imageUrnSpan(urn:Cite2Urn, s:String) = {
+	<span
+	class="app_clickable app_urn"
+	onclick={ event: Event => {
+			CiteMainController.retrieveImage(urn)
+		}
+	}>
+	{ s }
+	</span>
+}
 
 }

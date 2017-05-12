@@ -80,6 +80,15 @@ object CiteMainController {
 			js.Dynamic.global.document.getElementById("tab-1").checked = true
 	}
 
+	def retrieveObject(urn:Cite2Urn):Unit = {
+			// fill in
+	}
+
+	def retrieveImage(urn:Cite2Urn):Unit = {
+			ImageController.changeUrn(urn)
+					js.Dynamic.global.document.getElementById("tab-4").checked = true
+	}
+
 	@dom
 	def updateRepository(cexString: String, columnDelimiter: String = "\t") = {
 
