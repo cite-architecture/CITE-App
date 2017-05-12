@@ -46,18 +46,19 @@ object ImageView {
 		{ imageCollectionsContainer.bind }
 		{ imageSearchForm.bind }
 		{ imageSearchResults.bind }
+		{ imageMappedUrn.bind }
 		</div>
 
 		{ imageMessageDiv.bind }
 
-		<p id="image_reportingCurrentUrn" class="app_reportingCurrentUrn"> { ImageModel.urn.bind.toString } </p>
+		<p id="image_reportingCurrentUrn" class="app_reportingCurrentUrn"> { ImageModel.displayUrn.bind.toString } </p>
 
 
 		<p id="image_urnInputP">
 		<input
 		class={ s"${ImageController.validUrnInField.bind}" }
 		id="image_urnInput"
-		size={ 40 }
+		size={ 70 }
 		type="text"
 		value={ ImageModel.urn.bind.toString }
 		onkeyup={ urnValidatingKeyUpHandler }>
@@ -74,13 +75,31 @@ object ImageView {
 }
 
 @dom
+def imageMappedUrn = {
+		<input
+		id="image_mappedUrn"
+		size={ 30 }
+		type="text"
+		value=""
+		placeholder="Mapped URNs will appear here"
+		onchange={ event: Event => {
+			 	println("Mapped URN changed")
+			}
+		}>
+		</input>
+}
+
+@dom
 def retrieveImageButton = {
 	<button
 			onclick={ event: Event => {
 				val s:String = js.Dynamic.global.document.getElementById("image_urnInput").value.toString
-				ImageModel.urn := Cite2Urn(s)
+				//ImageModel.urn := Cite2Urn(s)
 				ImageController.updateUserMessage("Retrieving image…",1)
-				js.timers.setTimeout(500){ ImageController.changeImage }
+				js.timers.setTimeout(500){
+					  ImageController.changeUrn(s)
+						//ImageController.changeImage
+					}
 				}
 			}
 			disabled={ (ImageController.validUrnInField.bind == false) }

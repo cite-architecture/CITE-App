@@ -20,6 +20,33 @@ div#image_sidebar ol {
 	overflow-x: scroll;
 }
 
+a.image_imageROI {
+	outline: 2px solid yellow;
+}
+
+a.image_imageROI:active {
+	background-color: rgba(256,256,256,0);
+}
+
+a.image_roiGroup1 {
+	outline: 2px solid yellow;
+	background-color: rgba(200,200,0,.25);
+}
+a.image_roiGroup2 {
+	outline: 2px solid green;
+	background-color: rgba(0,200,0,.25);
+}
+a.image_roiGroup3 {
+	outline: 2px solid blue;
+	background-color: rgba(0,0,200,.25);
+}
+a.image_roiGroup4 {
+	outline: 2px solid red;
+	background-color: rgba(200,0,0,.25);
+}
+
+
+
 
 /* Text Formatting */
 

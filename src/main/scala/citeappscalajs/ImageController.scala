@@ -96,6 +96,7 @@ object ImageController {
 	}
 
 
+
 @JSName("updateImageJS")
 @js.native
 object updateImageJS extends js.Any {
