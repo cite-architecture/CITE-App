@@ -9,7 +9,8 @@ import org.scalajs.dom.ext._
 import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
-
+import edu.holycross.shot.citeobj._
+import scala.scalajs.js.Dynamic.{ global => g }
 import scala.scalajs.js.annotation.JSExport
 
 @JSExport
@@ -53,7 +54,7 @@ object ObjectView {
 
 		<p id="object_urnInputP">
 		<input
-		class={ s"${ObjectController.validUrnInField.bind}" }
+		class={ s"${ ObjectController.validObjectUrnInField.bind || ObjectController.validObjectUrnInField.bind }" }
 		id="object_urnInput"
 		size={ 40 }
 		type="text"
@@ -81,12 +82,20 @@ def retrieveObjectButton = {
 				js.timers.setTimeout(500){ ObjectController.changeObject }
 				}
 			}
-			disabled={ (ObjectController.validUrnInField.bind == false) }
+			disabled={
+						(ObjectController.validObjectUrnInField.bind == false) &&
+						(ObjectController.validCollectionUrnInField.bind == false)
+					 }
+
 > {
-	if ( ObjectController.validUrnInField.bind == true ){
+	if ( ObjectController.validObjectUrnInField.bind == true ){
 		"Retrieve object"
 	} else {
-		"No object identified"
+		if ( ObjectController.validCollectionUrnInField.bind == true ){
+			"Browse collection"
+		} else {
+			"Invalid URN"
+		}
 	}
 
 }
@@ -97,7 +106,22 @@ def retrieveObjectButton = {
 /* Passage Container */
 @dom
 def objectContainer = {
-	<div id="object_objectContainer"> </div>
+	<div id="object_objectContainer" data:bgtext="No Object"
+	class={ s"""${if( ObjectModel.objects.bind.size == 0 ){ "object_empty" } else {"object_not_empty"}}""" }
+	>
+
+<div class="app_witch">
+  <input id="object_toggle1" class="cmn-toggle cmn-toggle-round-flat" type="checkbox"></input>
+  <label for="object_toggle1"></label>
+</div>
+
+	{
+		for (obj <- ObjectModel.objects ) yield {
+			<p>{ obj.toString }</p>
+		}
+	}
+
+	</div>
 }
 
 
@@ -108,24 +132,35 @@ def objectCollectionsContainer = {
 	<div id="object_objectCollectionsContainer">
 	<h2>CITE Collections</h2>
 	<ul>
+	{
+		for (cc <- ObjectModel.collections) yield {
 			<li>
-			urn <br/> description
+			{ collectionUrnSpan( cc.urn ).bind } <br/>
+			{ cc.collectionLabel }
+			{ if(cc.isOrdered) "[ordered]" else "[unordered]" }
+			<br/>
+			{ ObjectModel.countObjects(cc.urn).toString } objects.
+
 			</li>
+		}
+	}
 	</ul>
 	</div>
 }
 
+
+
 /* General-use functions for making clickable URNs */
 @dom
-def workUrnSpan(urn:CtsUrn, s:String) = {
+def collectionUrnSpan(urn:Cite2Urn) = {
 	<span
 	class="app_clickable"
 	onclick={ event: Event => {
-		O2Controller.insertFirstNodeUrn(urn)
-		O2Model.clearPassage
+		ObjectController.insertFirstObjectUrn(urn)
+		ObjectModel.clearObject
 		}
 	}>
-	{ s }
+	{ urn.toString }
 	</span>
 }
 

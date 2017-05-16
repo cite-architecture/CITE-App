@@ -2,6 +2,7 @@ package citeapp
 import com.thoughtworks.binding._
 import scala.scalajs.js
 import org.scalajs.dom.document
+import scala.scalajs.js.Dynamic.{ global => g }
 import org.scalajs.dom.raw._
 import org.scalajs.dom.ext.Ajax
 import scala.concurrent
@@ -11,39 +12,39 @@ import scala.concurrent
 import edu.holycross.shot.cite._
 import edu.holycross.shot.scm._
 import edu.holycross.shot.ohco2._
+import edu.holycross.shot.citeobj._
 import scala.scalajs.js.annotation.JSExport
 
 @JSExport
 object CiteMainController {
 
 	@JSExport
-	def main(libUrl: String, libDelim: String): Unit = {
+	def main(libUrl: String, libDelim: String, fieldDelim: String): Unit = {
 
-		//CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
-		//js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl, libDelim) }
+		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
+		js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl, libDelim, fieldDelim) }
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
 
-	def loadRemoteLibrary(url: String, libDelim: String):Unit = {
+	def loadRemoteLibrary(url: String, libDelim: String, fieldDelim: String):Unit = {
 
 		val xhr = new XMLHttpRequest()
 		xhr.open("GET", url )
 		xhr.onload = { (e: Event) =>
 			if (xhr.status == 200) {
 				val contents:String = xhr.responseText
-				CiteMainController.updateRepository(contents, libDelim)
+				CiteMainController.updateRepository(contents, libDelim, fieldDelim)
 			} else {
 				CiteMainController.updateUserMessage(s"Request for remote library failed with code ${xhr.status}",2)
 			}
 		}
 		xhr.send()
 
-		/*
-		Ajax.get(url).onSuccess { case xhr =>
+		/* Ajax.get(url).onSuccess { case xhr =>
 		CiteMainController.updateUserMessage("Got remote library.",0)
 		val contents:String = xhr.responseText
-		CiteMainController.updateRepository(contents, libDelim)
+		CiteMainController.updateRepository(contents, libDelim, fieldDelim)
 	}
 	*/
 }
@@ -71,7 +72,8 @@ object CiteMainController {
 		reader.readAsText(e.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement].files(0))
 		reader.onload = (e: Event) => {
 			val contents = reader.result.asInstanceOf[String]
-			CiteMainController.updateRepository(contents,delimiter)
+			// Do we need to allow users to change the second delimiter?
+			CiteMainController.updateRepository(contents,delimiter,",")
 		}
 	}
 
@@ -90,20 +92,20 @@ object CiteMainController {
 	}
 
 	@dom
-	def updateRepository(cexString: String, columnDelimiter: String = "\t") = {
+	def updateRepository(cexString: String, columnDelimiter: String = "\t", fieldDelimiter: String = ",") = {
 
 		try {
-			val repo:CiteLibrary = CiteLibrary(cexString, columnDelimiter)
+			val repo:CiteLibrary = CiteLibrary(cexString, columnDelimiter, fieldDelimiter)
 			println("got here okay.")
 			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
+			var loadMessage:String = ""
 
 			repo.textRepository match {
 				case Some(tr) => {
 					CiteMainModel.currentLibraryMetadataString := mdString
-					CiteMainController.updateUserMessage(s"Created new corpus. ${mdString}",0)
 					O2Model.textRepository = tr
-					CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepository.catalog.size } works.",0)
-
+					CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepository.catalog.size } works. ",0)
+					loadMessage += s"Updated text repository: ${ O2Model.textRepository.catalog.size } works. "
 					O2Model.updateCitedWorks
 					NGModel.updateCitedWorks
 					NGController.clearResults
@@ -114,9 +116,28 @@ object CiteMainController {
 					NGController.preloadUrn
 				}
 				case None => {
-					CiteMainController.updateUserMessage("Chosen repository does not seem to include a TextRepository",2)
+					loadMessage += "Chosen repository does not seem to include a TextRepository. "
+					CiteMainController.updateUserMessage("Chosen repository does not seem to include a TextRepository.",2)
 				}
 			}
+
+			repo.collectionRepository match {
+				case Some(cr) => {
+					ObjectModel.collectionRepository = cr
+					ObjectModel.updateCollections
+					ObjectController.clearResults
+					ObjectController.clearHistory
+					ObjectModel.clearObject
+					ObjectController.preloadUrn
+					loadMessage += s"Updated collection repository: ${ cr.collections.size  } collections."
+
+				}
+				case None => {
+					loadMessage += "Chosen repository does not seem to include a TextRepository. "
+					CiteMainController.updateUserMessage("Chosen repository does not seem to include a TextRepository.",2)
+				}
+			}
+			CiteMainController.updateUserMessage(loadMessage,0)
 
 		} catch  {
 			case e: Exception => {

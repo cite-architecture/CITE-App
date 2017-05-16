@@ -1,7 +1,18 @@
 // Variables to hold the current image URN and an array of ROIs
 
+
 var viewer = null
-var overlayArray = []
+var roiArray = [
+{roi: "0.064,0.2267,0.466,0.0293", mappedUrn: "urn.cts:greekLit:tlg0012.tlg001.msA:1.1", group: "1"},
+{roi: "0.159,0.2538,0.343,0.0218", mappedUrn: "urn.cts:greekLit:tlg0012.tlg001.msA:1.2", group: "2"},
+{roi: "0.161,0.2748,0.343,0.0218", mappedUrn: "urn.cts:greekLit:tlg0012.tlg001.msA:1.3", group: "3"},
+{roi: "0.166,0.2928,0.343,0.0218", mappedUrn: "urn.cts:greekLit:tlg0012.tlg001.msA:1.4", group: "4"}
+]
+
+
+
+	          // className: 'image_imageROI image_roiGroup1'
+
 
 
 updateImageJS = function( collection, imageObject ){
@@ -20,50 +31,16 @@ function initOpenSeadragon(imagePath) {
 				viewer = null
 		}
 
-		overlayArray = [
-					{
-            id: 'example-overlay1',
-            x: 0.33,
-            y: 0.75,
-            width: 0.2,
-            height: 0.25,
-	          className: 'image_imageROI image_roiGroup1'
-					},
-					{
-						id: 'example-overlay2',
-						x: 0.66,
-						y: 0.25,
-						width: 0.2,
-						height: 0.25,
-						className: 'image_imageROI image_roiGroup2'
-				},
-					{
-						id: 'example-overlay3',
-						x: 0.50,
-						y: 0.50,
-						width: 0.2,
-						height: 0.25,
-						className: 'image_imageROI image_roiGroup3'
-				},
-				{
-					id: 'example-overlay4',
-					x: 0.10,
-					y: 0.5,
-					width: 0.2,
-					height: 0.25,
-					className: 'image_imageROI image_roiGroup4'
-				}
-		]
-
 		viewer = OpenSeadragon({
         id: "image_imageContainer",
         prefixUrl: "js/images/",
         tileSources: imagePath,
-				overlays: overlayArray,
 				springStiffness: 20,
 				animationTime: 8,
-				homeFillsViewer: true
-
+				homeFillsViewer: true,
+				gestureSettingsMouse: {
+					clickToZoom: false
+				}
 		});
 
 		viewer.guides({
@@ -89,18 +66,47 @@ function initOpenSeadragon(imagePath) {
 		  }
 		});
 
-		viewer.addHandler('open', function(event) {
-			// Go through and attach events to each overlay
-			for (n = 0; n < overlayArray.length; n++){
-				var thisId = overlayArray[n].id
-				var thisElement = document.getElementById(thisId)
-				thisElement.addEventListener("click", function() {
-					var TheTextBox = document.getElementById("image_mappedUrn");
-			    TheTextBox.value = this.id;
-					if (TheTextBox.onchange) TheTextBox.onchange();
-				}, false);
-			}
-		})
+
+    // Add overlays
+			setTimeout(function(){
+				var normH = viewer.world.getItemAt(0).getBounds().height
+				var normW = viewer.world.getItemAt(0).getBounds().width
+				if (roiArray.length > 0){
+					for (ol = 0; ol < roiArray.length; ol++){
+						var roi = roiArray[ol].roi
+						var rl = +roi.split(",")[0]
+						var rt = +roi.split(",")[1]
+						var rw = +roi.split(",")[2]
+						var rh = +roi.split(",")[3]
+						var tl = rl * normW
+					  var tt = rt * normH
+					  var tw = rw * normW
+					  var th = rh * normH
+						var osdRect = new OpenSeadragon.Rect(tl,tt,tw,th)
+						var elt = document.createElement("a")
+						elt.id = "image_imageRoi" + ol
+		 			  elt.className = "image_imageROI" + " image_roiGroup" + roiArray[ol].group
+						elt.dataset.urn = roiArray[ol].mappedUrn
+
+						viewer.addOverlay(elt,osdRect)
+					}
+				}
+
+					// Go through and attach events to each overlay
+					for (n = 0; n < roiArray.length; n++){
+						var thisId = "image_imageRoi" + n
+						var thisElement = document.getElementById(thisId)
+						thisElement.addEventListener("click", function() {
+							var TheTextBox = document.getElementById("image_mappedUrn");
+					    TheTextBox.value = thisElement.dataset.urn;
+							if (TheTextBox.onchange) TheTextBox.onchange();
+						}, false);
+					}
+				//})
+
+			},500);
+
+
 
 
 }

@@ -13,6 +13,8 @@ import org.scalajs.dom.ext._
 import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
+import edu.holycross.shot.citeobj._
+
 
 import scala.scalajs.js.annotation.JSExport
 
