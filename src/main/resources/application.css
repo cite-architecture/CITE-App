@@ -1,58 +1,11 @@
 /* Object Formatting */
 
-.cmn-toggle {
-  position: absolute;
-  margin-left: -9999px;
-  visibility: hidden;
-}
-.cmn-toggle + label {
-  display: block;
-  position: relative;
-  cursor: pointer;
-  outline: none;
-  user-select: none;
+#object_browseControls {
+	font-size: 80%;
+	display: inline;
+	margin-left: 1em;
 }
 
-input.cmn-toggle-round-flat + label {
-  padding: 2px;
-  width: 120px;
-  height: 60px;
-  background-color: #dddddd;
-  border-radius: 60px;
-  transition: background 0.4s;
-}
-
-input.cmn-toggle-round-flat + label:before,
-input.cmn-toggle-round-flat + label:after {
-  display: block;
-  position: absolute;
-  content: "";
-}
-input.cmn-toggle-round-flat + label:before {
-  top: 2px;
-  left: 2px;
-  bottom: 2px;
-  right: 2px;
-  background-color: #fff;
-  border-radius: 60px;
-  transition: background 0.4s;
-}
-input.cmn-toggle-round-flat + label:after {
-  top: 4px;
-  left: 4px;
-  bottom: 4px;
-  width: 52px;
-  background-color: #dddddd;
-  border-radius: 52px;
-  transition: margin 0.4s, background 0.4s;
-}
-input.cmn-toggle-round-flat:checked + label {
-  background-color: #8ce196;
-}
-input.cmn-toggle-round-flat:checked + label:after {
-  margin-left: 60px;
-  background-color: #8ce196;
-}
 
 
 /* Image Formating */
@@ -105,112 +58,60 @@ a.image_roiGroup4 {
 
 
 
-/* Text Formatting */
-
-div.p {
-	display: block;
-	padding-bottom: 0.5em;
-}
-
-unclear {
-	border-bottom: 2px dotted black;
-}
-
-add {
-	color: red;
-	vertical-align: super;
-}
-
-choice {
-	color: #09f;
-}
-choice:before {
-	content: "( ";
-}
-
-choice:after {
-	content: " )";
-}
-
-corr {
-	color: green;
-}
-
-choice corr:before{
-	content: "→";
-}
-
-
-del {
-	text-decoration: line-through;
-	color: red;
-}
-expan {
-	color: green;
-}
-
-expan:before {
-	content: "(";
-}
-
-expan:after {
-	content: ")";
-}
-
-gap {
-	background: white;
-	border-top: 1px solid #aab;
-	border-left: 1px solid #aab;
-	color: grey;
-	font-size: 80%;
-}
-q:before {
-	content: "“";
-}
-
-q:after {
-	content: "”";
-}
-
-quote:before {
-	content: "“";
-}
-
-quote:after {
-	content: "”";
-}
-
-w {
-	border: 1px solid #BBF;
-	padding: 3px;
-}
-
-sic {
-	color: navy;
-}
-
-sic:after{
-	content: " [sic]";
-}
-
-supplied:before {
-	content: "[";
-}
-
-supplied:after {
-	content: "]";
-}
-
-speaker {
-	font-weight: bold;
-}
-
-speaker:after {
-	content: " — ";
-}
-
-
 /* Appwide Stuff */
+
+.onoffswitch {
+    position: relative; width: 110px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+		display: inline-block;
+		top: 7px;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #E3E3E3; border-radius: 36px;
+		padding: 0;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 18px; padding: 0; line-height: 18px;
+		font-size: 11px;
+		color: white;
+		/*
+    font-size: 11px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+		*/
+    box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "Show Objects";
+    padding-left: 14px;
+    background-color: #5A91BF; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "List Objects";
+    padding-right: 14px;
+    background-color: #EBEBEB; color: #666666;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 7px; margin: 5.5px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 0;
+    right: 88px;
+    border: 2px solid #fff; border-radius: 36px;
+    transition: all 0.3s ease-in 0s;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
 
 a {
 	text-decoration: none;
@@ -830,4 +731,110 @@ column-gap: 30px;
 
 .osd-guide-vertical .osd-guide-line {
   border-left: 3px solid #D262F1;
+}
+
+
+
+/* Text Formatting */
+
+div.p {
+	display: block;
+	padding-bottom: 0.5em;
+}
+
+unclear {
+	border-bottom: 2px dotted black;
+}
+
+add {
+	color: red;
+	vertical-align: super;
+}
+
+choice {
+	color: #09f;
+}
+choice:before {
+	content: "( ";
+}
+
+choice:after {
+	content: " )";
+}
+
+corr {
+	color: green;
+}
+
+choice corr:before{
+	content: "→";
+}
+
+
+del {
+	text-decoration: line-through;
+	color: red;
+}
+expan {
+	color: green;
+}
+
+expan:before {
+	content: "(";
+}
+
+expan:after {
+	content: ")";
+}
+
+gap {
+	background: white;
+	border-top: 1px solid #aab;
+	border-left: 1px solid #aab;
+	color: grey;
+	font-size: 80%;
+}
+q:before {
+	content: "“";
+}
+
+q:after {
+	content: "”";
+}
+
+quote:before {
+	content: "“";
+}
+
+quote:after {
+	content: "”";
+}
+
+w {
+	border: 1px solid #BBF;
+	padding: 3px;
+}
+
+sic {
+	color: navy;
+}
+
+sic:after{
+	content: " [sic]";
+}
+
+supplied:before {
+	content: "[";
+}
+
+supplied:after {
+	content: "]";
+}
+
+speaker {
+	font-weight: bold;
+}
+
+speaker:after {
+	content: " — ";
 }

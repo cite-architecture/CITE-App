@@ -24,6 +24,13 @@ object ObjectController {
 	val validObjectUrnInField = Var(false)
 	val validCollectionUrnInField = Var(false)
 
+	@dom
+	def switchDisplay(thisEvent: Event):Unit = {
+		val showObjectsStr:String = js.Dynamic.global.document.getElementById("browse_onoffswitch").checked.toString
+		ObjectModel.showObjects := (showObjectsStr == "true")
+		g.console.log("Show Objects = ${ObjectModel.showObject.get}")
+	}
+
 	def updateUserMessage(msg: String, alert: Int): Unit = {
 		ObjectModel.userMessageVisibility := "app_visible"
 		ObjectModel.userMessage := msg

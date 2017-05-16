@@ -21,7 +21,11 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport
 object ObjectModel {
 
+	// Messages
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
+	val userMessage = Var("")
+	val userAlert = Var("default")
+	val userMessageVisibility = Var("app_hidden")
 
 
 	// urn is what the user requested
@@ -29,12 +33,20 @@ object ObjectModel {
 	// displayUrn is what will be shown
 	val displayUrn = Var(Cite2Urn("urn:cite2:hmt:vaimg.v1:VA012RN_0013"))
 
+
+	// Keeping track of current data
 	val collections = Vars.empty[CiteCollectionDef]
 	val objects = Vars.empty[Cite2Urn]
 
-	val userMessage = Var("")
-	val userAlert = Var("default")
-	val userMessageVisibility = Var("app_hidden")
+	// For Displat
+	val offset = Var(Int)
+	val limit = Var(Int)
+	val showObjects = Var(false)
+
+	// Object-or-collection?
+	//    Choices: "none","object","collection","range"
+	val objectOrCollection = Var("none")
+
 
 	var collectionRepository: CiteCollectionRepository = null
 

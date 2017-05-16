@@ -52,7 +52,7 @@ object ObjectView {
 		<p id="object_reportingCurrentUrn" class="app_reportingCurrentUrn"> { ObjectModel.urn.bind.toString } </p>
 
 
-		<p id="object_urnInputP">
+		<div id="object_urnInputP">
 		<input
 		class={ s"${ ObjectController.validObjectUrnInField.bind || ObjectController.validObjectUrnInField.bind }" }
 		id="object_urnInput"
@@ -64,8 +64,9 @@ object ObjectView {
 
 	{ ObjectView.retrieveObjectButton.bind }
 
-	<br/>
-	</p>
+	{ collectionBrowseControls.bind }
+	
+	</div>
 
 	{ objectContainer.bind }
 
@@ -110,10 +111,6 @@ def objectContainer = {
 	class={ s"""${if( ObjectModel.objects.bind.size == 0 ){ "object_empty" } else {"object_not_empty"}}""" }
 	>
 
-<div class="app_witch">
-  <input id="object_toggle1" class="cmn-toggle cmn-toggle-round-flat" type="checkbox"></input>
-  <label for="object_toggle1"></label>
-</div>
 
 	{
 		for (obj <- ObjectModel.objects ) yield {
@@ -122,6 +119,26 @@ def objectContainer = {
 	}
 
 	</div>
+}
+
+@dom
+def collectionBrowseControls = {
+		<div id="object_browseControls">
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="browse_onoffswitch" checked={false}
+					onchange={ event: Event => ObjectController.switchDisplay( event )}
+					/>
+			    <label class="onoffswitch-label" for="browse_onoffswitch">
+			        <span class="onoffswitch-inner"></span>
+			        <span class="onoffswitch-switch"></span>
+			    </label>
+			</div>
+
+			<label for="object_browseOffset">Start at</label>
+			<input type="text" id="object_browseOffset" size={5} value="1"/>
+			<label for="object_browseLimit">Show</label>
+			<input type="text" id="object_browseLimit" size={5} value="10"/>
+		</div>
 }
 
 
