@@ -54,7 +54,7 @@ object ObjectView {
 
 		<div id="object_urnInputP">
 		<input
-		class={ s"${ ObjectController.validObjectUrnInField.bind || ObjectController.validObjectUrnInField.bind }" }
+		class={ s"object_inputFor_${ObjectModel.objectOrCollection.bind}" }
 		id="object_urnInput"
 		size={ 40 }
 		type="text"
@@ -65,7 +65,7 @@ object ObjectView {
 	{ ObjectView.retrieveObjectButton.bind }
 
 	{ collectionBrowseControls.bind }
-	
+
 	</div>
 
 	{ objectContainer.bind }
@@ -84,19 +84,16 @@ def retrieveObjectButton = {
 				}
 			}
 			disabled={
-						(ObjectController.validObjectUrnInField.bind == false) &&
-						(ObjectController.validCollectionUrnInField.bind == false)
+						(ObjectModel.objectOrCollection.bind == "none")
 					 }
 
 > {
-	if ( ObjectController.validObjectUrnInField.bind == true ){
-		"Retrieve object"
-	} else {
-		if ( ObjectController.validCollectionUrnInField.bind == true ){
-			"Browse collection"
-		} else {
-			"Invalid URN"
-		}
+
+	ObjectModel.objectOrCollection.bind match {
+		case "object" => {"Retrieve object"}
+		case "collection" => {"Browse collection"}
+		case "range" => {"Retrieve range"}
+		case _ => {"Invalid URN"}
 	}
 
 }
@@ -121,9 +118,30 @@ def objectContainer = {
 	</div>
 }
 
+
+/* Controls for limit and offset, as well as listing or showing objects */
+
 @dom
 def collectionBrowseControls = {
-		<div id="object_browseControls">
+		<div id="object_browseControls"
+		class={
+			ObjectModel.objectOrCollection.bind match {
+				case "collection" => "app_visible"
+				case "range" => "app_visible"
+				case _ => "app_hidden"
+			}
+		}
+
+		>
+
+			<label for="object_browseOffset">Start at</label>
+			<input type="text" id="object_browseOffset" size={5} value={ObjectModel.offset.bind.toString}
+			onchange={ event: Event => ObjectController.validateNumericEntry( event )}
+			/>
+			<label for="object_browseLimit">Show</label>
+			<input type="text" id="object_browseLimit" size={3} value={ObjectModel.limit.bind.toString}
+			onchange={ event: Event => ObjectController.validateNumericEntry( event )} />
+
 			<div class="onoffswitch">
 			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="browse_onoffswitch" checked={false}
 					onchange={ event: Event => ObjectController.switchDisplay( event )}
@@ -133,11 +151,6 @@ def collectionBrowseControls = {
 			        <span class="onoffswitch-switch"></span>
 			    </label>
 			</div>
-
-			<label for="object_browseOffset">Start at</label>
-			<input type="text" id="object_browseOffset" size={5} value="1"/>
-			<label for="object_browseLimit">Show</label>
-			<input type="text" id="object_browseLimit" size={5} value="10"/>
 		</div>
 }
 

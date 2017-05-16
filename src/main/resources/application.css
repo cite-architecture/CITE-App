@@ -2,8 +2,8 @@
 
 #object_browseControls {
 	font-size: 80%;
-	display: inline;
-	margin-left: 1em;
+	margin-left: -4px;
+  transition: all 0.3s ease-in 0s;
 }
 
 
@@ -60,52 +60,56 @@ a.image_roiGroup4 {
 
 /* Appwide Stuff */
 
+
 .onoffswitch {
-    position: relative; width: 110px;
+    position: relative; width: 90px;
     -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
 		display: inline-block;
-		top: 7px;
+		top: 6px;
 }
+
 .onoffswitch-checkbox {
     display: none;
 }
 .onoffswitch-label {
     display: block; overflow: hidden; cursor: pointer;
-    border: 2px solid #E3E3E3; border-radius: 36px;
+    border: 2px solid #e5e5e5; border-radius: 20px;
 		padding: 0;
 }
+
 .onoffswitch-inner {
     display: block; width: 200%; margin-left: -100%;
     transition: margin 0.3s ease-in 0s;
 }
+
 .onoffswitch-inner:before, .onoffswitch-inner:after {
-    display: block; float: left; width: 50%; height: 18px; padding: 0; line-height: 18px;
-		font-size: 11px;
-		color: white;
-		/*
-    font-size: 11px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
-		*/
+    display: block; float: left; width: 50%; height: 16px; padding: 0; line-height: 16px;
+    font-size: 10px; color: white;
     box-sizing: border-box;
 }
+
 .onoffswitch-inner:before {
     content: "Show Objects";
-    padding-left: 14px;
-    background-color: #5A91BF; color: #FFFFFF;
+    padding-left: 6px;
+    background-color: #34A7C1; color: #FFFFFF;
 }
 .onoffswitch-inner:after {
     content: "List Objects";
-    padding-right: 14px;
-    background-color: #EBEBEB; color: #666666;
+    padding-right: 10px;
+    background-color: #EEEEEE; color: #3f3f3f;
     text-align: right;
 }
+
+
 .onoffswitch-switch {
-    display: block; width: 7px; margin: 5.5px;
+    display: block; width: 6px; margin: 5px;
     background: #FFFFFF;
     position: absolute; top: 0; bottom: 0;
-    right: 88px;
-    border: 2px solid #fff; border-radius: 36px;
+    right: 70px;
+    border: 2px solid #fff; border-radius: 20px;
     transition: all 0.3s ease-in 0s;
 }
+
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
     margin-left: 0;
 }

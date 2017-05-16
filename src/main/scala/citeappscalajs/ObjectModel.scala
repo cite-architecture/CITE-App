@@ -38,9 +38,9 @@ object ObjectModel {
 	val collections = Vars.empty[CiteCollectionDef]
 	val objects = Vars.empty[Cite2Urn]
 
-	// For Displat
-	val offset = Var(Int)
-	val limit = Var(Int)
+	// For Display
+	val offset = Var(5)
+	val limit = Var(13)
 	val showObjects = Var(false)
 
 	// Object-or-collection?
