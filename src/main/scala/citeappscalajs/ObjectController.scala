@@ -21,6 +21,9 @@ import scala.scalajs.js.annotation.JSExport
 object ObjectController {
 
 
+	// Based on the UI toggle, sets showObject.
+	//     true -> show each object and all its properties
+	//     false -> show URN and label only
 	@dom
 	def switchDisplay(thisEvent: Event):Unit = {
 		val showObjectsStr:String = js.Dynamic.global.document.getElementById("browse_onoffswitch").checked.toString
@@ -40,7 +43,6 @@ object ObjectController {
 		ObjectModel.msgTimer = js.timers.setTimeout(6000){ ObjectModel.userMessageVisibility := "app_hidden" }
 	}
 
-	// This version also insists on an object-identifier
 	def validateUrn(urnString: String): Unit = {
 		try{
 			val newUrn: Cite2Urn = Cite2Urn(urnString)
@@ -73,29 +75,28 @@ object ObjectController {
 		}
 	}
 
+
 	def changeObject:Unit = {
 		val tempUrn:Cite2Urn = ObjectModel.urn.get
 		ObjectModel.clearObject
 
 		ObjectModel.objectOrCollection.get match {
 				case "object" =>{
-				  val filteredData = ObjectModel.collectionRepository.data ~~ tempUrn
-				  filteredData.objects.foreach( fc => {
-						ObjectModel.objects.get += fc
-					})
+					ObjectModel.getObjects(tempUrn)
 				}
 				case "collection" =>{
-				  val filteredData = ObjectModel.collectionRepository.data ~~ tempUrn
-				  filteredData.objects.foreach( fc => {
-						ObjectModel.objects.get += fc
-					})
+					ObjectModel.getObjects(tempUrn)
 				}
 				case "range" =>{
-					ObjectController.updateUserMessage(s"Will deal with range ${tempUrn}.",1)
+					ObjectModel.getObjects(tempUrn)
 				}
 		}
+		ObjectModel.setDisplay
 	}
 
+  // changeUrn when the request-urn is modified by the user or the app
+	// contrast with pageObjects, which changes the display without changing
+	// the requested URN.
 	def changeUrn(urnString: String): Unit = {
 		changeUrn(Cite2Urn(urnString))
 	}
@@ -164,11 +165,23 @@ object ObjectController {
 
 	def insertFirstObjectUrn(urn: Cite2Urn): Unit = {
 		g.console.log(s"Will get first urn for: ${urn}")
-		val firstUrn:Cite2Urn = ( ObjectModel.collectionRepository.data ~~ urn ).objects.head
+
+		val firstUrn:Cite2Urn = ObjectModel.collectionRepository.citableObjects(urn)(0).urn
+
 		js.Dynamic.global.document.getElementById("object_urnInput").value = firstUrn.toString
 		ObjectModel.objectOrCollection := "object"
 	//js.Dynamic.global.document.getElementById("o2_urnInput").value = firstUrn.toString
 	//validUrnInField := true
+	}
+
+	@dom
+	def getNext:Unit = {
+
+	}
+
+	@dom
+	def getPrev:Unit = {
+
 	}
 
 

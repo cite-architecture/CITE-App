@@ -63,6 +63,7 @@ object ObjectView {
 		</input>
 
 	{ ObjectView.retrieveObjectButton.bind }
+	{ ObjectView.objectToCollectionButton.bind }
 
 	{ collectionBrowseControls.bind }
 
@@ -100,6 +101,33 @@ def retrieveObjectButton = {
 </button>
 }
 
+@dom
+def objectToCollectionButton = {
+	<button
+			onclick={ event: Event => {
+				val s:String = js.Dynamic.global.document.getElementById("object_urnInput").value.toString
+				ObjectModel.urn := Cite2Urn(s).dropSelector
+				ObjectModel.offset := 1
+				ObjectModel.limit := 10
+				ObjectModel.objectOrCollection := "collection"
+				ObjectController.updateUserMessage("Retrieving collection…",1)
+				js.timers.setTimeout(500){ ObjectController.changeObject }
+				}
+			}
+		class={
+			ObjectModel.objectOrCollection.bind match {
+				case "collection" => "app_hidden"
+				case "range" => "app_visible"
+				case "object" => "app_visible"
+				case _ => "app_hidden"
+			}
+		}
+			disabled={
+						((ObjectModel.objectOrCollection.bind == "none") || (ObjectModel.objectOrCollection.bind == "collection"))
+					 }
+
+> Browse this Object’s Collection </button>
+}
 
 /* Passage Container */
 @dom
@@ -108,14 +136,32 @@ def objectContainer = {
 	class={ s"""${if( ObjectModel.objects.bind.size == 0 ){ "object_empty" } else {"object_not_empty"}}""" }
 	>
 
+		<div id="object_navButtonContainer_top">
+			{ prevButton.bind }
+			{ nextButton.bind }
+		</div>
 
-	{
-		for (obj <- ObjectModel.objects ) yield {
-			<p>{ obj.toString }</p>
-		}
-	}
+	{ renderObjects.bind }
+
+		<div id="object_navButtonContainer_bottom">
+			{ prevButton.bind }
+			{ nextButton.bind }
+		</div>
 
 	</div>
+}
+
+/* Fancy switcher, either listing objects as urn+label, or showing all the object's propeties. */
+
+@dom
+def renderObjects = {
+		for (obj <- ObjectModel.displayObjects ) yield {
+			<p>
+				{ obj.urn.toString }
+				::
+				{ obj.label }
+			</p>
+		}
 }
 
 
@@ -195,5 +241,27 @@ def collectionUrnSpan(urn:Cite2Urn) = {
 }
 
 
+	/* Navigation Buttons */
+	@dom
+	def nextButton = {
+		<button
+		class="navButton"
+		onclick={ event: Event => ObjectController.getNext }
+		disabled= {
+			(ObjectModel.currentNext.bind == None)
+		}
+		> → </button>
+	}
+
+	@dom
+	def prevButton = {
+		<button
+		class="navButton"
+		onclick={ event: Event => ObjectController.getPrev }
+		disabled= {
+			(ObjectModel.currentPrev.bind == None)
+		}
+		> ← </button>
+	}
 
 }
