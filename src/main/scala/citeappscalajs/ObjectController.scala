@@ -28,7 +28,6 @@ object ObjectController {
 	def switchDisplay(thisEvent: Event):Unit = {
 		val showObjectsStr:String = js.Dynamic.global.document.getElementById("browse_onoffswitch").checked.toString
 		ObjectModel.showObjects := (showObjectsStr == "true")
-		g.console.log("Show Objects = ${ObjectModel.showObject.get}")
 	}
 
 	def updateUserMessage(msg: String, alert: Int): Unit = {
@@ -43,6 +42,8 @@ object ObjectController {
 		ObjectModel.msgTimer = js.timers.setTimeout(6000){ ObjectModel.userMessageVisibility := "app_hidden" }
 	}
 
+	// On key-up, and on submit, checks for valid Cite2Urn, and decides
+	// whether the request is for an object, or a range, or nothing
 	def validateUrn(urnString: String): Unit = {
 		try{
 			val newUrn: Cite2Urn = Cite2Urn(urnString)
@@ -75,28 +76,39 @@ object ObjectController {
 		}
 	}
 
-
+  // The sequence goes like this:
+	//    - [getPrev or getNext]
+	//    - changeUrn
+	//    - changeObject
 	def changeObject:Unit = {
 		val tempUrn:Cite2Urn = ObjectModel.urn.get
 		ObjectModel.clearObject
+		val collUrn = ObjectModel.urn.get.dropSelector
+		ObjectModel.isOrdered := ObjectModel.collectionRepository.isOrdered(collUrn)
+		if (
+				(ObjectModel.objectOrCollection.get == true) ||
+				(ObjectModel.urn.get.isRange == true) ||
+				(ObjectModel.isOrdered.get == true) ||
+				(ObjectModel.urn.get.objectOption == None)
+			){
+			  	ObjectModel.browsable := true
+			} else { ObjectModel.browsable := false }
 
-		ObjectModel.objectOrCollection.get match {
-				case "object" =>{
-					ObjectModel.getObjects(tempUrn)
-				}
-				case "collection" =>{
-					ObjectModel.getObjects(tempUrn)
-				}
-				case "range" =>{
-					ObjectModel.getObjects(tempUrn)
-				}
-		}
-		ObjectModel.setDisplay
+			ObjectModel.objectOrCollection.get match {
+					case "object" => {
+						//g.console.log(s"Doing get objects… ${ObjectModel.urn.get}")
+						ObjectModel.getObjects(tempUrn)
+					}
+					case "collection" =>{
+						ObjectModel.getObjects(tempUrn)
+					}
+					case "range" =>{
+						ObjectModel.getObjects(tempUrn)
+					}
+			}
+		ObjectController.setDisplay
 	}
 
-  // changeUrn when the request-urn is modified by the user or the app
-	// contrast with pageObjects, which changes the display without changing
-	// the requested URN.
 	def changeUrn(urnString: String): Unit = {
 		changeUrn(Cite2Urn(urnString))
 	}
@@ -104,39 +116,47 @@ object ObjectController {
 	def changeUrn(urn: Cite2Urn): Unit = {
 		try {
 			ObjectModel.urn := urn
+			val collUrn = urn.dropSelector
 			ObjectModel.displayUrn := urn
 			ObjectModel.urn.get.objectComponentOption match {
 				case Some(o) => {
+					// test for range
 					ObjectModel.urn.get.rangeBeginOption match {
 						case Some(rb) => {
 							ObjectModel.urn.get.rangeEndOption match {
 								case Some(re) => {
 									ObjectModel.objectOrCollection := "range"
+									ObjectModel.isOrdered := ObjectModel.collectionRepository.isOrdered(collUrn)
 									ObjectController.updateUserMessage("Retrieving range…",1)
 								}
 								case _ => {
 									ObjectModel.objectOrCollection := "none"
+									ObjectModel.isOrdered := false
 								}
 							}
 						}
+						// if not a range, it is an object
 						case _ =>{
 							ObjectModel.objectOrCollection := "object"
+							ObjectModel.isOrdered := ObjectModel.collectionRepository.isOrdered(collUrn)
 							ObjectController.updateUserMessage("Retrieving object…",1)
 						}
 					}
 				}
+				// otherwise, this is a collection
 				case _ => {
 					ObjectModel.objectOrCollection := "collection"
+					ObjectModel.isOrdered := ObjectModel.collectionRepository.isOrdered(collUrn)
 					ObjectController.updateUserMessage("Retrieving collection…",1)
 				}
 			}
 			if (ObjectModel.objectOrCollection.get != "none") {
 				js.timers.setTimeout(500){ ObjectController.changeObject }
-				updateUserMessage("Invalid URN. Current URN not changed.",2)
 			}
 		} catch {
 			case e: Exception => {
 				ObjectModel.objectOrCollection := "none"
+				ObjectModel.isOrdered := false
 				updateUserMessage("Invalid URN. Current URN not changed.",2)
 			}
 		}
@@ -150,7 +170,7 @@ object ObjectController {
 			} else {
 
 			}
-			g.console.log("preloading URN")
+			//g.console.log("preloading URN")
 	}
 
 	@dom
@@ -164,7 +184,7 @@ object ObjectController {
 	}
 
 	def insertFirstObjectUrn(urn: Cite2Urn): Unit = {
-		g.console.log(s"Will get first urn for: ${urn}")
+		//g.console.log(s"Will get first urn for: ${urn}")
 
 		val firstUrn:Cite2Urn = ObjectModel.collectionRepository.citableObjects(urn)(0).urn
 
@@ -176,12 +196,97 @@ object ObjectController {
 
 	@dom
 	def getNext:Unit = {
-
+		ObjectModel.currentNext.get match {
+			case Some(u) => {
+				val nu:Cite2Urn = u._1
+				val no:Int = u._2
+				val nl:Int = u._3
+				ObjectModel.objectOrCollection.get match {
+					case "object" => {
+						ObjectController.changeUrn(nu)
+					}
+					case "none" => {
+						ObjectController.updateUserMessage("There is no object. getNext should not have been called",2)
+					}
+					// range or paged collection
+					case _ => {
+						ObjectModel.limit := nl
+						ObjectModel.offset := no
+						ObjectController.setDisplay
+					}
+				}
+			}
+			case _ => {
+					ObjectController.updateUserMessage("There is no next object. getNext should not have been called",2)
+			}
+		}
 	}
 
 	@dom
 	def getPrev:Unit = {
+		ObjectModel.currentPrev.get match {
+			case Some(u) => {
+				val nu:Cite2Urn = u._1
+				val no:Int = u._2
+				val nl:Int = u._3
+				ObjectModel.objectOrCollection.get match {
+					case "object" => {
+						ObjectController.changeUrn(nu)
+					}
+					case "none" => {
+						ObjectController.updateUserMessage("There is no object. getPrev should not have been called",2)
+					}
+					case _ => {
+						ObjectModel.limit := nl
+						ObjectModel.offset := no
+						ObjectController.setDisplay
+					}
+				}
+			}
+			case _ => {
+					ObjectController.updateUserMessage("There is no previous object. getPrev should not have been called",2)
+			}
+		}
+	}
 
+	// Sets the display to a [possible] subset of the current objects
+	@dom
+	def setDisplay:Unit = {
+		 val collUrn:Cite2Urn = ObjectModel.urn.get.dropSelector
+		 val numObj:Int = ObjectModel.objects.get.size
+		 val tLim:Int = ObjectModel.limit.get
+		 val tOff:Int = ObjectModel.offset.get
+		 val startIndex:Int = tOff - 1
+		 val endIndex:Int = {
+			 if ( (tOff + tLim - 1)  >= numObj ) {
+				 (numObj - 1)
+			 } else {
+				 ((tOff - 1) + (tLim - 1))
+			 }
+		 }
+		 if (ObjectModel.objectOrCollection.get == "object"){
+			 	ObjectModel.displayObjects.get.clear
+				ObjectModel.displayObjects.get += ObjectModel.objects.get(0)
+				ObjectModel.updatePrevNext
+		 } else {
+			 if (tOff > numObj){
+				 ObjectController.updateUserMessage(s"There are ${numObj} objects in the requested ${ObjectModel.objectOrCollection.get}, so an offset of ${tOff} is invalid.",2)
+			 } else {
+				 /*
+			 	g.console.log(s"numObj = ${numObj}")
+			 	g.console.log(s"tLim = ${tLim}")
+			 	g.console.log(s"tOff = ${tOff}")
+			 	g.console.log(s"startIndex = ${startIndex}")
+			 	g.console.log(s"endIndex = ${endIndex}")
+			 	g.console.log(s"------------------------")
+				*/
+				ObjectModel.displayObjects.get.clear
+				for (i <- startIndex to endIndex){
+					ObjectModel.displayObjects.get += ObjectModel.collectionRepository.citableObjects(collUrn)(i)
+				}
+				ObjectModel.updatePrevNext
+			}
+		}
 	}
 
 

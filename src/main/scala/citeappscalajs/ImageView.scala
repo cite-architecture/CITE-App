@@ -85,7 +85,7 @@ def imageMappedUrn = {
 		value=""
 		placeholder="Mapped URNs will appear here"
 		onchange={ event: Event => {
-			 	println("Mapped URN changed")
+			 	//println("Mapped URN changed")
 			}
 		}>
 		</input>

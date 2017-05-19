@@ -37,59 +37,97 @@ object ObjectModel {
 	val collections = Vars.empty[CiteCollectionDef]
 	val objects = Vars.empty[CiteObject]
 	val displayObjects = Vars.empty[CiteObject]
+	val isOrdered = Var(false)
 
 	// For Display
 	val offset = Var(1)
-	val limit = Var(10)
+	val limit = Var(4)
 	val showObjects = Var(false) // if true, show a whole object; false, URN+label
+	val browsable = Var(false)
 
 	// for navigation
-	val currentPrev = Var(Tuple2(Int,Int))
-	val currentNext = Var(Tuple2(Int,Int))
+	val prevOption:Option[Tuple3[Cite2Urn,Int,Int]] = None
+	val nextOption:Option[Tuple3[Cite2Urn,Int,Int]] = None
+	val currentPrev = Var(prevOption)
+	val currentNext = Var(nextOption)
 
-	// Object-or-collection?
+
+	// Object-or-collection? (based on current request)
 	//    Choices: "none","object","collection","range"
 	val objectOrCollection = Var("none")
 
-
+	// The big data repo from the .cex file
 	var collectionRepository: CiteCollectionRepository = null
-
-
 
 	// Clears all current object data, and with it, displayed objects
 	@dom
-	def clearObject = {
+	def clearObject:Unit = {
 			objects.get.clear
+			currentPrev := None
+			currentNext := None
 	}
 
-
 	@dom
-	def setDisplay:Unit = {
-		 val collUrn:Cite2Urn = ObjectModel.urn.get.dropSelector
-		 val numObj:Int = objects.get.size
-		 val tLim:Int = ObjectModel.limit.get
-		 val tOff:Int = ObjectModel.offset.get
-		 val startIndex:Int = tOff - 1
-		 val endIndex:Int = {
-			 if ( (tLim + tOff - 1)  >= numObj ) {
-				 g.console.log(s"first if: ${tLim + tOff - 1}")
-				 (numObj - 1)
-			 } else {
-				 ((tOff - 1) + (tLim - 1))
-			 }
-		 }
-		 if (tOff > numObj){
-			 ObjectController.updateUserMessage(s"There are ${numObj} objects in the requested ${ObjectModel.objectOrCollection.get}, so an offset of ${tOff} is invalid.",2)
-		 } else {
-		 	g.console.log(s"numObj = ${numObj}")
-		 	g.console.log(s"tLim = ${tLim}")
-		 	g.console.log(s"tOff = ${tOff}")
-		 	g.console.log(s"startIndex = ${startIndex}")
-		 	g.console.log(s"endIndex = ${endIndex}")
-		 	g.console.log(s"------------------------")
-			ObjectModel.displayObjects.get.clear
-			for (i <- startIndex to endIndex){
-				ObjectModel.displayObjects.get += ObjectModel.collectionRepository.citableObjects(collUrn)(i)
+	def updatePrevNext:Unit = {
+		val currentColl:Cite2Urn = urn.get.dropSelector
+		ObjectModel.objectOrCollection.get match {
+			case "object" => {
+				if (isOrdered.get) {
+					val thisIndex = collectionRepository.indexOf(objects.get(0))
+					val numInCollection:Int = collectionRepository.citableObjects(currentColl).size
+					if (thisIndex + 1 < numInCollection){
+							currentNext := Option(collectionRepository.citableObjects(thisIndex + 1).urn,offset.get,limit.get)
+					} else {
+						currentNext := None
+					}
+					if (thisIndex > 0){
+							currentPrev := Option(collectionRepository.citableObjects(thisIndex - 1).urn,offset.get,limit.get)
+					} else {
+						currentPrev := None
+					}
+				} else {
+					currentPrev := None
+					currentNext := None
+				}
+			}
+			case "none" => {
+					currentPrev := None
+					currentNext := None
+			}
+			case _ => {
+				g.console.log("updating pn")
+				g.console.log(s"current p: ${currentPrev.get}; n: ${currentNext.get}")
+				g.console.log(s"num in c: ${ObjectModel.objects.get.size}")
+				val numC = objects.get.size
+				if(limit.get >= numC){
+					currentPrev := None
+					currentNext := None
+				} else {
+					if ((offset.get + limit.get) > numC){
+						currentNext := None
+					} else {
+						// get next
+						val o:Int = offset.get + limit.get
+					//	val u:Cite2Urn = objects.get(o - 1).urn
+
+						currentNext := Option(urn.get,o,limit.get)
+					}
+					if (offset.get == 1 ){
+						currentPrev := None
+					} else {
+						// get prev
+						val o:Int = {
+							if ((offset.get - limit.get) > 0){
+								offset.get - limit.get
+							} else { 1 }
+						}
+						//val u:Cite2Urn = objects.get(o).urn
+						currentPrev := Option(urn.get,o,limit.get)
+					}
+				}
+				g.console.log("…now…")
+				g.console.log(s"current p: ${currentPrev.get}; n: ${currentNext.get}")
+				g.console.log("-------------------------")
 			}
 		}
 	}
@@ -133,7 +171,7 @@ object ObjectModel {
 					val rb:Cite2Urn = rangeTuple._1
 					val re:Cite2Urn = rangeTuple._2
 					ObjectModel.getRangeObjects(rb, re)
-					ObjectModel.setDisplay
+					//ObjectController.setDisplay
 				} else {
 					ObjectController.updateUserMessage(s"The collection ${u.dropSelector} is not an ordered collection, so range-citations are not applicable.",2)
 				}
@@ -142,19 +180,19 @@ object ObjectModel {
 					// Just object
 					case Some(o) => {
 						 ObjectModel.objects.get += ObjectModel.collectionRepository.citableObjects.filter(_.urn == u)(0)
+						 //ObjectController.setDisplay
 					}
 					// collection
 					case None => {
-						g.console.log(s"no objectComponent for ${u}")
 					  val filteredData = ObjectModel.collectionRepository.citableObjects(u)
 					  filteredData.foreach( fc => {
 							ObjectModel.objects.get += fc
+							//ObjectController.setDisplay
 						})
 					}
 				}
 			}
 	}
-
 
 	@dom
 	def updateCollections = {
@@ -169,16 +207,11 @@ object ObjectModel {
 		howMany
 	}
 
+
 	/* This is how to pass data to the global JS scope */
 	/*
 	js.Dynamic.global.currentObjectUrn = "urn:cts"
 	js.Dynamic.global.roiArray = Array("one","two","three")
 	*/
-
-	val urn1 = Cite2Urn("urn:cite2:hmt:vaimg.v1:VA012RN_0013")
-	val urn2 = Cite2Urn("urn:cite2:hmt:vaimg.v1:VA012VN_0514")
-	val urn3 = Cite2Urn("urn:cite2:hmt:vaimg.v1:VA013RN_0014")
-
-
 
 }

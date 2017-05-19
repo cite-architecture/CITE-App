@@ -52,7 +52,7 @@ object ObjectView {
 		<p id="object_reportingCurrentUrn" class="app_reportingCurrentUrn"> { ObjectModel.urn.bind.toString } </p>
 
 
-		<div id="object_urnInputP">
+		<p id="object_urnInputP">
 		<input
 		class={ s"object_inputFor_${ObjectModel.objectOrCollection.bind}" }
 		id="object_urnInput"
@@ -67,7 +67,7 @@ object ObjectView {
 
 	{ collectionBrowseControls.bind }
 
-	</div>
+	</p>
 
 	{ objectContainer.bind }
 
@@ -107,8 +107,8 @@ def objectToCollectionButton = {
 			onclick={ event: Event => {
 				val s:String = js.Dynamic.global.document.getElementById("object_urnInput").value.toString
 				ObjectModel.urn := Cite2Urn(s).dropSelector
-				ObjectModel.offset := 1
-				ObjectModel.limit := 10
+				//ObjectModel.offset := 1
+				//ObjectModel.limit := 2
 				ObjectModel.objectOrCollection := "collection"
 				ObjectController.updateUserMessage("Retrieving collection…",1)
 				js.timers.setTimeout(500){ ObjectController.changeObject }
@@ -136,14 +136,16 @@ def objectContainer = {
 	class={ s"""${if( ObjectModel.objects.bind.size == 0 ){ "object_empty" } else {"object_not_empty"}}""" }
 	>
 
-		<div id="object_navButtonContainer_top">
+		<div id="object_navButtonContainer_top"
+		class={ if(ObjectModel.browsable.bind){"app_visible"} else {"app_hidden"}}>
 			{ prevButton.bind }
 			{ nextButton.bind }
 		</div>
 
 	{ renderObjects.bind }
 
-		<div id="object_navButtonContainer_bottom">
+		<div id="object_navButtonContainer_bottom"
+		class={ if(ObjectModel.browsable.bind){"app_visible"} else {"app_hidden"}}>
 			{ prevButton.bind }
 			{ nextButton.bind }
 		</div>
@@ -155,14 +157,25 @@ def objectContainer = {
 
 @dom
 def renderObjects = {
+	<ul>
+	{
 		for (obj <- ObjectModel.displayObjects ) yield {
-			<p>
+			{ renderSingleObject(obj).bind }
+		}
+	}
+	</ul>
+}
+
+/* Create either URN+Label or full property-table for an object */
+@dom
+def renderSingleObject(obj:CiteObject) = {
+			<li class="cols">
 				{ obj.urn.toString }
 				::
 				{ obj.label }
-			</p>
-		}
+			</li>
 }
+
 
 
 /* Controls for limit and offset, as well as listing or showing objects */

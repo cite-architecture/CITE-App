@@ -16,11 +16,11 @@ var roiArray = [
 
 
 updateImageJS = function( collection, imageObject ){
-    console.log("Collection: " + collection)
-		console.log("Image: " + imageObject)
+//    console.log("Collection: " + collection)
+//		console.log("Image: " + imageObject)
 		var collDirectory = collection.replace(new RegExp(':', 'g'), '_');
 		var imagePath = "image_archive/" + collDirectory + "/" + imageObject + ".dzi"
-		console.log("Will look for images in: " + imagePath)
+	//	console.log("Will look for images in: " + imagePath)
 		initOpenSeadragon(imagePath)
 	}
 
@@ -104,7 +104,7 @@ function initOpenSeadragon(imagePath) {
 					}
 				//})
 
-			},2000);
+			},4000);
 
 
 function distinctColor(n){

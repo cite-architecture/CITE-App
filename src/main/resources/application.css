@@ -6,7 +6,24 @@
   transition: all 0.3s ease-in 0s;
 }
 
+div#object_objectContainer li.cols {
+	font-size: 80%;
+	list-style-type: none;
+	float: left;
+	max-width: 300px;
+	margin-bottom: 2em;
+	margin-right: 1.5em;
+}
 
+div#object_objectContainer li.cols:before {
+	content: "·";
+	margin-right: 1em;
+	margin-left: -1.5em;
+}
+
+#object_navButtonContainer_bottom {
+	clear: both;
+}
 
 /* Image Formating */
 div#image_imageContainer {
@@ -185,6 +202,7 @@ a:hover {
 }
 
 .app_hidden {
+	display: none;
 	visibility: hidden;
 	-webkit-opacity: 0;
 	-moz-opacity: 0;
