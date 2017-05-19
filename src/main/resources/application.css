@@ -12,13 +12,19 @@ div#object_objectContainer li.cols {
 	float: left;
 	max-width: 300px;
 	margin-bottom: 2em;
+}
+
+div#object_objectContainer li.list {
+	list-style-type: none;
+	margin-bottom: 1em;
 	margin-right: 1.5em;
 }
 
-div#object_objectContainer li.cols:before {
+
+div#object_objectContainer li.list:before {
 	content: "·";
-	margin-right: 1em;
-	margin-left: -1.5em;
+	margin-right: 2em;
+	margin-left: -2em;
 }
 
 #object_navButtonContainer_bottom {

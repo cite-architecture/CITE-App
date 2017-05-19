@@ -169,13 +169,30 @@ def renderObjects = {
 /* Create either URN+Label or full property-table for an object */
 @dom
 def renderSingleObject(obj:CiteObject) = {
+	if (ObjectModel.showObjects.get){
 			<li class="cols">
+				<table>
+					<tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Value</th>
+					</tr>
+					<tr>
+							<td>p</td>
+							<td>t</td>
+							<td>v</td>
+					</tr>
+				</table>
+			</li>
+	} else {
+			<li class="list"><strong>
 				{ obj.urn.toString }
-				::
+				</strong>
+			  -
 				{ obj.label }
 			</li>
+	}
 }
-
 
 
 /* Controls for limit and offset, as well as listing or showing objects */
@@ -203,7 +220,7 @@ def collectionBrowseControls = {
 
 			<div class="onoffswitch">
 			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="browse_onoffswitch" checked={false}
-					onchange={ event: Event => ObjectController.switchDisplay( event )}
+					onchange={ event: Event => js.timers.setTimeout(500){ ObjectController.switchDisplay( event )}}
 					/>
 			    <label class="onoffswitch-label" for="browse_onoffswitch">
 			        <span class="onoffswitch-inner"></span>

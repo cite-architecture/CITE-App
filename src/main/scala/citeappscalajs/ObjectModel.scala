@@ -95,9 +95,9 @@ object ObjectModel {
 					currentNext := None
 			}
 			case _ => {
-				g.console.log("updating pn")
-				g.console.log(s"current p: ${currentPrev.get}; n: ${currentNext.get}")
-				g.console.log(s"num in c: ${ObjectModel.objects.get.size}")
+				//g.console.log("updating pn")
+				//g.console.log(s"current p: ${currentPrev.get}; n: ${currentNext.get}")
+				//g.console.log(s"num in c: ${ObjectModel.objects.get.size}")
 				val numC = objects.get.size
 				if(limit.get >= numC){
 					currentPrev := None
@@ -125,9 +125,11 @@ object ObjectModel {
 						currentPrev := Option(urn.get,o,limit.get)
 					}
 				}
+				/*
 				g.console.log("…now…")
 				g.console.log(s"current p: ${currentPrev.get}; n: ${currentNext.get}")
 				g.console.log("-------------------------")
+				*/
 			}
 		}
 	}

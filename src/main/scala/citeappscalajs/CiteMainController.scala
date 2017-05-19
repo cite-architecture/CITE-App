@@ -96,7 +96,6 @@ object CiteMainController {
 
 		try {
 			val repo:CiteLibrary = CiteLibrary(cexString, columnDelimiter, fieldDelimiter)
-			println("got here okay.")
 			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
 			var loadMessage:String = ""
 

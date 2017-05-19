@@ -26,8 +26,11 @@ object ObjectController {
 	//     false -> show URN and label only
 	@dom
 	def switchDisplay(thisEvent: Event):Unit = {
+		val before = ObjectModel.showObjects.get
 		val showObjectsStr:String = js.Dynamic.global.document.getElementById("browse_onoffswitch").checked.toString
 		ObjectModel.showObjects := (showObjectsStr == "true")
+		g.console.log(s"Switched from ${before} to ${ObjectModel.showObjects.get}")
+		ObjectController.setDisplay
 	}
 
 	def updateUserMessage(msg: String, alert: Int): Unit = {
