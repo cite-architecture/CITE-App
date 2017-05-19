@@ -39,6 +39,9 @@ object ObjectModel {
 	val displayObjects = Vars.empty[CiteObject]
 	val isOrdered = Var(false)
 
+	//val tempPropTypes = CitePropertyDef(Cite2Urn("urn:cite2:hmt:msA.v1.urn:"),"URN",Cite2UrnType)
+	val currentPropertyTypes = Vars.empty[CitePropertyDef]
+
 	// For Display
 	val offset = Var(1)
 	val limit = Var(4)

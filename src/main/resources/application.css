@@ -1,17 +1,28 @@
 /* Object Formatting */
 
+div#object_objectContainer table {
+	max-width: 700px;
+	border: 1px dashed silver;
+	margin: 1em;
+}
+
+div#object_objectContainer table th, div#object_objectContainer table td {
+	word-break: break-all;
+	vertical-align: top;
+	line-height: 1.2em;
+	padding-right: 1em;
+}
+
+
 #object_browseControls {
 	font-size: 80%;
 	margin-left: -4px;
   transition: all 0.3s ease-in 0s;
 }
 
-div#object_objectContainer li.cols {
+div#object_objectContainer li.tables {
 	font-size: 80%;
 	list-style-type: none;
-	float: left;
-	max-width: 300px;
-	margin-bottom: 2em;
 }
 
 div#object_objectContainer li.list {
@@ -22,9 +33,7 @@ div#object_objectContainer li.list {
 
 
 div#object_objectContainer li.list:before {
-	content: "·";
-	margin-right: 2em;
-	margin-left: -2em;
+	margin-left: 2em;
 }
 
 #object_navButtonContainer_bottom {

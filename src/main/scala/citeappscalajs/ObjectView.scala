@@ -160,40 +160,51 @@ def renderObjects = {
 	<ul>
 	{
 		for (obj <- ObjectModel.displayObjects ) yield {
-			{ renderSingleObject(obj).bind }
+			if ((ObjectModel.showObjects.get) || (ObjectModel.objectOrCollection.get == "object")){
+
+				val collUrn = ObjectModel.urn.get.dropSelector
+				val propList = obj.propertyList.map(pl => {
+
+				val pt = ObjectModel.collections.get.filter(_.urn == collUrn)(0).propertyDefs.filter(_.urn == pl.urn.dropSelector)(0).propertyType.toString
+
+					Var(Tuple3(pl.urn,pt,pl.propertyValue.toString))
+
+				}).toList
+				<li class="tables">
+					<table>
+						<tr>
+	            <th>Property</th>
+	            <th>Type</th>
+	            <th>Value</th>
+						</tr>
+
+						{ renderList(propList).bind }
+
+					</table>
+				</li>
+			} else {
+			 <li class="list"><strong>
+					{ obj.urn.toString }
+					</strong>
+				  -
+					{ obj.label }
+				</li>
+			}
 		}
 	}
 	</ul>
 }
 
-/* Create either URN+Label or full property-table for an object */
-@dom
-def renderSingleObject(obj:CiteObject) = {
-	if (ObjectModel.showObjects.get){
-			<li class="cols">
-				<table>
-					<tr>
-            <th>Property</th>
-            <th>Type</th>
-            <th>Value</th>
-					</tr>
-					<tr>
-							<td>p</td>
-							<td>t</td>
-							<td>v</td>
-					</tr>
-				</table>
-			</li>
-	} else {
-			<li class="list"><strong>
-				{ obj.urn.toString }
-				</strong>
-			  -
-				{ obj.label }
-			</li>
-	}
+@dom def renderList(data: List[Var[Tuple3[Cite2Urn,String,String]]]) = {
+  import scalaz.std.list._
+			for (v <- data) yield {
+				<tr>
+		    <td>{v.bind._1.toString}</td>
+		    <td>{v.bind._2.toString}</td>
+		    <td>{v.bind._3.toString}</td>
+				</tr>
+		  }
 }
-
 
 /* Controls for limit and offset, as well as listing or showing objects */
 
