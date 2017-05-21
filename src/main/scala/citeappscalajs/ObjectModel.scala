@@ -47,6 +47,7 @@ object ObjectModel {
 	val limit = Var(4)
 	val showObjects = Var(false) // if true, show a whole object; false, URN+label
 	val browsable = Var(false)
+	val objectReport = Var("")
 
 	// for navigation
 	val prevOption:Option[Tuple3[Cite2Urn,Int,Int]] = None
@@ -59,6 +60,7 @@ object ObjectModel {
 	//    Choices: "none","object","collection","range"
 	val objectOrCollection = Var("none")
 
+
 	// The big data repo from the .cex file
 	var collectionRepository: CiteCollectionRepository = null
 
@@ -66,8 +68,12 @@ object ObjectModel {
 	@dom
 	def clearObject:Unit = {
 			objects.get.clear
+			displayObjects.get.clear
+			browsable := false
 			currentPrev := None
 			currentNext := None
+			objectReport := ""
+			offset := 1
 	}
 
 	@dom
@@ -128,11 +134,6 @@ object ObjectModel {
 						currentPrev := Option(urn.get,o,limit.get)
 					}
 				}
-				/*
-				g.console.log("…now…")
-				g.console.log(s"current p: ${currentPrev.get}; n: ${currentNext.get}")
-				g.console.log("-------------------------")
-				*/
 			}
 		}
 	}
@@ -189,11 +190,13 @@ object ObjectModel {
 					}
 					// collection
 					case None => {
+
 					  val filteredData = ObjectModel.collectionRepository.citableObjects(u)
+
 					  filteredData.foreach( fc => {
 							ObjectModel.objects.get += fc
-							//ObjectController.setDisplay
 						})
+
 					}
 				}
 			}

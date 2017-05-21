@@ -70,9 +70,7 @@ object ImageController {
 		try {
 			ImageModel.displayUrn := urn
 			validUrnInField := true
-			g.console.log(s"Start with: ${urn}")
 			val oe = urn.objectExtensionOption
-			g.console.log(s"Extension: ${oe}")
 			oe match {
 				case Some(e) => {
 						val ve = Vector[String](e)

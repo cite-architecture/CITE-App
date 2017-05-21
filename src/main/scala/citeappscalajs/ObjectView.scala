@@ -142,6 +142,8 @@ def objectContainer = {
 			{ nextButton.bind }
 		</div>
 
+	{ objectInfo.bind }
+
 	{ renderObjects.bind }
 
 		<div id="object_navButtonContainer_bottom"
@@ -151,6 +153,13 @@ def objectContainer = {
 		</div>
 
 	</div>
+}
+
+@dom
+def objectInfo = {
+	<p id="objects_objectInfo">
+		{ ObjectModel.objectReport.bind }
+	</p>
 }
 
 /* Fancy switcher, either listing objects as urn+label, or showing all the object's propeties. */
@@ -163,12 +172,13 @@ def renderObjects = {
 			if ((ObjectModel.showObjects.get) || (ObjectModel.objectOrCollection.get == "object")){
 
 				val collUrn = ObjectModel.urn.get.dropSelector
+				val headList = List(Var(Tuple3(obj.urn,"Cite2UrnType",obj.urn.toString)), Var(Tuple3(obj.urn,"StringType",obj.label)))
 				val propList = obj.propertyList.map(pl => {
+					g.console.log(pl.toString)
 
 				val pt = ObjectModel.collections.get.filter(_.urn == collUrn)(0).propertyDefs.filter(_.urn == pl.urn.dropSelector)(0).propertyType.toString
 
-					Var(Tuple3(pl.urn,pt,pl.propertyValue.toString))
-
+				Var(Tuple3(pl.urn,pt,pl.propertyValue.toString))
 				}).toList
 				<li class="tables">
 					<table>
@@ -178,6 +188,7 @@ def renderObjects = {
 	            <th>Value</th>
 						</tr>
 
+						{ renderList(headList).bind }
 						{ renderList(propList).bind }
 
 					</table>
@@ -186,7 +197,7 @@ def renderObjects = {
 			 <li class="list"><strong>
 					{ obj.urn.toString }
 					</strong>
-				  -
+
 					{ obj.label }
 				</li>
 			}
@@ -201,7 +212,7 @@ def renderObjects = {
 				<tr>
 		    <td>{v.bind._1.toString}</td>
 		    <td>{v.bind._2.toString}</td>
-		    <td>{v.bind._3.toString}</td>
+				<td>{ propertyUrnSpan(v.get._3.toString).bind }</td>
 				</tr>
 		  }
 }
@@ -280,6 +291,28 @@ def collectionUrnSpan(urn:Cite2Urn) = {
 	{ urn.toString }
 	</span>
 }
+
+/* For URN properties in objects */
+@dom
+def propertyUrnSpan(urnStr:String) = {
+		<span
+		class={
+			if (urnStr.contains("urn:")){
+				"app_clickable"
+			} else {
+				""
+			}
+		}
+		onclick={ event: Event => {
+			if (urnStr.contains("urn:")){
+				ObjectController.propertyUrnClick(urnStr)
+			}
+			}
+		}>
+	{ urnStr }
+	</span>
+}
+
 
 
 	/* Navigation Buttons */

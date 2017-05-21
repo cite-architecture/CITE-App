@@ -29,7 +29,6 @@ object ObjectController {
 		val before = ObjectModel.showObjects.get
 		val showObjectsStr:String = js.Dynamic.global.document.getElementById("browse_onoffswitch").checked.toString
 		ObjectModel.showObjects := (showObjectsStr == "true")
-		g.console.log(s"Switched from ${before} to ${ObjectModel.showObjects.get}")
 		ObjectController.setDisplay
 	}
 
@@ -108,6 +107,9 @@ object ObjectController {
 					case "range" =>{
 						ObjectModel.getObjects(tempUrn)
 					}
+					case _ => {
+						g.console.log("Nothing to change.")
+					}
 			}
 		ObjectController.setDisplay
 	}
@@ -178,27 +180,26 @@ object ObjectController {
 
 	@dom
 	def clearResults = {
-			g.console.log("Clearing results")
+			//g.console.log("Clearing results")
 	}
+
 
 	@dom
 	def clearHistory = {
-			g.console.log("Clearing history")
+			//g.console.log("Clearing history")
 	}
 
 	def insertFirstObjectUrn(urn: Cite2Urn): Unit = {
-		//g.console.log(s"Will get first urn for: ${urn}")
-
+		ObjectModel.clearObject
 		val firstUrn:Cite2Urn = ObjectModel.collectionRepository.citableObjects(urn)(0).urn
 
 		js.Dynamic.global.document.getElementById("object_urnInput").value = firstUrn.toString
 		ObjectModel.objectOrCollection := "object"
-	//js.Dynamic.global.document.getElementById("o2_urnInput").value = firstUrn.toString
-	//validUrnInField := true
 	}
 
 	@dom
 	def getNext:Unit = {
+		g.console.log("getNext")
 		ObjectModel.currentNext.get match {
 			case Some(u) => {
 				val nu:Cite2Urn = u._1
@@ -271,6 +272,7 @@ object ObjectController {
 			 	ObjectModel.displayObjects.get.clear
 				ObjectModel.displayObjects.get += ObjectModel.objects.get(0)
 				ObjectModel.updatePrevNext
+				ObjectController.updateReport
 		 } else {
 			 if (tOff > numObj){
 				 ObjectController.updateUserMessage(s"There are ${numObj} objects in the requested ${ObjectModel.objectOrCollection.get}, so an offset of ${tOff} is invalid.",2)
@@ -288,8 +290,18 @@ object ObjectController {
 					ObjectModel.displayObjects.get += ObjectModel.collectionRepository.citableObjects(collUrn)(i)
 				}
 				ObjectModel.updatePrevNext
+				ObjectController.updateReport
 			}
 		}
+	}
+
+	def updateReport:Unit = {
+		val collUrn:Cite2Urn = ObjectModel.urn.get.dropSelector
+		val collLabel:String = ObjectModel.collectionRepository.collectionDefinition(collUrn).get.collectionLabel
+		val n:Int = ObjectModel.displayObjects.get.size
+		val total:Int = ObjectModel.collectionRepository.collectionData(collUrn).objects.size
+		val report = s"Showing ${n} out of ${total} objects in collection: ${collLabel} [${collUrn}]."
+		ObjectModel.objectReport := report
 	}
 
 
@@ -326,5 +338,10 @@ object ObjectController {
 			}
 		}
 	}
+
+	def propertyUrnClick(urnSt:String) = {
+			g.console.log(s"Clicked… ${urnSt}")
+	}
+
 
 }

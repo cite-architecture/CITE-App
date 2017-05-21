@@ -95,6 +95,7 @@ object CiteMainController {
 	def updateRepository(cexString: String, columnDelimiter: String = "\t", fieldDelimiter: String = ",") = {
 
 		try {
+
 			val repo:CiteLibrary = CiteLibrary(cexString, columnDelimiter, fieldDelimiter)
 			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
 			var loadMessage:String = ""
@@ -122,6 +123,7 @@ object CiteMainController {
 
 			repo.collectionRepository match {
 				case Some(cr) => {
+
 					ObjectModel.collectionRepository = cr
 					ObjectModel.updateCollections
 					ObjectController.clearResults
