@@ -14,10 +14,10 @@ resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases")
 libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
   "org.scala-js" %%% "scalajs-dom" % "0.9.1",
-  "edu.holycross.shot.cite" %%% "xcite" % "2.3.1",
+  "edu.holycross.shot.cite" %%% "xcite" % "2.4.0",
   "edu.holycross.shot" %%% "ohco2" % "8.0.1",
-  "edu.holycross.shot" %%% "scm" % "3.3.0",
-  "edu.holycross.shot" %%% "citeobj" % "1.4.0",
+  "edu.holycross.shot" %%% "scm" % "3.5.0",
+  "edu.holycross.shot" %%% "citeobj" % "2.0.0",
   "edu.holycross.shot" %% "citeenv" % "1.1.2",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
 )

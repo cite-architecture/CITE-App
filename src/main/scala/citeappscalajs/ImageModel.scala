@@ -24,6 +24,11 @@ object ImageModel {
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 
 
+
+  // Image Collections here
+	val imgArchivePath:String = "../../../image_archive/"
+	var imageCollections:ImageExtensions = null
+
 	// urn is what the user requested
 	val urn = Var(Cite2Urn("urn:cite2:ns:coll.v1:obj"))
 	// displayUrn is what will be shown

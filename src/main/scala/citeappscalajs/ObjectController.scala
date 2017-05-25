@@ -86,7 +86,10 @@ object ObjectController {
 		val tempUrn:Cite2Urn = ObjectModel.urn.get
 		ObjectModel.clearObject
 		val collUrn = ObjectModel.urn.get.dropSelector
+
+		// Based on the new URN, set image, ordered, browsable flags
 		ObjectModel.isOrdered := ObjectModel.collectionRepository.isOrdered(collUrn)
+
 		if (
 				(ObjectModel.objectOrCollection.get == true) ||
 				(ObjectModel.urn.get.isRange == true) ||
@@ -210,7 +213,7 @@ object ObjectController {
 						ObjectController.changeUrn(nu)
 					}
 					case "none" => {
-						ObjectController.updateUserMessage("There is no object. getNext should not have been called",2)
+						ObjectController.updateUserMessage("There is no object. getNext should not have been called. Please file an issue on GitHub.",2)
 					}
 					// range or paged collection
 					case _ => {
@@ -221,7 +224,7 @@ object ObjectController {
 				}
 			}
 			case _ => {
-					ObjectController.updateUserMessage("There is no next object. getNext should not have been called",2)
+					ObjectController.updateUserMessage("There is no next object. getNext should not have been called. Please file an issue on GitHub.",2)
 			}
 		}
 	}
@@ -257,7 +260,7 @@ object ObjectController {
 	@dom
 	def setDisplay:Unit = {
 		 val collUrn:Cite2Urn = ObjectModel.urn.get.dropSelector
-		 val numObj:Int = ObjectModel.objects.get.size
+		 val numObj:Int = ObjectModel.boundObjects.get.size
 		 val tLim:Int = ObjectModel.limit.get
 		 val tOff:Int = ObjectModel.offset.get
 		 val startIndex:Int = tOff - 1
@@ -269,25 +272,19 @@ object ObjectController {
 			 }
 		 }
 		 if (ObjectModel.objectOrCollection.get == "object"){
-			 	ObjectModel.displayObjects.get.clear
-				ObjectModel.displayObjects.get += ObjectModel.objects.get(0)
+			 	ObjectModel.boundDisplayObjects.get.clear
+				// Here we need to send off to construct displayObjects that are bound
+				ObjectModel.boundDisplayObjects.get += ObjectModel.constructBoundDisplayObject(ObjectModel.boundObjects.get(0))
+
 				ObjectModel.updatePrevNext
 				ObjectController.updateReport
 		 } else {
 			 if (tOff > numObj){
 				 ObjectController.updateUserMessage(s"There are ${numObj} objects in the requested ${ObjectModel.objectOrCollection.get}, so an offset of ${tOff} is invalid.",2)
 			 } else {
-				 /*
-			 	g.console.log(s"numObj = ${numObj}")
-			 	g.console.log(s"tLim = ${tLim}")
-			 	g.console.log(s"tOff = ${tOff}")
-			 	g.console.log(s"startIndex = ${startIndex}")
-			 	g.console.log(s"endIndex = ${endIndex}")
-			 	g.console.log(s"------------------------")
-				*/
-				ObjectModel.displayObjects.get.clear
+				ObjectModel.boundDisplayObjects.get.clear
 				for (i <- startIndex to endIndex){
-					ObjectModel.displayObjects.get += ObjectModel.collectionRepository.citableObjects(collUrn)(i)
+					ObjectModel.boundDisplayObjects.get += ObjectModel.constructBoundDisplayObject(ObjectModel.collectionRepository.citableObjects(collUrn)(i))
 				}
 				ObjectModel.updatePrevNext
 				ObjectController.updateReport
@@ -298,7 +295,7 @@ object ObjectController {
 	def updateReport:Unit = {
 		val collUrn:Cite2Urn = ObjectModel.urn.get.dropSelector
 		val collLabel:String = ObjectModel.collectionRepository.collectionDefinition(collUrn).get.collectionLabel
-		val n:Int = ObjectModel.displayObjects.get.size
+		val n:Int = ObjectModel.boundDisplayObjects.get.size
 		val total:Int = ObjectModel.collectionRepository.collectionData(collUrn).objects.size
 		val report = s"Showing ${n} out of ${total} objects in collection: ${collLabel} [${collUrn}]."
 		ObjectModel.objectReport := report
@@ -339,8 +336,11 @@ object ObjectController {
 		}
 	}
 
+ @JSExport
 	def propertyUrnClick(urnSt:String) = {
-			g.console.log(s"Clicked… ${urnSt}")
+		  // below is how you invoke a cofirmation dialog
+			// val cc = window.confirm("Hi")
+			CiteSwitcher.switch(urnSt)
 	}
 
 

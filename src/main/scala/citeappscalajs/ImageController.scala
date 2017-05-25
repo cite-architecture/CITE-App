@@ -36,6 +36,24 @@ object ImageController {
 		ImageModel.msgTimer = js.timers.setTimeout(6000){ ImageModel.userMessageVisibility := "app_hidden" }
 	}
 
+	def imgThumb(urn:Cite2Urn):String = {
+			val path:String = s"""${ImageModel.imgArchivePath}${urn.dropSelector.toString.replaceAll(":","_")}/${urn.objectComponent}_files/8/0_0.jpeg"""
+			path
+	}
+
+	def getFullImagePath(urn:Cite2Urn):String = {
+			val path:String = s"""${ImageModel.imgArchivePath}${urn.dropSelector.toString.replaceAll(":","_")}/${urn.objectComponent}.jpeg"""
+			path
+	}
+
+	def getBinaryImage(urn:Cite2Urn):String = {
+		val canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
+	  val ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
+	  canvas.width = (0.95 * window.innerWidth).toInt
+	  canvas.height = (0.95 * window.innerHeight).toInt
+		val s:String = "Test"
+		s
+	}
 
 	def validateUrn(urnString: String): Unit = {
 		try{

@@ -117,7 +117,6 @@ object CiteMainController {
 				}
 				case None => {
 					loadMessage += "Chosen repository does not seem to include a TextRepository. "
-					CiteMainController.updateUserMessage("Chosen repository does not seem to include a TextRepository.",2)
 				}
 			}
 
@@ -133,11 +132,23 @@ object CiteMainController {
 					loadMessage += s"Updated collection repository: ${ cr.collections.size  } collections."
 
 				}
+
 				case None => {
 					loadMessage += "Chosen repository does not seem to include a TextRepository. "
-					CiteMainController.updateUserMessage("Chosen repository does not seem to include a TextRepository.",2)
 				}
 			}
+
+			repo.imageExtensions match {
+				case Some(ie) => {
+						ImageModel.imageCollections = ie
+						loadMessage += s"Image collections: ${ie.protocolMap.size}."
+				}
+
+				case None => {
+					loadMessage += "Chosen repository does not seem to include any image collections. "
+				}
+			}
+
 			CiteMainController.updateUserMessage(loadMessage,0)
 
 		} catch  {

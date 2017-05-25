@@ -24,4 +24,8 @@ object CiteMainModel {
 
 		val currentLibraryMetadataString = Var("No library loaded.")
 
+		val textProtocol = "TextProtocol"
+		val objectProtocol = "ObjectProtocol"
+		val localImageProtocol = "LocalImageProtocol"
+
 }

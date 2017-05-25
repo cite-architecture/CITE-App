@@ -35,12 +35,23 @@ object ObjectModel {
 
 	// Keeping track of current collection data
 	val collections = Vars.empty[CiteCollectionDef]
-	val objects = Vars.empty[CiteObject]
-	val displayObjects = Vars.empty[CiteObject]
+
+	// Binding up objects, their properties, and extensions
+	val citeObject:Var[CiteObject] = null
+
+	case class BoundCiteProperty(urn:Var[Cite2Urn],propertyType:Var[CitePropertyType],propertyValue:Var[String])
+
+	case class BoundCiteProtocol(prot:Var[String])
+
+  case class BoundDisplayObject(urn:Var[Cite2Urn], label:Var[String],props:Vars[BoundCiteProperty], prot:Vars[BoundCiteProtocol])
+
+
+	val boundObjects = Vars.empty[CiteObject]
+	val boundDisplayObjects = Vars.empty[BoundDisplayObject]
+
+	// for collection-browsing
 	val isOrdered = Var(false)
 
-	//val tempPropTypes = CitePropertyDef(Cite2Urn("urn:cite2:hmt:msA.v1.urn:"),"URN",Cite2UrnType)
-	val currentPropertyTypes = Vars.empty[CitePropertyDef]
 
 	// For Display
 	val offset = Var(1)
@@ -55,7 +66,6 @@ object ObjectModel {
 	val currentPrev = Var(prevOption)
 	val currentNext = Var(nextOption)
 
-
 	// Object-or-collection? (based on current request)
 	//    Choices: "none","object","collection","range"
 	val objectOrCollection = Var("none")
@@ -64,11 +74,45 @@ object ObjectModel {
 	// The big data repo from the .cex file
 	var collectionRepository: CiteCollectionRepository = null
 
+	def constructBoundDisplayObject(obj:CiteObject):BoundDisplayObject = {
+		  val collUrn:Cite2Urn = obj.urn.dropSelector
+			val urn = Var(obj.urn)
+			val label = Var(obj.label)
+			val tempPropList = Vars.empty[BoundCiteProperty]
+			for (p <- obj.propertyList){
+					val tempU = Var(p.urn)
+					val tempV = Var(p.propertyValue.toString)
+					val tempT = Var(p.propertyDef.propertyType)
+					val tempP = BoundCiteProperty(tempU,tempT,tempV)
+					val props = Var(tempP)
+					tempPropList.get += tempP
+			}
+			val tempProtocolList = Vars.empty[BoundCiteProtocol]
+		  val tempProt0 = Var(CiteMainModel.objectProtocol)
+			tempProtocolList.get += BoundCiteProtocol(tempProt0)
+			// *********************
+			// Now we load other extensions… images for now, but others later!
+			// *********************
+			if (ImageModel.imageCollections != null) {
+				for (ie <- ImageModel.imageCollections.extensions(collUrn)) {
+					val imageVector = ie
+						if (imageVector.protocol == "Local jpeg string"){
+						   val tempProt1 = Var(CiteMainModel.localImageProtocol)
+							 tempProtocolList.get += BoundCiteProtocol(tempProt1)
+						}
+				}
+			}
+		//BoundDisplayObject(urn:Var[Cite2Urn], label:Var[String],props:Vars[BoundCiteProperty], prot:Vars[BoundCiteProtocol])
+		val tempBDO = BoundDisplayObject(urn,label,tempPropList,tempProtocolList)
+		tempBDO
+	}
+
+
 	// Clears all current object data, and with it, displayed objects
 	@dom
 	def clearObject:Unit = {
-			objects.get.clear
-			displayObjects.get.clear
+			boundObjects.get.clear
+			boundDisplayObjects.get.clear
 			browsable := false
 			currentPrev := None
 			currentNext := None
@@ -82,7 +126,7 @@ object ObjectModel {
 		ObjectModel.objectOrCollection.get match {
 			case "object" => {
 				if (isOrdered.get) {
-					val thisIndex = collectionRepository.indexOf(objects.get(0))
+					val thisIndex = collectionRepository.indexOf(boundObjects.get(0))
 					val numInCollection:Int = collectionRepository.citableObjects(currentColl).size
 					if (thisIndex + 1 < numInCollection){
 							currentNext := Option(collectionRepository.citableObjects(thisIndex + 1).urn,offset.get,limit.get)
@@ -107,7 +151,7 @@ object ObjectModel {
 				//g.console.log("updating pn")
 				//g.console.log(s"current p: ${currentPrev.get}; n: ${currentNext.get}")
 				//g.console.log(s"num in c: ${ObjectModel.objects.get.size}")
-				val numC = objects.get.size
+				val numC = boundObjects.get.size
 				if(limit.get >= numC){
 					currentPrev := None
 					currentNext := None
@@ -117,7 +161,6 @@ object ObjectModel {
 					} else {
 						// get next
 						val o:Int = offset.get + limit.get
-					//	val u:Cite2Urn = objects.get(o - 1).urn
 
 						currentNext := Option(urn.get,o,limit.get)
 					}
@@ -158,7 +201,7 @@ object ObjectModel {
 			var y:Int = ObjectModel.collectionRepository.indexOf(toObject)
 
 			for (i <- x to y){
-				ObjectModel.objects.get += ObjectModel.collectionRepository.citableObjects(fromUrn.dropSelector)(i)
+				ObjectModel.boundObjects.get += ObjectModel.collectionRepository.citableObjects(fromUrn.dropSelector)(i)
 			}
 		} catch {
 			case e: Exception => {
@@ -185,7 +228,7 @@ object ObjectModel {
 				u.objectComponentOption match {
 					// Just object
 					case Some(o) => {
-						 ObjectModel.objects.get += ObjectModel.collectionRepository.citableObjects.filter(_.urn == u)(0)
+						 ObjectModel.boundObjects.get += ObjectModel.collectionRepository.citableObjects.filter(_.urn == u)(0)
 						 //ObjectController.setDisplay
 					}
 					// collection
@@ -194,7 +237,7 @@ object ObjectModel {
 					  val filteredData = ObjectModel.collectionRepository.citableObjects(u)
 
 					  filteredData.foreach( fc => {
-							ObjectModel.objects.get += fc
+							ObjectModel.boundObjects.get += fc
 						})
 
 					}

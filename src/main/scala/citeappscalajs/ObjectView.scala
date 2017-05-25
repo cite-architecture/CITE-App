@@ -133,7 +133,7 @@ def objectToCollectionButton = {
 @dom
 def objectContainer = {
 	<div id="object_objectContainer" data:bgtext="No Object"
-	class={ s"""${if( ObjectModel.objects.bind.size == 0 ){ "object_empty" } else {"object_not_empty"}}""" }
+	class={ s"""${if( ObjectModel.boundObjects.bind.size == 0 ){ "object_empty" } else {"object_not_empty"}}""" }
 	>
 
 		<div id="object_navButtonContainer_top"
@@ -168,18 +168,9 @@ def objectInfo = {
 def renderObjects = {
 	<ul>
 	{
-		for (obj <- ObjectModel.displayObjects ) yield {
+		for (obj <- ObjectModel.boundDisplayObjects ) yield {
 			if ((ObjectModel.showObjects.get) || (ObjectModel.objectOrCollection.get == "object")){
 
-				val collUrn = ObjectModel.urn.get.dropSelector
-				val headList = List(Var(Tuple3(obj.urn,"Cite2UrnType",obj.urn.toString)), Var(Tuple3(obj.urn,"StringType",obj.label)))
-				val propList = obj.propertyList.map(pl => {
-					g.console.log(pl.toString)
-
-				val pt = ObjectModel.collections.get.filter(_.urn == collUrn)(0).propertyDefs.filter(_.urn == pl.urn.dropSelector)(0).propertyType.toString
-
-				Var(Tuple3(pl.urn,pt,pl.propertyValue.toString))
-				}).toList
 				<li class="tables">
 					<table>
 						<tr>
@@ -187,18 +178,13 @@ def renderObjects = {
 	            <th>Type</th>
 	            <th>Value</th>
 						</tr>
-
-						{ renderList(headList).bind }
-						{ renderList(propList).bind }
-
 					</table>
 				</li>
 			} else {
 			 <li class="list"><strong>
-					{ obj.urn.toString }
+					{ obj.urn.bind.toString }
 					</strong>
-
-					{ obj.label }
+					{ obj.label.bind }
 				</li>
 			}
 		}
@@ -206,16 +192,15 @@ def renderObjects = {
 	</ul>
 }
 
-@dom def renderList(data: List[Var[Tuple3[Cite2Urn,String,String]]]) = {
-  import scalaz.std.list._
-			for (v <- data) yield {
-				<tr>
-		    <td>{v.bind._1.toString}</td>
-		    <td>{v.bind._2.toString}</td>
-				<td>{ propertyUrnSpan(v.get._3.toString).bind }</td>
-				</tr>
-		  }
+@dom def thumbnailView(urn:Cite2Urn) = {
+		<img src={ ImageController.imgThumb(urn) } class="object_imgThumb"
+		onclick={ event: Event => {
+			g.console.log(s"Image click ${urn}")
+			}
+		}
+		/>
 }
+
 
 /* Controls for limit and offset, as well as listing or showing objects */
 
@@ -229,7 +214,6 @@ def collectionBrowseControls = {
 				case _ => "app_hidden"
 			}
 		}
-
 		>
 
 			<label for="object_browseOffset">Start at</label>
@@ -295,24 +279,8 @@ def collectionUrnSpan(urn:Cite2Urn) = {
 /* For URN properties in objects */
 @dom
 def propertyUrnSpan(urnStr:String) = {
-		<span
-		class={
-			if (urnStr.contains("urn:")){
-				"app_clickable"
-			} else {
-				""
-			}
-		}
-		onclick={ event: Event => {
-			if (urnStr.contains("urn:")){
-				ObjectController.propertyUrnClick(urnStr)
-			}
-			}
-		}>
-	{ urnStr }
-	</span>
+		<span></span>
 }
-
 
 
 	/* Navigation Buttons */

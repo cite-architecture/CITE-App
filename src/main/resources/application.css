@@ -11,6 +11,15 @@ div#object_objectContainer ul {
 	margin: 0;
 }
 
+div#object_objectContainer ul li {
+	clear: left;
+}
+
+img.object_imgThumb {
+	float: left;
+	margin: 0 10px 10px 0;
+}
+
 p#objects_objectInfo {
 	display: block;
 	font-size: 80%;
