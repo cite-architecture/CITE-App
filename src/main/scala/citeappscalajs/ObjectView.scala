@@ -178,6 +178,23 @@ def renderObjects = {
 	            <th>Type</th>
 	            <th>Value</th>
 						</tr>
+						<tr>
+							<td>URN</td>
+							<td>Cite2UrnType</td>
+							<td>
+							{ ObjectView.renderCiteUrnProperty(obj.urn.get).bind }
+							</td>
+						</tr>
+						<tr>
+							<td>Label</td>
+							<td>StringType</td>
+							<td>{ obj.label.bind }</td>
+						</tr>
+						{
+							for (p <- obj.props) yield {
+									 	{ ObjectView .renderProperty(p).bind }
+							}
+						}
 					</table>
 				</li>
 			} else {
@@ -190,6 +207,61 @@ def renderObjects = {
 		}
 	}
 	</ul>
+}
+
+
+@dom def renderCiteUrnProperty(u:Cite2Urn) = {
+<p>
+	{ ObjectView.objectLinks(u).bind }
+</p>
+}
+
+@dom def renderProperty(p:ObjectModel.BoundCiteProperty) = {
+	<tr>
+	<td>{ p.urn.bind.toString }</td>
+	<td>{ p.propertyType.bind.toString }</td>
+	<td>{
+		p.propertyType.get match {
+			case Cite2UrnType =>{ <p>{ ObjectView.renderCiteUrnProperty(Cite2Urn(p.propertyValue.get)).bind }</p>}
+			case CtsUrnType =>{ <p>{ s"CtsUrnProperty: ${p.propertyValue.bind}"}</p>}
+			case _ =>{ <p>{ s"${p.propertyValue.bind.toString}"}</p>}
+		}
+
+	}</td>
+	</tr>
+}
+
+@dom
+def objectLinks(u:Cite2Urn) = {
+	val collUrn = u.dropSelector
+	if (ImageModel.imageCollections.extensions(collUrn).size > 0){
+		{
+			<span>
+			{ s"${u.toString}" } <br/>
+			<a
+			onclick={ event: Event => {
+				ObjectController.updateUserMessage("Retrieving object…",1)
+				js.timers.setTimeout(500){ ObjectController.changeUrn(u) }
+				}
+			} >View as Object</a> |
+			<a >View as Image</a> <br/>
+			{ ObjectView.thumbnailView(u).bind }
+			</span>
+		}
+	} else {
+		{
+			<span>
+			<a
+			onclick={ event: Event => {
+				ObjectController.updateUserMessage("Retrieving object…",1)
+				js.timers.setTimeout(500){ ObjectController.changeUrn(u) }
+				}
+			}>
+				{ s"${u.toString}" }
+			</a>
+			</span>
+		}
+	}
 }
 
 @dom def thumbnailView(urn:Cite2Urn) = {

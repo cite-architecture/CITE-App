@@ -4,6 +4,7 @@ div#object_objectContainer table {
 	max-width: 700px;
 	border: 1px dashed silver;
 	margin: 1em;
+	padding: 0.5em
 }
 
 div#object_objectContainer ul {
@@ -17,7 +18,7 @@ div#object_objectContainer ul li {
 
 img.object_imgThumb {
 	float: left;
-	margin: 0 10px 10px 0;
+	margin: 10px 10px 10px 0;
 }
 
 p#objects_objectInfo {
@@ -29,10 +30,23 @@ p#objects_objectInfo {
 
 div#object_objectContainer table td {
 	min-width: 7em;
+	vertical-align: top;
+}
+
+div#object_objectContainer table td p {
+	margin-top: 0px;
 }
 
 div#object_objectContainer table th {
-	background-color: rgba(220,220,240,0.8);
+	background-color: rgba(0, 0, 94, 0.54);
+	color: white;
+}
+
+div#object_objectContainer table tr:nth-child(even) {
+	background: rgba(234, 234, 255, 0.4);
+}
+div#object_objectContainer table tr:nth-child(odd) {
+	background: white;
 }
 
 div#object_objectContainer table th, div#object_objectContainer table td {

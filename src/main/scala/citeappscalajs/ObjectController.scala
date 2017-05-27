@@ -340,7 +340,7 @@ object ObjectController {
 	def propertyUrnClick(urnSt:String) = {
 		  // below is how you invoke a cofirmation dialog
 			// val cc = window.confirm("Hi")
-			CiteSwitcher.switch(urnSt)
+			//CiteSwitcher.switch(urnSt)
 	}
 
 

@@ -21,8 +21,25 @@ import scala.scalajs.js.annotation.JSExport
 object CiteSwitcher {
 
 
-	def switch(s:String):Unit = {
-			g.console.log(s"Will handle ${s}.")
+	@dom
+	def objectLinks(u:Cite2Urn) = {
+		val collUrn = u.dropSelector
+		if (ImageModel.imageCollections.extensions(collUrn).size > 0){
+			{
+				<span>
+				{ s"${u.toString}" } <br/>
+				<a >View as Object</a> |
+				<a >View as Image</a>
+				</span>
+			}
+		} else {
+			{
+				<span>
+				{ s"${u.toString}" }
+				<a >View as Object</a>
+				</span>
+			}
+		}
 	}
 
 
