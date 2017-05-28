@@ -99,7 +99,7 @@ def retrievePassageButton = {
 @dom
 def seeAllVersionsButton = {
 	<button
-		disabled = { if (O2Model.versionsForCurrentUrn.bind > 1) false else true }
+		disabled = { if (O2Model.versionsForCurrentUrn.bind > 0) false else true }
 		onclick = { event: Event => {
 				O2Model.displayUrn := O2Model.collapseToWorkUrn(O2Model.urn.get)
 				O2Model.displayNewPassage(O2Model.displayUrn.get)

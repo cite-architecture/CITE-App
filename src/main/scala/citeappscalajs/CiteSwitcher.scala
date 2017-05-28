@@ -24,7 +24,7 @@ object CiteSwitcher {
 	@dom
 	def objectLinks(u:Cite2Urn) = {
 		val collUrn = u.dropSelector
-		if (ImageModel.imageCollections.extensions(collUrn).size > 0){
+		if (ImageModel.imageExtensions.extensions(collUrn).size > 0){
 			{
 				<span>
 				{ s"${u.toString}" } <br/>

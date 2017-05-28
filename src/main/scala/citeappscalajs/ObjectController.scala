@@ -32,6 +32,25 @@ object ObjectController {
 		ObjectController.setDisplay
 	}
 
+	def objectIsPresent(u:Cite2Urn):Boolean = {
+		if (ObjectModel.collectionRepository.citableObjects.filter(_.urn == u).size > 0){
+			true
+		} else { false }
+
+	}
+
+	def labelForCollection(u:Cite2Urn):String = {
+		val collUrn = u.dropSelector
+		ObjectModel.collectionRepository.collectionDefinition(collUrn) match {
+			case Some(cd) => {
+				cd.collectionLabel
+			}
+			case _ => {
+				s"Collection ${collUrn} is not represented in this repository."
+			}
+		}
+	}
+
 	def updateUserMessage(msg: String, alert: Int): Unit = {
 		ObjectModel.userMessageVisibility := "app_visible"
 		ObjectModel.userMessage := msg

@@ -94,7 +94,7 @@ object ObjectModel {
 			// Now we load other extensions… images for now, but others later!
 			// *********************
 			if (ImageModel.imageCollections != null) {
-				for (ie <- ImageModel.imageCollections.extensions(collUrn)) {
+				for (ie <- ImageModel.imageExtensions.extensions(collUrn)) {
 					val imageVector = ie
 						if (imageVector.protocol == "Local jpeg string"){
 						   val tempProt1 = Var(CiteMainModel.localImageProtocol)

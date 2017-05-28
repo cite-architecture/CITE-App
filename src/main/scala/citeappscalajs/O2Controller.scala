@@ -29,7 +29,7 @@ object O2Controller {
 		O2Model.displayPassage(newUrn)
 		O2Model.getPrevNextUrn(O2Model.urn.get)
 		val timeEnd = new js.Date().getTime()
-		O2Controller.updateUserMessage(s"Fetched text in ${(timeEnd - timeStart)/1000} seconds.",0)
+		O2Controller.updateUserMessage(s"Fetched ${O2Model.currentCitableNodes.get} citation objects in ${(timeEnd - timeStart)/1000} seconds.",0)
 	}
 
 

@@ -167,11 +167,24 @@ def imageSearchResults = {
 def imageCollectionsContainer = {
 	<div id="image_imageCollectionsContainer">
 	<h2>Image Collections</h2>
-	<ul>
-			<li>
-			urn <br/> description
-			</li>
-	</ul>
+		{
+			<ul>
+			{ for (ic <- ImageModel.imageCollections ) yield {
+				<li>
+					<a
+					onclick={ event: Event => {
+						CiteMainController.retrieveObject(ic)
+						}
+					}>
+						{ s"${ic}" }
+					</a>
+					<br/>
+					{ ObjectController.labelForCollection(ic) }
+				</li>
+				}
+			}
+			</ul>
+		}
 	</div>
 }
 

@@ -24,6 +24,7 @@ object O2Model {
 	//val passage = Vars.empty[CitableNode]
 	//var xmlPassage = new org.scalajs.dom.raw.DOMParser().parseFromString( "<cts:passage></cts:passage>", "text/xml" )
 	var xmlPassage = js.Dynamic.global.document.createElement("div")
+	val currentCitableNodes = Var(0)
 	val isRtlPassage = Var(false)
 
 	// urn is what the user requested
@@ -78,6 +79,7 @@ object O2Model {
 	@dom
 	def displayPassage(newUrn: CtsUrn):Unit = {
 		val tempCorpus: Corpus = O2Model.textRepository.corpus ~~ newUrn
+		O2Model.currentCitableNodes := tempCorpus.size
 		//O2Model.passage.get.clear
 		O2Model.xmlPassage.innerHTML = ""
 
@@ -85,25 +87,38 @@ object O2Model {
 
 		var currentVersionUrnStr = ""
 
-		// set up columns
-		for ( cn <- tempCorpus.nodes ) {
+		if (tempCorpus.size > 0){
+			// set up columns
+			for ( cn <- tempCorpus.nodes ) {
 
-			var descEl = ""
-			if (cn.urn.dropPassage.toString != currentVersionUrnStr ){
-				currentVersionUrnStr = cn.urn.dropPassage.toString
-				val desc = O2Model.textRepository.catalog.label(cn.urn)
-				descEl = s"""<span class="o2_versionDescription ltr">${desc} : ${cn.urn.dropPassage.toString}</span>"""
+				var descEl = ""
+				if (cn.urn.dropPassage.toString != currentVersionUrnStr ){
+					currentVersionUrnStr = cn.urn.dropPassage.toString
+					val desc = O2Model.textRepository.catalog.label(cn.urn)
+					descEl = s"""<span class="o2_versionDescription ltr">${desc} : ${cn.urn.dropPassage.toString}</span>"""
+				}
+				val citString:String = s"""<span class="o2_passageUrn">${cn.urn.passageComponent}</span>"""
+
+				val txtString:String = """<p class="o2_passage">""" + citString + cn.text + "</p>"
+
+				O2Model.isRtlPassage := O2Model.checkForRTL(cn.text)
+
+				val divClass =	if (O2Model.isRtlPassage.get){ "rtl" } else { "ltr" }
+				val elString:String = s"""<div class="p ${divClass}">""" + descEl + txtString + "</div>"
+				wholePassageElement += elString
+				//O2Model.passage.get += cn
 			}
-			val citString:String = s"""<span class="o2_passageUrn">${cn.urn.passageComponent}</span>"""
-
-			val txtString:String = """<p class="o2_passage">""" + citString + cn.text + "</p>"
-
-			O2Model.isRtlPassage := O2Model.checkForRTL(cn.text)
-
-			val divClass =	if (O2Model.isRtlPassage.get){ "rtl" } else { "ltr" }
-			val elString:String = s"""<div class="p ${divClass}">""" + descEl + txtString + "</div>"
+		} else {
+			// Display notice that there was no text found
+			var elString = ""
+			elString = s"""<div class="ltr o2_warnNoText">${newUrn} is not represented in the current library."""
+			if (O2Model.versionsForCurrentUrn.get > 0){
+				val s  = s"urn:cts:${newUrn.namespace}:${newUrn.textGroup}.${newUrn.work}:"
+				elString += s""" However, there are versions of ${s} in the library. “See all versions of passage” will show the requested passage, if it is present in any other version of this work."""
+			}
+			elString += "</div>"
 			wholePassageElement += elString
-			//O2Model.passage.get += cn
+
 		}
 		O2Model.xmlPassage.innerHTML = wholePassageElement
 		js.Dynamic.global.document.getElementById("o2_xmlPassageContainer").appendChild(xmlPassage)

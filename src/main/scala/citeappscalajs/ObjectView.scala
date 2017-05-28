@@ -245,39 +245,43 @@ def textLinks(u:CtsUrn) = {
 @dom
 def objectLinks(u:Cite2Urn) = {
 	val collUrn = u.dropSelector
-	if (ImageModel.imageCollections.extensions(collUrn).size > 0){
-		{
-			<span>
-			{ s"${u.toString}" } <br/>
-			<a
-			onclick={ event: Event => {
-				CiteMainController.retrieveObject(u)
-				}
-			} >View as Object</a> |
-			<a >View as Image</a> <br/>
-			{ ObjectView.thumbnailView(u).bind }
-			</span>
+	if (ObjectController.objectIsPresent(u)){
+		if (ImageModel.imageExtensions.extensions(collUrn).size > 0){
+			{
+				<span>
+				{ s"${u.toString}" } <br/>
+				<a
+				onclick={ event: Event => {
+					CiteMainController.retrieveObject(u)
+					}
+				} >View as Object</a> |
+				<a >View as Image</a> <br/>
+				{ ObjectView.thumbnailView(u).bind }
+				</span>
+			}
+		} else {
+			{
+				<span>
+				<a
+				onclick={ event: Event => {
+					ObjectController.updateUserMessage("Retrieving object…",1)
+					js.timers.setTimeout(500){ ObjectController.changeUrn(u) }
+					}
+				}>
+					{ s"${u.toString}" }
+				</a>
+				</span>
+			}
 		}
 	} else {
-		{
-			<span>
-			<a
-			onclick={ event: Event => {
-				ObjectController.updateUserMessage("Retrieving object…",1)
-				js.timers.setTimeout(500){ ObjectController.changeUrn(u) }
-				}
-			}>
-				{ s"${u.toString}" }
-			</a>
-			</span>
-		}
+		<span> { s"${u}"} <br/> {"(This object is not present in the current library.)"} </span>
 	}
 }
 
 @dom def thumbnailView(urn:Cite2Urn) = {
 		<img src={ ImageController.imgThumb(urn) } class="object_imgThumb"
 		onclick={ event: Event => {
-			g.console.log(s"Image click ${urn}")
+			CiteMainController.retrieveImage(urn)
 			}
 		}
 		/>

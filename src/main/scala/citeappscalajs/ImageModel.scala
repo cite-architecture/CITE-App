@@ -27,7 +27,8 @@ object ImageModel {
 
   // Image Collections here
 	val imgArchivePath:String = "../../../image_archive/"
-	var imageCollections:ImageExtensions = null
+	var imageExtensions:ImageExtensions = null
+	val imageCollections = Vars.empty[Cite2Urn]
 
 	// urn is what the user requested
 	val urn = Var(Cite2Urn("urn:cite2:ns:coll.v1:obj"))
@@ -44,12 +45,17 @@ object ImageModel {
 
 	val imageSearchResults = Vars.empty[ImageObject]
 
-  case class ImageObject(val urn:Cite2Urn, val label:String, val rights:String) {
+   	case class ImageObject(val urn:Cite2Urn, val label:String, val rights:String) {
 			override def toString = s"${urn} - ${label}. ${rights}"
 	}
 
 	case class ImageROI(val urn:Cite2Urn, val roi:String, val roiData:Urn = null, val roiGroup:Integer = 1){
 			override def toString = s"${urn}@${roi}. ${roiData} [Group ${roiGroup}]"
+	}
+
+	def updateImageCollections = {
+		imageCollections.get.clear
+		imageExtensions.protocolMap.foreach(k => imageCollections.get += k._1)
 	}
 
 	def updateRois(u:Cite2Urn, ve:Vector[String]):Unit = {

@@ -439,6 +439,14 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 	direction: ltr;
 }
 
+div.o2_warnNoText {
+	border: 1px dashed rgb(179, 0, 0);
+	color: rgb(179, 0, 0);
+	font-size: 100%;
+	fint-weigth: bold;
+	padding: 1em 1em 1em 1em;
+}
+
 div.o2_textColumn {
 	margin-right: 1em;
 }

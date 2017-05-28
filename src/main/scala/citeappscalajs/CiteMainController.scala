@@ -142,7 +142,8 @@ object CiteMainController {
 
 			repo.imageExtensions match {
 				case Some(ie) => {
-						ImageModel.imageCollections = ie
+						ImageModel.imageExtensions = ie
+						ImageModel.updateImageCollections
 						loadMessage += s"Image collections: ${ie.protocolMap.size}."
 				}
 
