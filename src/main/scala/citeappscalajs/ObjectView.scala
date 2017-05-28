@@ -223,12 +223,23 @@ def renderObjects = {
 	<td>{
 		p.propertyType.get match {
 			case Cite2UrnType =>{ <p>{ ObjectView.renderCiteUrnProperty(Cite2Urn(p.propertyValue.get)).bind }</p>}
-			case CtsUrnType =>{ <p>{ s"CtsUrnProperty: ${p.propertyValue.bind}"}</p>}
+			case CtsUrnType =>{ <p>{ ObjectView.textLinks(CtsUrn(p.propertyValue.get)).bind }</p>}
 			case _ =>{ <p>{ s"${p.propertyValue.bind.toString}"}</p>}
 		}
 
 	}</td>
 	</tr>
+}
+
+@dom
+def textLinks(u:CtsUrn) = {
+	<p><a
+	onclick={ event: Event => {
+		CiteMainController.retrieveTextPassage(u)
+	}}>
+	<strong>Text Passage:</strong> {u.toString}
+	</a>
+	</p>
 }
 
 @dom
@@ -240,8 +251,7 @@ def objectLinks(u:Cite2Urn) = {
 			{ s"${u.toString}" } <br/>
 			<a
 			onclick={ event: Event => {
-				ObjectController.updateUserMessage("Retrieving object…",1)
-				js.timers.setTimeout(500){ ObjectController.changeUrn(u) }
+				CiteMainController.retrieveObject(u)
 				}
 			} >View as Object</a> |
 			<a >View as Image</a> <br/>

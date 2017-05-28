@@ -58,7 +58,7 @@ object CiteMainController {
 			case 2 => CiteMainModel.userAlert := "warn"
 		}
 		js.timers.clearTimeout(CiteMainModel.msgTimer)
-		CiteMainModel.msgTimer = js.timers.setTimeout(20000){ CiteMainModel.userMessageVisibility := "app_hidden" }
+		CiteMainModel.msgTimer = js.timers.setTimeout(10000){ CiteMainModel.userMessageVisibility := "app_hidden" }
 	}
 
 
@@ -83,12 +83,14 @@ object CiteMainController {
 	}
 
 	def retrieveObject(urn:Cite2Urn):Unit = {
-			// fill in
+			ObjectController.updateUserMessage("Retrieving object…",1)
+			js.Dynamic.global.document.getElementById("tab-3").checked = true
+			js.timers.setTimeout(500){ ObjectController.changeUrn(urn) }
 	}
 
 	def retrieveImage(urn:Cite2Urn):Unit = {
 			ImageController.changeUrn(urn)
-					js.Dynamic.global.document.getElementById("tab-4").checked = true
+			js.Dynamic.global.document.getElementById("tab-4").checked = true
 	}
 
 	@dom

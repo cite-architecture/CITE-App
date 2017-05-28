@@ -219,17 +219,21 @@ a:hover {
 }
 
 
+#mainMessage {
+	min-height: 2.5em;
+}
+
 .app_message {
 	max-width: 500px;
 	font-size: 80%;
 	font-weight: normal;
 	min-height: 1em;
 	float: right;
-	-webkit-transition: all 0.5s ease-out 0s;
-	-moz-transition: all 0.5s ease-out 0s;
-	-ms-transition: all 0.5s ease-out 0s;
-	-o-transition: all 0.5s ease-out 0s;
-	transition: all 0.5s ease-out 0s;
+	-webkit-transition: all 0.5s ease-out 1s;
+	-moz-transition: all 0.5s ease-out 1s;
+	-ms-transition: all 0.5s ease-out 1s;
+	-o-transition: all 0.5s ease-out 1s;
+	transition: all 0.5s ease-out 1s;
 }
 
 
@@ -260,11 +264,16 @@ a:hover {
 }
 
 .app_hidden {
-	display: none;
+	/* display: none; */
 	visibility: hidden;
 	-webkit-opacity: 0;
 	-moz-opacity: 0;
 	opacity: 0;
+	-webkit-transition: all 0.5s ease-out 1s;
+	-moz-transition: all 0.5s ease-out 1s;
+	-ms-transition: all 0.5s ease-out 1s;
+	-o-transition: all 0.5s ease-out 1s;
+	transition: all 0.5s ease-out 1s;
 }
 
 .app_visible {
@@ -272,6 +281,11 @@ a:hover {
 	-webkit-opacity: 0.90;
 	-moz-opacity: 0.90;
 	opacity: 0.90;
+	-webkit-transition: all 0.5s ease-out 1s;
+	-moz-transition: all 0.5s ease-out 1s;
+	-ms-transition: all 0.5s ease-out 1s;
+	-o-transition: all 0.5s ease-out 1s;
+	transition: all 0.5s ease-out 1s;
 }
 
 div.app_sidebarDiv{
