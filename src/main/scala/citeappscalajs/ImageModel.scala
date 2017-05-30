@@ -50,8 +50,15 @@ object ImageModel {
 
 	// An ImageROI object must have an Image URN. It may have a defined ROI, a mapped URN, and a group.
 	// If it `roi` = None, then any mapping applies to the whole image.
-	case class ImageROI(val urn:Cite2Urn, val roi:Option[String], val roiData:Option[Urn] = None, val roiGroup:Integer = 1){
+	case class ImageROI(val index:Int, val urn:Cite2Urn, val roi:Option[String], val roiData:Option[Urn] = None, val roiGroup:Integer = 1){
 			override def toString = s"${urn}@${roi}. ${roiData} [Group ${roiGroup}]"
+	}
+
+	def idForMappedUrn(i:Int):String = {
+		s"image_mappedUrn_${i}"
+	}
+	def idForMappedROI(i:Int):String = {
+		s"image_mappedROI_${i}"
 	}
 
 	def updateImageCollections = {
@@ -59,12 +66,12 @@ object ImageModel {
 		imageExtensions.protocolMap.foreach(k => imageCollections.get += k._1)
 	}
 
+  // Eventually, do something clever to assign groups to ROIs based on their mapped URNs
 	def updateRois(u:Cite2Urn, roiVector:Vector[(Option[String],Option[Urn])]):Unit = {
 			imageROIs.get.clear
-			for (r <- roiVector){
-				imageROIs.get += ImageROI(u, r._1, r._2)
+			for ((r, i) <- roiVector.zipWithIndex){
+				imageROIs.get += ImageROI(i, u, r._1, r._2)
 			}
-
 	}
 
 

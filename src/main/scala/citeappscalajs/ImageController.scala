@@ -68,15 +68,12 @@ object ImageController {
 	}
 
 	def changeImage:Unit = {
-		g.console.log("doing changeImage")
 		val tempUrn:Cite2Urn = ImageModel.urn.get
 		val collection:Cite2Urn = tempUrn.dropSelector
 		val ioo:Option[String] = tempUrn.objectComponentOption
 		ioo match {
 			case Some(s) => {
-				g.console.log("About to do loadJsArray")
 				ImageController.loadJsArray
-				g.console.log(s"About to do updateImageJS with ${collection.toString} and ${s}")
 				ImageController.updateImageJS(collection.toString, s )
 			}
 			case _ => {
@@ -86,7 +83,6 @@ object ImageController {
 	}
 
 	def loadJsArray:Unit = {
-		g.console.log(s"ScalaJS imageROIs = ${ImageModel.imageROIs.get}")
 		for (iroi <- ImageModel.imageROIs.get){
 			val tempRoi:String = {
 				iroi.roi match {
@@ -102,7 +98,8 @@ object ImageController {
 			}
 			// We will have to do something clever here to make groups
 			val tempGroup:String = "1"
-			ImageController.addToJsRoiArray(tempRoi,tempMappedData,tempGroup,true)
+			val tempIndex:Int = iroi.index
+			ImageController.addToJsRoiArray(tempIndex, tempRoi,tempMappedData,tempGroup,true)
 		}
 	}
 
@@ -138,7 +135,6 @@ object ImageController {
 			ImageModel.urn := urn.dropExtensions
 			val plainUrn:Cite2Urn = urn.dropExtensions
 			ImageModel.updateRois(plainUrn,roiVec)
-			g.console.log(s"Got here with ${plainUrn} and ${ImageModel.imageROIs.get}")
 			ImageController.changeImage
 		} catch {
 			case e: Exception => {
@@ -157,7 +153,7 @@ object clearJsRoiArray extends js.Any {
 @JSName("addToJsRoiArray")
 @js.native
 object addToJsRoiArray extends js.Any {
-  def apply(roiString:String, urnString:String, groupString:String, clearFirst:Boolean): js.Dynamic = js.native
+  def apply(index:Int, roiString:String, urnString:String, groupString:String, clearFirst:Boolean): js.Dynamic = js.native
 }
 
 @JSName("updateImageJS")

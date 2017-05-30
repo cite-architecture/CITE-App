@@ -47,7 +47,6 @@ object ImageView {
 		<div id="image_sidebar" class="app_sidebarDiv">
 		{ imageCollectionsContainer.bind }
 		{ imageMappedDataDiv.bind }
-		{ imageMappedUrn.bind }
 		</div>
 
 		{ imageMessageDiv.bind }
@@ -73,21 +72,6 @@ object ImageView {
 	{ imageContainer.bind }
 
 	</div>
-}
-
-@dom
-def imageMappedUrn = {
-		<input
-		id="image_mappedUrn"
-		size={ 30 }
-		type="text"
-		value=""
-		placeholder="Mapped URNs will appear here"
-		onchange={ event: Event => {
-			 	//println("Mapped URN changed")
-			}
-		}>
-		</input>
 }
 
 @dom
@@ -146,10 +130,13 @@ def imageMappedDataDiv = {
 @dom
 def mappedUrnP(iroi:ImageModel.ImageROI) = {
 	val u:Urn = iroi.roiData.get
-	val pId = s"image_mapped_${u}"
-	<p class={ s"image_mappedUrn image_roiGroup${iroi.roiGroup}"}
+	val idx:Int = iroi.index
+	val pId = ImageModel.idForMappedUrn(idx)
+	<p class={ s"image_mappedUrn image_roiGroup_${iroi.roiGroup} ${ImageModel.idForMappedUrn(idx)}"}
 		id={ pId } >
+
 		{ u.toString }
+
 	</p>
 }
 
