@@ -4,6 +4,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
 import scala.scalajs.js
 import scala.scalajs.js._
+import scala.scalajs.js.Dynamic.{ global => g }
 import js.annotation._
 import collection.mutable
 import collection.mutable._
@@ -43,13 +44,13 @@ object ImageModel {
 	val userAlert = Var("default")
 	val userMessageVisibility = Var("app_hidden")
 
-	val imageSearchResults = Vars.empty[ImageObject]
-
    	case class ImageObject(val urn:Cite2Urn, val label:String, val rights:String) {
 			override def toString = s"${urn} - ${label}. ${rights}"
 	}
 
-	case class ImageROI(val urn:Cite2Urn, val roi:String, val roiData:Urn = null, val roiGroup:Integer = 1){
+	// An ImageROI object must have an Image URN. It may have a defined ROI, a mapped URN, and a group.
+	// If it `roi` = None, then any mapping applies to the whole image.
+	case class ImageROI(val urn:Cite2Urn, val roi:Option[String], val roiData:Option[Urn] = None, val roiGroup:Integer = 1){
 			override def toString = s"${urn}@${roi}. ${roiData} [Group ${roiGroup}]"
 	}
 
@@ -58,10 +59,10 @@ object ImageModel {
 		imageExtensions.protocolMap.foreach(k => imageCollections.get += k._1)
 	}
 
-	def updateRois(u:Cite2Urn, ve:Vector[String]):Unit = {
+	def updateRois(u:Cite2Urn, roiVector:Vector[(Option[String],Option[Urn])]):Unit = {
 			imageROIs.get.clear
-			for (r <- ve){
-				imageROIs.get += ImageROI(u, r)
+			for (r <- roiVector){
+				imageROIs.get += ImageROI(u, r._1, r._2)
 			}
 
 	}
@@ -73,6 +74,8 @@ object ImageModel {
 	js.Dynamic.global.roiArray = Array("one","two","three")
 	*/
 
+    /* Stuff for initial testing, remove when this all works */
+	/*
 	val urn1 = Cite2Urn("urn:cite2:hmt:vaimg.v1:VA012RN_0013")
 	val label1 = "Venetus A: Marcianus Graecus Z. 454 (= 822), folio 12, recto."
 	val urn2 = Cite2Urn("urn:cite2:hmt:vaimg.v1:VA012VN_0514")
@@ -85,10 +88,7 @@ object ImageModel {
 
 	val imageRepository = Vector[ImageObject](new ImageObject(urn1,label1,rights),new ImageObject(urn2,label2,rights),new ImageObject(urn3,label3,rights),new ImageObject(urn4,label4,rights))
 
-	imageSearchResults.get.clear
-	for (i <- imageRepository){ imageSearchResults.get += i}
-
-
 	ImageController.changeUrn(ImageModel.imageRepository(0).urn)
+	*/
 
 }

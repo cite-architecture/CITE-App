@@ -74,6 +74,15 @@ div#object_objectContainer li.list {
 	margin-right: 1.5em;
 }
 
+div#object_searchForm {
+}
+
+#object_searchTextbox {
+}
+#object_searchSubmit {
+	margin: 1em -2px 0 0;
+}
+
 
 div#object_objectContainer li.list:before {
 	margin-left: 2em;

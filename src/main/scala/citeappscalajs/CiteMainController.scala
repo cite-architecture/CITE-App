@@ -82,14 +82,16 @@ object CiteMainController {
 			js.Dynamic.global.document.getElementById("tab-1").checked = true
 	}
 
-	def retrieveObject(urn:Cite2Urn):Unit = {
+	def retrieveObject(mappedUrn:Option[Cite2Urn], objUrn:Cite2Urn):Unit = {
+			val urn:Cite2Urn = objUrn.dropExtensions
 			ObjectController.updateUserMessage("Retrieving object…",1)
 			js.Dynamic.global.document.getElementById("tab-3").checked = true
 			js.timers.setTimeout(500){ ObjectController.changeUrn(urn) }
 	}
 
-	def retrieveImage(urn:Cite2Urn):Unit = {
-			ImageController.changeUrn(urn)
+	def retrieveImage(mappedUrn:Option[Cite2Urn], propVal:Cite2Urn):Unit = {
+			val oe = propVal.objectExtensionOption
+			ImageController.changeUrn(propVal,Vector((oe,mappedUrn)))
 			js.Dynamic.global.document.getElementById("tab-4").checked = true
 	}
 

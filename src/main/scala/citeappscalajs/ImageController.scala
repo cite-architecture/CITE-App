@@ -36,7 +36,8 @@ object ImageController {
 		ImageModel.msgTimer = js.timers.setTimeout(6000){ ImageModel.userMessageVisibility := "app_hidden" }
 	}
 
-	def imgThumb(urn:Cite2Urn):String = {
+	def imgThumb(fullUrn:Cite2Urn):String = {
+			val urn:Cite2Urn = fullUrn.dropExtensions
 			val path:String = s"""${ImageModel.imgArchivePath}${urn.dropSelector.toString.replaceAll(":","_")}/${urn.objectComponent}_files/8/0_0.jpeg"""
 			path
 	}
@@ -67,44 +68,61 @@ object ImageController {
 	}
 
 	def changeImage:Unit = {
+		g.console.log("doing changeImage")
 		val tempUrn:Cite2Urn = ImageModel.urn.get
 		val collection:Cite2Urn = tempUrn.dropSelector
 		val ioo:Option[String] = tempUrn.objectComponentOption
 		ioo match {
-				case Some(s) => {
-					ImageController.updateImageJS(collection.toString, s )
-				}
-				case _ => {
-					ImageController.updateUserMessage(s"No image-object specified in ${tempUrn}",2)
-				}
+			case Some(s) => {
+				g.console.log("About to do loadJsArray")
+				ImageController.loadJsArray
+				g.console.log(s"About to do updateImageJS with ${collection.toString} and ${s}")
+				ImageController.updateImageJS(collection.toString, s )
+			}
+			case _ => {
+				ImageController.updateUserMessage(s"No image-object specified in ${tempUrn}",2)
+			}
 		}
 	}
 
+	def loadJsArray:Unit = {
+		g.console.log(s"ScalaJS imageROIs = ${ImageModel.imageROIs.get}")
+		for (iroi <- ImageModel.imageROIs.get){
+			val tempRoi:String = {
+				iroi.roi match {
+					case Some(r) => r
+					case _ => ""
+				}
+			}
+			val tempMappedData:String = {
+				iroi.roiData match {
+					case Some(u) => u.toString
+					case _ => ""
+				}
+			}
+			// We will have to do something clever here to make groups
+			val tempGroup:String = "1"
+			ImageController.addToJsRoiArray(tempRoi,tempMappedData,tempGroup,true)
+		}
+	}
+
+	/* ------- Versions of `changeUrn` -------
+    For `changeUrn` we need three versions.
+	1. ImageURN as String… convert to Cite2Urn and invoke…
+	2. Image URN as Cite2Urn (only).
+	   a. No-ROI substring: Invoke with an empty vector of roi-mappings
+	   b. w/ROI substring: Invoke with a vector of [Some[String],None]
+	3. Image URN with Vector of roi-mappings. Invoke with vector of [Some[String],Some[Urn]]
+	------------------------------------------ */
+
 	def changeUrn(urnString: String): Unit = {
-		changeUrn(Cite2Urn(urnString))
+		changeUrn(Cite2Urn(urnString),Vector((None, None)))
 	}
 
 	def changeUrn(urn: Cite2Urn): Unit = {
 		try {
-			ImageModel.displayUrn := urn
-			validUrnInField := true
 			val oe = urn.objectExtensionOption
-			oe match {
-				case Some(e) => {
-						val ve = Vector[String](e)
-						ImageModel.updateRois(urn.dropExtensions, ve)
-						ImageModel.urn := urn.dropExtensions
-						g.console.log(s"Urn without extension: ${ImageModel.urn.get.toString}")
-				}
-				case _ => {
-						ImageModel.urn := urn
-				}
-			}
-			ImageController.updateUserMessage("Retrieving image…",1)
-			js.timers.setTimeout(500){
-			ImageController.changeImage
-			}
-
+			changeUrn(urn,Vector((oe,None)))
 		} catch {
 			case e: Exception => {
 				validUrnInField := false
@@ -113,7 +131,34 @@ object ImageController {
 		}
 	}
 
+	def changeUrn(urn:Cite2Urn,roiVec:Vector[(Option[String],Option[Urn])]):Unit = {
+		try {
+			ImageModel.displayUrn := urn
+			validUrnInField := true
+			ImageModel.urn := urn.dropExtensions
+			val plainUrn:Cite2Urn = urn.dropExtensions
+			ImageModel.updateRois(plainUrn,roiVec)
+			g.console.log(s"Got here with ${plainUrn} and ${ImageModel.imageROIs.get}")
+			ImageController.changeImage
+		} catch {
+			case e: Exception => {
+				validUrnInField := false
+				updateUserMessage("Invalid URN. Current URN not changed.",2)
+			}
+		}
+	}
 
+@JSName("clearJsRoiArray")
+@js.native
+object clearJsRoiArray extends js.Any {
+
+}
+
+@JSName("addToJsRoiArray")
+@js.native
+object addToJsRoiArray extends js.Any {
+  def apply(roiString:String, urnString:String, groupString:String, clearFirst:Boolean): js.Dynamic = js.native
+}
 
 @JSName("updateImageJS")
 @js.native

@@ -46,8 +46,7 @@ object ImageView {
 
 		<div id="image_sidebar" class="app_sidebarDiv">
 		{ imageCollectionsContainer.bind }
-		{ imageSearchForm.bind }
-		{ imageSearchResults.bind }
+		{ imageMappedDataDiv.bind }
 		{ imageMappedUrn.bind }
 		</div>
 
@@ -125,42 +124,35 @@ def imageContainer = {
 
 /* Search Image Properties Forms */
 @dom
-def imageSearchForm = {
-	<h2>Search Image Metadata</h2>
-	<label for="image_searchImageTextbox">Search text</label>
-	<input
-		type="text"
-		placeholder="Find text in image metadata"
-		size={ 20 }
-		id="image_searchImageTextbox"/>
-	<br/>
-	<button
-		id="image_searchSubmit"
-			onclick={ event: Event => {
-					ImageController.updateUserMessage("Searching image metadata. Please be patient…",1)
+def imageMappedDataDiv = {
+	<h2>Mapped Data</h2>
+	<div id="image_mappedData">
+		{
+			for (iroi <- ImageModel.imageROIs) yield {
+				iroi.roiData match {
+					case Some(u) => {
+						{ mappedUrnP(iroi).bind }
+					}
+					case _ => {
+					   <p>Unmapped Region of Interest</p>
+					}
+
 				}
 			}
-		>Search Image Metadata</button>
+		}
+	</div>
 }
 
-/* Image metadata search results */
 @dom
-def imageSearchResults = {
-		<div id="image_searchResults">
-			<h2>Search Results</h2>
-			<ol>
-			{
-				for (i <- ImageModel.imageSearchResults) yield {
-					<li>
-						{ imageUrnSpan(i.urn, i.urn.toString).bind }
-						<br/>
-						{ i.label }
-					</li>
-				}
-			}
-			</ol>
-		</div>
+def mappedUrnP(iroi:ImageModel.ImageROI) = {
+	val u:Urn = iroi.roiData.get
+	val pId = s"image_mapped_${u}"
+	<p class={ s"image_mappedUrn image_roiGroup${iroi.roiGroup}"}
+		id={ pId } >
+		{ u.toString }
+	</p>
 }
+
 
 /* Cited Works List */
 @dom
@@ -173,7 +165,7 @@ def imageCollectionsContainer = {
 				<li>
 					<a
 					onclick={ event: Event => {
-						CiteMainController.retrieveObject(ic)
+						CiteMainController.retrieveObject(None,ic)
 						}
 					}>
 						{ s"${ic}" }
@@ -188,42 +180,5 @@ def imageCollectionsContainer = {
 	</div>
 }
 
-/* General-use functions for making clickable URNs */
-@dom
-def workUrnSpan(urn:CtsUrn, s:String) = {
-	<span
-	class="app_clickable"
-	onclick={ event: Event => {
-		O2Controller.insertFirstNodeUrn(urn)
-		O2Model.clearPassage
-		}
-	}>
-	{ s }
-	</span>
-}
-
-@dom
-def passageUrnSpan(urn:CtsUrn, s:String) = {
-	<span
-	class="app_clickable app_urn"
-	onclick={ event: Event => {
-			CiteMainController.retrieveTextPassage(urn)
-		}
-	}>
-	{ s }
-	</span>
-}
-
-@dom
-def imageUrnSpan(urn:Cite2Urn, s:String) = {
-	<span
-	class="app_clickable app_urn"
-	onclick={ event: Event => {
-			CiteMainController.retrieveImage(urn)
-		}
-	}>
-	{ s }
-	</span>
-}
 
 }

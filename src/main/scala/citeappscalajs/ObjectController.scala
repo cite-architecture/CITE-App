@@ -33,7 +33,8 @@ object ObjectController {
 	}
 
 	def objectIsPresent(u:Cite2Urn):Boolean = {
-		if (ObjectModel.collectionRepository.citableObjects.filter(_.urn == u).size > 0){
+		val tempU:Cite2Urn = u.dropExtensions
+		if (ObjectModel.collectionRepository.citableObjects.filter(_.urn == tempU).size > 0){
 			true
 		} else { false }
 

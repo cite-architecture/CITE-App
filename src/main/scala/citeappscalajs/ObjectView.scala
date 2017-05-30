@@ -45,6 +45,7 @@ object ObjectView {
 
 		<div id="object_sidebar" class="app_sidebarDiv">
 		{ objectCollectionsContainer.bind }
+		{ textSearchForm.bind }
 		</div>
 
 		{ objectMessageDiv.bind }
@@ -182,7 +183,7 @@ def renderObjects = {
 							<td>URN</td>
 							<td>Cite2UrnType</td>
 							<td>
-							{ ObjectView.renderCiteUrnProperty(obj.urn.get).bind }
+							{ ObjectView.renderCiteUrnProperty(None, obj.urn.get).bind }
 							</td>
 						</tr>
 						<tr>
@@ -210,9 +211,9 @@ def renderObjects = {
 }
 
 
-@dom def renderCiteUrnProperty(u:Cite2Urn) = {
+@dom def renderCiteUrnProperty(propUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 <p>
-	{ ObjectView.objectLinks(u).bind }
+	{ ObjectView.objectLinks(propUrn, propVal).bind }
 </p>
 }
 
@@ -222,7 +223,7 @@ def renderObjects = {
 	<td>{ p.propertyType.bind.toString }</td>
 	<td>{
 		p.propertyType.get match {
-			case Cite2UrnType =>{ <p>{ ObjectView.renderCiteUrnProperty(Cite2Urn(p.propertyValue.get)).bind }</p>}
+			case Cite2UrnType =>{ <p>{ ObjectView.renderCiteUrnProperty(Some(p.urn.get),Cite2Urn(p.propertyValue.get)).bind }</p>}
 			case CtsUrnType =>{ <p>{ ObjectView.textLinks(CtsUrn(p.propertyValue.get)).bind }</p>}
 			case _ =>{ <p>{ s"${p.propertyValue.bind.toString}"}</p>}
 		}
@@ -243,20 +244,24 @@ def textLinks(u:CtsUrn) = {
 }
 
 @dom
-def objectLinks(u:Cite2Urn) = {
-	val collUrn = u.dropSelector
-	if (ObjectController.objectIsPresent(u)){
+def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
+	val collUrn = propVal.dropSelector
+	if (ObjectController.objectIsPresent(propVal)){
 		if (ImageModel.imageExtensions.extensions(collUrn).size > 0){
 			{
 				<span>
-				{ s"${u.toString}" } <br/>
+				{ s"${propVal.toString}" } <br/>
 				<a
 				onclick={ event: Event => {
-					CiteMainController.retrieveObject(u)
+					CiteMainController.retrieveObject(contextUrn,propVal)
 					}
 				} >View as Object</a> |
-				<a >View as Image</a> <br/>
-				{ ObjectView.thumbnailView(u).bind }
+				<a
+					onclick={ event: Event => {
+						CiteMainController.retrieveImage(contextUrn,propVal)
+					}
+				}>View as Image</a> <br/>
+				{ ObjectView.thumbnailView(contextUrn, propVal).bind }
 				</span>
 			}
 		} else {
@@ -265,23 +270,24 @@ def objectLinks(u:Cite2Urn) = {
 				<a
 				onclick={ event: Event => {
 					ObjectController.updateUserMessage("Retrieving object…",1)
-					js.timers.setTimeout(500){ ObjectController.changeUrn(u) }
+					js.timers.setTimeout(500){ ObjectController.changeUrn(propVal) }
 					}
 				}>
-					{ s"${u.toString}" }
+					{ s"${propVal.toString}" }
 				</a>
 				</span>
 			}
 		}
 	} else {
-		<span> { s"${u}"} <br/> {"(This object is not present in the current library.)"} </span>
+		<span> { s"${propVal}"} <br/> {"(This object is not present in the current library.)"} </span>
 	}
 }
 
-@dom def thumbnailView(urn:Cite2Urn) = {
-		<img src={ ImageController.imgThumb(urn) } class="object_imgThumb"
+
+@dom def thumbnailView(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
+		<img src={ ImageController.imgThumb(propVal) } class="object_imgThumb"
 		onclick={ event: Event => {
-			CiteMainController.retrieveImage(urn)
+			CiteMainController.retrieveImage(contextUrn,propVal)
 			}
 		}
 		/>
@@ -391,5 +397,30 @@ def propertyUrnSpan(urnStr:String) = {
 		}
 		> ← </button>
 	}
+
+/* Search Properties Forms */
+@dom
+def textSearchForm = {
+	<div id="object_searchForm">
+	<h2>Search Property Values</h2>
+	<p id="object_whichCollectionToSearch">Searching: <strong>{ ObjectModel.urn.bind.dropSelector.toString }</strong></p>
+	<label for="object_searchTextbox">Search text</label>
+	<input
+		type="text"
+		placeholder="Find text in image metadata"
+		size={ 20 }
+		id="object_searchTextbox"/>
+	<br/>
+	<button
+		id="object_searchSubmit"
+			onclick={ event: Event => {
+					val s: String = js.Dynamic.global.document.getElementById("object_searchTextbox").value.toString
+					ObjectController.updateUserMessage("Searching property values. Please be patient…",1)
+					g.console.log(s"Searching for ${s}")
+				}
+			}
+		>Search Image Metadata</button>
+	</div>
+}
 
 }
