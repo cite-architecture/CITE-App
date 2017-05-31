@@ -16,31 +16,36 @@ classes:
 
 
 function idForMappedUrn(i) {
-	var s = "image_mappedUrn_" + i
+	var s = "image_mappedUrn_" + (i)
 	return s
 }
 
 function idForMappedROI(i) {
-	var s = "image_mappedROI_" + i
+	var s = "image_mappedROI_" + (i)
+	return s
+}
+
+function roiToUrnId(id) {
+	var s = id.replace("image_mappedROI_","image_mappedUrn_")
 	return s
 }
 
 
-
-function clearJsRoiArray() {
+function clearJsRoiArray(r) {
+	console.log("======== clear array =======")
 	roiArray = []
 }
 
-function addToJsRoiArray(i,r,u,g,clearFirst){
-	if(clearFirst){ clearJsRoiArray() }
+function addToJsRoiArray(i,r,u,g){
+	console.log("JS: addToJsRoiArray:" + i + ", " + r + ", " + u + ", " + g )
 	tempMap = {index: i, roi: r, mappedUrn: u, group: g}
 	roiArray.push(tempMap)
 }
 
 function clearSelectedROIs(){
 	for (n = 0; n < roiArray.length; n++){
-			var roiId = idForMappedROI(n)
-			var urnId = idForMappedUrn(n)
+			var roiId = idForMappedROI(n+1)
+			var urnId = idForMappedUrn(n+1)
 			var thisROI = document.getElementById(roiId)
 			var thisURN = document.getElementById(urnId)
 			thisROI.classList.remove("image_roi_selected")
@@ -126,16 +131,14 @@ function initOpenSeadragon(imagePath) {
 					for (n = 0; n < roiArray.length; n++){
 						var captureN = n // because N keeps moving
 						var thisId = idForMappedROI(roiArray[n].index)
-						var thisClass = "image_mappedROI"
 						var thisElement = document.getElementById(thisId)
-						thisElement.addEventListener("click", function() {
+						thisElement.addEventListener("click", function(e) {
 								clearSelectedROIs()
-								var thisIndex = captureN
-								var targetId = idForMappedUrn(roiArray[thisIndex].index)
+								var roiId = e.target.id
+								var targetId = roiToUrnId(roiId)
 								var targetSpan = document.getElementById(targetId)
 								targetSpan.classList.add("image_roi_selected")
-								targetSpan.classList.add(idForMappedUrn(captureN))
-								targetSpan.classList.add(thisClass)
+								e.target.classList.add("image_roi_selected")
 						}, false);
 					}
 			},2000);

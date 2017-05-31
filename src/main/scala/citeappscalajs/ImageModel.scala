@@ -70,8 +70,13 @@ object ImageModel {
 	def updateRois(u:Cite2Urn, roiVector:Vector[(Option[String],Option[Urn])]):Unit = {
 			imageROIs.get.clear
 			for ((r, i) <- roiVector.zipWithIndex){
-				imageROIs.get += ImageROI(i, u, r._1, r._2)
+				// For now we're putting each ROI in its own group
+				imageROIs.get += ImageROI(i+1, u, r._1, r._2, (i+1))
 			}
+			// FOR TESTING ONLY! REMOVE BEFORE FLIGHT!!
+		imageROIs.get += ImageROI(roiVector.size+1,Cite2Urn("urn:cite2:hmt:msA.v1:1r"),Some("0,0,0.25,0.25"),Some(CtsUrn("urn:cts:greekLit:tlg0012.tlg001.allen:2.1")),roiVector.size+1)
+		imageROIs.get += ImageROI(roiVector.size+2,Cite2Urn("urn:cite2:hmt:msA.v1:1r"),Some("0.75,0.75,0.25,0.25"),Some(CtsUrn("urn:cts:greekLit:tlg0012.tlg001.allen:2.2")),roiVector.size+2)
+		g.console.log(s"Scala updateRois: ${imageROIs.get.size}")
 	}
 
 

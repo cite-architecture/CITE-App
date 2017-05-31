@@ -4,6 +4,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
 import scala.scalajs.js
 import scala.scalajs.js._
+import scala.scalajs.js.Dynamic.{ global => g }
 import org.scalajs.dom._
 import org.scalajs.dom.ext._
 import org.scalajs.dom.raw._
@@ -132,12 +133,66 @@ def mappedUrnP(iroi:ImageModel.ImageROI) = {
 	val u:Urn = iroi.roiData.get
 	val idx:Int = iroi.index
 	val pId = ImageModel.idForMappedUrn(idx)
+	g.console.log(s"ImageView: ${u}, ${idx}, ${pId}")
 	<p class={ s"image_mappedUrn image_roiGroup_${iroi.roiGroup} ${ImageModel.idForMappedUrn(idx)}"}
 		id={ pId } >
 
-		{ u.toString }
+		{ mappedUrnSpan(u).bind }
 
 	</p>
+}
+
+@dom
+def mappedUrnSpan(u:Urn) = {
+	 { u match {
+			case CtsUrn(_) => {
+				<a onclick={ event: Event => { CiteMainController.retrieveTextPassage(u.asInstanceOf[CtsUrn]) }}>
+				<strong>Text Passage:</strong> {u.toString}
+				</a>
+			}
+			case Cite2Urn(_) => {
+				val c2u = u.asInstanceOf[Cite2Urn].dropProperty
+				val collUrn = c2u.dropSelector
+				if (ObjectController.objectIsPresent(c2u)){
+					if (ImageModel.imageExtensions.extensions(collUrn).size > 0){
+						{
+							<span>
+							{ s"${c2u.toString}" } <br/>
+							<a
+							onclick={ event: Event => {
+								CiteMainController.retrieveObject(None,c2u)
+								}
+							} >View as Object</a> |
+							<a
+								onclick={ event: Event => {
+									CiteMainController.retrieveImage(None,c2u)
+								}
+							}>View as Image</a> <br/>
+							{ ObjectView.thumbnailView(None, c2u).bind }
+							</span>
+						}
+					} else {
+						{
+							<span>
+							<a
+							onclick={ event: Event => {
+								CiteMainController.retrieveObject(None,c2u)
+								}
+							}>
+								{ s"${c2u.toString}" }
+							</a>
+							</span>
+						}
+					}
+				} else {
+					<span> { s"${c2u}"} <br/> {"(This object is not present in the current library.)"} </span>
+				}
+			}
+			case _ => {
+				<a>Unknown</a>
+			}
+		}
+	}
 }
 
 

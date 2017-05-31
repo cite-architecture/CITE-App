@@ -83,6 +83,8 @@ object ImageController {
 	}
 
 	def loadJsArray:Unit = {
+		ImageController.clearJsRoiArray(true)
+		g.console.log(s"Scala loadJsArray: ${ImageModel.imageROIs.get.size}")
 		for (iroi <- ImageModel.imageROIs.get){
 			val tempRoi:String = {
 				iroi.roi match {
@@ -97,9 +99,10 @@ object ImageController {
 				}
 			}
 			// We will have to do something clever here to make groups
-			val tempGroup:String = "1"
+			val tempGroup:String = iroi.roiGroup.toString
 			val tempIndex:Int = iroi.index
-			ImageController.addToJsRoiArray(tempIndex, tempRoi,tempMappedData,tempGroup,true)
+			g.console.log(s"Adding: ${tempIndex}, ${tempRoi}, ${tempMappedData}, ${tempGroup}")
+			ImageController.addToJsRoiArray(tempIndex, tempRoi,tempMappedData,tempGroup)
 		}
 	}
 
@@ -123,7 +126,7 @@ object ImageController {
 		} catch {
 			case e: Exception => {
 				validUrnInField := false
-				updateUserMessage("Invalid URN. Current URN not changed.",2)
+				updateUserMessage(s"Invalid URN. Current URN not changed. ${e}",2)
 			}
 		}
 	}
@@ -139,7 +142,7 @@ object ImageController {
 		} catch {
 			case e: Exception => {
 				validUrnInField := false
-				updateUserMessage("Invalid URN. Current URN not changed.",2)
+				updateUserMessage(s"Invalid URN [2]. Current URN not changed. ${e}",2)
 			}
 		}
 	}
@@ -147,13 +150,13 @@ object ImageController {
 @JSName("clearJsRoiArray")
 @js.native
 object clearJsRoiArray extends js.Any {
-
+	def apply(really:Boolean): js.Dynamic = js.native
 }
 
 @JSName("addToJsRoiArray")
 @js.native
 object addToJsRoiArray extends js.Any {
-  def apply(index:Int, roiString:String, urnString:String, groupString:String, clearFirst:Boolean): js.Dynamic = js.native
+  def apply(index:Int, roiString:String, urnString:String, groupString:String): js.Dynamic = js.native
 }
 
 @JSName("updateImageJS")

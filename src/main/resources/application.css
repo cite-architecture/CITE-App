@@ -124,42 +124,78 @@ a.image_mappedROI:active {
 	background-color: rgba(256,256,256,0);
 }
 
-.image_roi_selected {
-	border: 1px solid rgba(230,230,0,1);
-	background-color: rgba(230,230,0,.1);
-}
-
 a.image_roiGroup_1 {
 	outline: 2px solid rgb(255,0,0);
 	background-color: rgba(255,0,0,.1);
 }
+p.image_roiGroup_1:before {
+	content: "▶︎";
+	color: rgb(255,0,0);
+}
 a.image_roiGroup_2 {
-	outline: 2px solid rgb(128, 0, 0);
-	background-color: rgba(128, 0, 0,.1);
-}
-a.image_roiGroup_3 {
-	outline: 2px solid rgb(170, 110, 40);
-	background-color: rgba(170, 110, 40,.1);
-}
-a.image_roiGroup_4 {
-	outline: 2px solid rgb(128, 128, 0);
-	background-color: rgba(128, 128, 0,.1);
-}
-a.image_roiGroup_5 {
-	outline: 2px solid rgb(190, 255, 0);
-	background-color: rgba(190, 255, 0,.1);
-}
-a.image_roiGroup_6 {
 	outline: 2px solid rgb(0, 128, 128);
 	background-color: rgba(0, 128, 128,.1);
 }
-a.image_roiGroup_7 {
+p.image_roiGroup_2:before {
+	content: "▶︎";
+	color: rgb(0, 128, 128);
+}
+a.image_roiGroup_3 {
 	outline: 2px solid rgb(130, 0, 150);
 	background-color: rgba(130, 0, 150,.1);
+}
+p.image_roiGroup_3:before {
+	content: "▶︎";
+	color: rgb(130, 0, 150);
+}
+a.image_roiGroup_4 {
+	outline: 2px solid rgb(170, 110, 40);
+	background-color: rgba(170, 110, 40,.1);
+}
+p.image_roiGroup_4:before {
+	content: "▶︎";
+	color: rgb(170, 110, 40);
+}
+a.image_roiGroup_6 {
+	outline: 2px solid rgb(190, 255, 0);
+	background-color: rgba(190, 255, 0,.1);
+}
+p.image_roiGroup_6:before {
+	content: "▶︎";
+	color: rgb(190, 255, 0);
+}
+a.image_roiGroup_5 {
+	outline: 2px solid rgb(128, 0, 0);
+	background-color: rgba(128, 0, 0,.1);
+}
+p.image_roiGroup_5:before {
+	content: "▶︎";
+	color: rgb(128, 0, 0);
+}
+a.image_roiGroup_7 {
+	outline: 2px solid rgb(128, 128, 0);
+	background-color: rgba(128, 128, 0,.1);
+}
+p.image_roiGroup_7:before {
+	content: "▶︎";
+	color: rgb(128, 128, 0);
 }
 a.image_roiGroup_8 {
 	outline: 2px solid rgb(255,0,255);
 	background-color: rgba(255,0,255,.1);
+}
+p.image_roiGroup_8:before {
+	content: "▶︎";
+	color: rgb(255, 0, 255);
+}
+
+a.image_roi_selected {
+	outline: 2px solid rgba(230,230,0,1);
+	background-color: rgba(230,230,0,.1);
+}
+
+p.image_roi_selected {
+	background-color: rgba(230,230,0,.1);
 }
 
 
