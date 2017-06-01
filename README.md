@@ -14,7 +14,7 @@ CITE Application, by default, downloads a sample corpus of texts. Licensing and 
 
 ## Using
 
-CITE Application is a single web page you can open in a browser. Precompiled versions are available in the [downloads directory](compiled-one-file-app), and named `cite-VERSION.html`.
+CITE Application is a single web page you can open in a browser. Precompiled versions are available in the [downloads directory](downloads), and named `cite-VERSION.html`.
 
 ## Building, testing
 
