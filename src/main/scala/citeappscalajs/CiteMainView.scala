@@ -25,6 +25,10 @@ object CiteMainView {
 	val objectView = ObjectView.objectDiv
 	val imageView = ImageView.imageDiv
 
+
+
+	// *** Apropos Microservice ***
+	// We will want a switch here
 	@dom
 	def filePicker = {
 		<span id="app_filePickerSpan">

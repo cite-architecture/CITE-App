@@ -95,6 +95,9 @@ object CiteMainController {
 			js.Dynamic.global.document.getElementById("tab-4").checked = true
 	}
 
+
+	// Reads CEX file, creates repositories for Texts, Objects, and Images
+	// *** Apropos Microservice ***
 	@dom
 	def updateRepository(cexString: String, columnDelimiter: String = "\t", fieldDelimiter: String = ",") = {
 

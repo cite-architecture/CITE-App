@@ -36,24 +36,43 @@ object ImageController {
 		ImageModel.msgTimer = js.timers.setTimeout(6000){ ImageModel.userMessageVisibility := "app_hidden" }
 	}
 
+	// *** Apropos Microservice ***
 	def imgThumb(fullUrn:Cite2Urn):String = {
 			val urn:Cite2Urn = fullUrn.dropExtensions
 			val path:String = s"""${ImageModel.imgArchivePath}${urn.dropSelector.toString.replaceAll(":","_")}/${urn.objectComponent}_files/8/0_0.jpeg"""
 			path
 	}
 
+	// *** Apropos Microservice ***
 	def getFullImagePath(urn:Cite2Urn):String = {
-			val path:String = s"""${ImageModel.imgArchivePath}${urn.dropSelector.toString.replaceAll(":","_")}/${urn.objectComponent}.jpeg"""
+			val path:String = s"""${ImageModel.imgArchivePath}${urn.dropSelector.toString.replaceAll(":","_")}/${urn.objectComponent}.jpg"""
 			path
 	}
 
-	def getBinaryImage(urn:Cite2Urn):String = {
+	// *** Apropos Microservice ***
+	def getBinaryImage(urn:Cite2Urn):Unit = {
+		// Set up path to full-sized image
+			val justUrn = urn.dropExtensions
+			val justROI = urn.objectExtensionOption
+			val path:String = getFullImagePath(justUrn)
+			g.console.log(path)
+
+
 		val canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
-	  val ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
-	  canvas.width = (0.95 * window.innerWidth).toInt
-	  canvas.height = (0.95 * window.innerHeight).toInt
-		val s:String = "Test"
-		s
+		val ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
+		val img = document.createElement("img").asInstanceOf[HTMLImageElement]
+		img.setAttribute("src",path)
+		img.onload = (e: Event) => {
+		    //	canvas.width = (0.95 * window.innerWidth).toInt
+			//	canvas.height = (0.95 * window.innerHeight).toInt
+			canvas.width = img.width
+			canvas.height = img.height
+			ctx.drawImage(img,0,0)
+			val s:String = canvas.toDataURL("image/png")
+			g.console.log(s)
+			val imgPreview = document.getElementById("image_previewImg").asInstanceOf[HTMLImageElement]
+			imgPreview.setAttribute("src",s)
+		}
 	}
 
 	def validateUrn(urnString: String): Unit = {
@@ -84,7 +103,7 @@ object ImageController {
 
 	def loadJsArray:Unit = {
 		ImageController.clearJsRoiArray(true)
-		g.console.log(s"Scala loadJsArray: ${ImageModel.imageROIs.get.size}")
+		//g.console.log(s"Scala loadJsArray: ${ImageModel.imageROIs.get.size}")
 		for (iroi <- ImageModel.imageROIs.get){
 			val tempRoi:String = {
 				iroi.roi match {
@@ -101,7 +120,7 @@ object ImageController {
 			// We will have to do something clever here to make groups
 			val tempGroup:String = iroi.roiGroup.toString
 			val tempIndex:Int = iroi.index
-			g.console.log(s"Adding: ${tempIndex}, ${tempRoi}, ${tempMappedData}, ${tempGroup}")
+			//g.console.log(s"Adding: ${tempIndex}, ${tempRoi}, ${tempMappedData}, ${tempGroup}")
 			ImageController.addToJsRoiArray(tempIndex, tempRoi,tempMappedData,tempGroup)
 		}
 	}
@@ -115,10 +134,12 @@ object ImageController {
 	3. Image URN with Vector of roi-mappings. Invoke with vector of [Some[String],Some[Urn]]
 	------------------------------------------ */
 
+	// *** Apropos Microservice ***
 	def changeUrn(urnString: String): Unit = {
 		changeUrn(Cite2Urn(urnString),Vector((None, None)))
 	}
 
+	// *** Apropos Microservice ***
 	def changeUrn(urn: Cite2Urn): Unit = {
 		try {
 			val oe = urn.objectExtensionOption
@@ -131,6 +152,7 @@ object ImageController {
 		}
 	}
 
+	// *** Apropos Microservice ***
 	def changeUrn(urn:Cite2Urn,roiVec:Vector[(Option[String],Option[Urn])]):Unit = {
 		try {
 			ImageModel.displayUrn := urn

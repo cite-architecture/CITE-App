@@ -88,7 +88,8 @@ object ObjectModel {
 					tempPropList.get += tempP
 			}
 			val tempProtocolList = Vars.empty[BoundCiteProtocol]
-		  val tempProt0 = Var(CiteMainModel.objectProtocol)
+
+			val tempProt0 = Var(CiteMainModel.objectProtocol)
 			tempProtocolList.get += BoundCiteProtocol(tempProt0)
 			// *********************
 			// Now we load other extensions… images for now, but others later!

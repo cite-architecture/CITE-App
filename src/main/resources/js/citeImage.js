@@ -32,12 +32,10 @@ function roiToUrnId(id) {
 
 
 function clearJsRoiArray(r) {
-	console.log("======== clear array =======")
 	roiArray = []
 }
 
 function addToJsRoiArray(i,r,u,g){
-	console.log("JS: addToJsRoiArray:" + i + ", " + r + ", " + u + ", " + g )
 	tempMap = {index: i, roi: r, mappedUrn: u, group: g}
 	roiArray.push(tempMap)
 }
@@ -141,6 +139,6 @@ function initOpenSeadragon(imagePath) {
 								e.target.classList.add("image_roi_selected")
 						}, false);
 					}
-			},2000);
+			},1000);
 
 }

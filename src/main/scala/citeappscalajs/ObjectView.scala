@@ -12,6 +12,7 @@ import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.scalajs.js.Dynamic.{ global => g }
 import scala.scalajs.js.annotation.JSExport
+import scala.concurrent.Future
 
 @JSExport
 object ObjectView {
@@ -283,14 +284,9 @@ def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 	}
 }
 
-
+// contextUrn is the URN of the property of which propVal is the value; contextUrn, therefore, provides access to the collection and the object
 @dom def thumbnailView(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
-		<img src={ ImageController.imgThumb(propVal) } class="object_imgThumb"
-		onclick={ event: Event => {
-			CiteMainController.retrieveImage(contextUrn,propVal)
-			}
-		}
-		/>
+	{ ImageView.thumbnailView(contextUrn:Option[Cite2Urn], propVal:Cite2Urn).bind }
 }
 
 

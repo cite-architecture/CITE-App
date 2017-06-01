@@ -47,6 +47,7 @@ object ImageView {
 
 		<div id="image_sidebar" class="app_sidebarDiv">
 		{ imageCollectionsContainer.bind }
+		{ imagePreviewImg.bind }
 		{ imageMappedDataDiv.bind }
 		</div>
 
@@ -131,24 +132,44 @@ def imageMappedDataDiv = {
 @dom
 def mappedUrnP(iroi:ImageModel.ImageROI) = {
 	val u:Urn = iroi.roiData.get
+	val imgU:Cite2Urn = {
+		iroi.roi match {
+			case Some(r) => Cite2Urn(s"${iroi.urn}@${r}")
+			case _ => iroi.urn
+		}
+	}
 	val idx:Int = iroi.index
 	val pId = ImageModel.idForMappedUrn(idx)
-	g.console.log(s"ImageView: ${u}, ${idx}, ${pId}")
+	g.console.log(s"ImageView: ${imgU}, ${u}, ${idx}, ${pId}")
 	<p class={ s"image_mappedUrn image_roiGroup_${iroi.roiGroup} ${ImageModel.idForMappedUrn(idx)}"}
-		id={ pId } >
+		id={ pId }
+			onmouseover={ event: Event => {
+				val roiId = ImageModel.idForMappedROI(idx)
+				g.console.log(roiId)
+				val hoveredROI = document.getElementById(ImageModel.idForMappedROI(idx)).asInstanceOf[HTMLAnchorElement]
+				hoveredROI.classList.add("image_roi_hovered")
+			}}
+			onmouseleave={ event: Event => {
+				val hoveredROI = document.getElementById(ImageModel.idForMappedROI(idx)).asInstanceOf[HTMLAnchorElement]
+				hoveredROI.classList.remove("image_roi_hovered")
+			}}
+		>
 
-		{ mappedUrnSpan(u).bind }
+		{ mappedUrnSpan(u, imgU).bind }
 
 	</p>
 }
 
 @dom
-def mappedUrnSpan(u:Urn) = {
+def mappedUrnSpan(u:Urn, imgU:Cite2Urn) = {
 	 { u match {
 			case CtsUrn(_) => {
+				<span>
 				<a onclick={ event: Event => { CiteMainController.retrieveTextPassage(u.asInstanceOf[CtsUrn]) }}>
 				<strong>Text Passage:</strong> {u.toString}
 				</a>
+				<br/> { binaryImageLink(imgU).bind }
+				</span>
 			}
 			case Cite2Urn(_) => {
 				val c2u = u.asInstanceOf[Cite2Urn].dropProperty
@@ -157,7 +178,7 @@ def mappedUrnSpan(u:Urn) = {
 					if (ImageModel.imageExtensions.extensions(collUrn).size > 0){
 						{
 							<span>
-							{ s"${c2u.toString}" } <br/>
+							<strong>Object:</strong> { s"${c2u.toString}" }
 							<a
 							onclick={ event: Event => {
 								CiteMainController.retrieveObject(None,c2u)
@@ -168,7 +189,7 @@ def mappedUrnSpan(u:Urn) = {
 									CiteMainController.retrieveImage(None,c2u)
 								}
 							}>View as Image</a> <br/>
-							{ ObjectView.thumbnailView(None, c2u).bind }
+							<br/> { binaryImageLink(imgU).bind }
 							</span>
 						}
 					} else {
@@ -178,9 +199,10 @@ def mappedUrnSpan(u:Urn) = {
 							onclick={ event: Event => {
 								CiteMainController.retrieveObject(None,c2u)
 								}
-							}>
+							} >
 								{ s"${c2u.toString}" }
 							</a>
+							<br/> { binaryImageLink(imgU).bind }
 							</span>
 						}
 					}
@@ -193,6 +215,68 @@ def mappedUrnSpan(u:Urn) = {
 			}
 		}
 	}
+}
+
+@dom
+def binaryImageLink(u:Cite2Urn) = {
+	<a
+	onclick={ event: Event => {
+		ImageController.getBinaryImage(u)
+		}
+	}>{ u.toString }</a>
+}
+
+@dom
+def thumbnailView(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
+	val maxWidth = 300;
+	val justUrn = propVal.dropExtensions
+	val justROI = propVal.objectExtensionOption
+	var rT:Float = 0; var rL:Float = 0; var rW:Float = 1; var rH:Float = 1;
+	justROI match {
+		case Some(r) => {
+			rL = r.split(',')(0).toFloat
+			rT = r.split(',')(1).toFloat
+			rW = r.split(',')(2).toFloat
+			rH = r.split(',')(3).toFloat
+		}
+		case _ => {
+			rT = 0; rL = 0; rW = 1; rH = 1;
+		}
+	}
+
+	// Let's make some decisions about how big this ROI is!
+	var path:String = ""
+	(rW * rH) match {
+		case x if x < 0.25 => path = ImageController.getFullImagePath(justUrn)
+		case _ => path = ImageController.imgThumb(justUrn)
+	}
+
+	val canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
+	val ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
+	val offScreenImg = document.createElement("img").asInstanceOf[HTMLImageElement]
+	val onScreenImg = document.createElement("img").asInstanceOf[HTMLImageElement]
+	offScreenImg.setAttribute("src",path)
+	//Wait for that to load, then proceed
+	offScreenImg.onload = (e: Event) => {
+			canvas.width = (offScreenImg.width * rW).round
+			canvas.height = (offScreenImg.height * rH).round
+			ctx.drawImage(offScreenImg,(0-(offScreenImg.width * rL)).round,(0-(offScreenImg.height*rT)).round)
+			val s:String = canvas.toDataURL("image/png")
+			onScreenImg.setAttribute("src",s)
+			onScreenImg.setAttribute("class","object_imgThumb")
+	}
+	onScreenImg
+}
+
+
+@dom
+def imagePreviewImg = {
+	<div id="image_imagePreviewDiv">
+	<h2>Image Preview</h2>
+	<img id="image_previewImg" src=""/>
+	<br/>
+	<a>Download Full Sized Image</a>
+	</div>
 }
 
 

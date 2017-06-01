@@ -36,6 +36,7 @@ object ImageModel {
 	// displayUrn is what will be shown
 	val displayUrn = Var(Cite2Urn("urn:cite2:ns:coll.v1:obj"))
 	val versionsForCurrentUrn = Var(1)
+	val previewImageUrn = Var[Cite2Urn](null) 
 
 	//We might have zero+ ROIs on this image
 	val imageROIs = Vars.empty[ImageROI]
@@ -74,8 +75,8 @@ object ImageModel {
 				imageROIs.get += ImageROI(i+1, u, r._1, r._2, (i+1))
 			}
 			// FOR TESTING ONLY! REMOVE BEFORE FLIGHT!!
-		imageROIs.get += ImageROI(roiVector.size+1,Cite2Urn("urn:cite2:hmt:msA.v1:1r"),Some("0,0,0.25,0.25"),Some(CtsUrn("urn:cts:greekLit:tlg0012.tlg001.allen:2.1")),roiVector.size+1)
-		imageROIs.get += ImageROI(roiVector.size+2,Cite2Urn("urn:cite2:hmt:msA.v1:1r"),Some("0.75,0.75,0.25,0.25"),Some(CtsUrn("urn:cts:greekLit:tlg0012.tlg001.allen:2.2")),roiVector.size+2)
+		imageROIs.get += ImageROI(roiVector.size+1,Cite2Urn("urn:cite2:hmt:vaimg.v1:VA012RN_0013"),Some("0,0,0.25,0.25"),Some(CtsUrn("urn:cts:greekLit:tlg0012.tlg001.allen:2.1")),roiVector.size+1)
+		imageROIs.get += ImageROI(roiVector.size+2,Cite2Urn("urn:cite2:hmt:vaimg.v1:VA012RN_0013"),Some("0.75,0.75,0.25,0.25"),Some(CtsUrn("urn:cts:greekLit:tlg0012.tlg001.allen:2.2")),roiVector.size+2)
 		g.console.log(s"Scala updateRois: ${imageROIs.get.size}")
 	}
 
