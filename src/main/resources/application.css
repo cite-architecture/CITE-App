@@ -205,8 +205,7 @@ a.image_roi_selected {
 }
 
 a.image_roi_hovered {
-	outline-style: solid;
-	outline-width: 7px ;
+	background-color: rgba(230,230,0,0.2);
 }
 
 p.image_roi_selected {

@@ -14,6 +14,17 @@ classes:
 
 */
 
+/*
+function imageInNewWindow(c) {
+		console.log("Got here… opening " )
+		var w = c.width;
+		console.log(w);
+		var h = c.height;
+		console.log(h);
+		var u = c.toDataURL();
+		window.open(u, "Image", "width=200, height=200");
+}
+*/
 
 function idForMappedUrn(i) {
 	var s = "image_mappedUrn_" + (i)

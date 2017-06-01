@@ -147,12 +147,14 @@ object CiteMainController {
 
 			repo.imageExtensions match {
 				case Some(ie) => {
+						ImageController.clearAll
 						ImageModel.imageExtensions = ie
 						ImageModel.updateImageCollections
 						loadMessage += s"Image collections: ${ie.protocolMap.size}."
 				}
 
 				case None => {
+					ImageController.clearAll
 					loadMessage += "Chosen repository does not seem to include any image collections. "
 				}
 			}

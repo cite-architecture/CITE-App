@@ -7,11 +7,17 @@
 </head>
 <body>
 
+<script type="text/javascript" src="js/citeImage.js"></script>
+<script type="text/javascript" src="js/openseadragon.min.js"></script>
+<script type="text/javascript" src="js/openseadragon-guides.js"></script>
+
 <script type="text/javascript" src="../citeapp-fastopt.js"></script>
 <script>
-		var defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/libraries/million.cex"
+		//var defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/libraries/million.cex"
+		var defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/sandbox/experimental/cite-test-enriched.cex"
 		var defaultLibraryDelimiter = "#"
-		citeapp.CiteMainController().main(defaultLibraryUrl, defaultLibraryDelimiter);
+		var defaultFieldDelimiter = ","
+		citeapp.CiteMainController().main(defaultLibraryUrl, defaultLibraryDelimiter, defaultFieldDelimiter);
 </script>
 </body>
 </html>

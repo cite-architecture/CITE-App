@@ -21,6 +21,10 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport
 object ImageController {
 
+	def clearAll:Unit = {
+		val previewImg = document.getElementById("image_previewImg").asInstanceOf[HTMLImageElement]
+		previewImg.setAttribute("src","")
+	}
 
 	val validUrnInField = Var(false)
 
@@ -49,31 +53,53 @@ object ImageController {
 			path
 	}
 
-	// *** Apropos Microservice ***
-	def getBinaryImage(urn:Cite2Urn):Unit = {
-		// Set up path to full-sized image
-			val justUrn = urn.dropExtensions
-			val justROI = urn.objectExtensionOption
-			val path:String = getFullImagePath(justUrn)
-			g.console.log(path)
+// *** Apropos Microservice ***
+  def previewImage(u:Cite2Urn) = {
+			try {
+				val justUrn = u.dropExtensions
+				val justROI = u.objectExtensionOption
+				var rT:Float = 0; var rL:Float = 0; var rW:Float = 1; var rH:Float = 1;
+				justROI match {
+					case Some(r) => {
+						rL = r.split(',')(0).toFloat
+						rT = r.split(',')(1).toFloat
+						rW = r.split(',')(2).toFloat
+						rH = r.split(',')(3).toFloat
+					}
+					case _ => {
+						rT = 0; rL = 0; rW = 1; rH = 1;
+					}
+				}
 
+				// Let's make some decisions about how big this ROI is!
+				var path:String = ""
+				(rW * rH) match {
+					case x if x < 0.15 => path = ImageController.getFullImagePath(justUrn)
+					case _ => path = ImageController.imgThumb(justUrn)
+				}
 
-		val canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
-		val ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
-		val img = document.createElement("img").asInstanceOf[HTMLImageElement]
-		img.setAttribute("src",path)
-		img.onload = (e: Event) => {
-		    //	canvas.width = (0.95 * window.innerWidth).toInt
-			//	canvas.height = (0.95 * window.innerHeight).toInt
-			canvas.width = img.width
-			canvas.height = img.height
-			ctx.drawImage(img,0,0)
-			val s:String = canvas.toDataURL("image/png")
-			g.console.log(s)
-			val imgPreview = document.getElementById("image_previewImg").asInstanceOf[HTMLImageElement]
-			imgPreview.setAttribute("src",s)
+				val canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
+				val ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
+				val offScreenImg = document.createElement("img").asInstanceOf[HTMLImageElement]
+				offScreenImg.setAttribute("src",path)
+				//Wait for that to load, then proceed
+				offScreenImg.onload = (e: Event) => {
+						canvas.width = (offScreenImg.width * rW).round
+						canvas.height = (offScreenImg.height * rH).round
+						// draw it once
+						ctx.drawImage(offScreenImg,(0-(offScreenImg.width * rL)).round,(0-(offScreenImg.height*rT)).round)
+
+						val s:String = canvas.toDataURL("image/png")
+						val prevImg = document.getElementById("image_previewImg").asInstanceOf[HTMLImageElement]
+						prevImg.setAttribute("src",s)
+				}
+
+			} catch {
+				case e: Exception => {
+					ImageController.updateUserMessage(s"Could not download image for ${u}. ${e}",2)
+				}
+			}
 		}
-	}
 
 	def validateUrn(urnString: String): Unit = {
 		try{
@@ -93,6 +119,7 @@ object ImageController {
 		ioo match {
 			case Some(s) => {
 				ImageController.loadJsArray
+				ImageController.previewImage(tempUrn)
 				ImageController.updateImageJS(collection.toString, s )
 			}
 			case _ => {
@@ -186,6 +213,15 @@ object addToJsRoiArray extends js.Any {
 object updateImageJS extends js.Any {
   def apply(collection: String, imageObject: String): js.Dynamic = js.native
 }
+
+/*
+@JSName("imageInNewWindow")
+@js.native
+object imageInNewWindow extends js.Any {
+  def apply(canvas: HTMLCanvasElement): js.Dynamic = js.native
+}
+*/
+
 
 
 }

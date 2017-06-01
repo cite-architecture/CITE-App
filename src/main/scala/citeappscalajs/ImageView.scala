@@ -47,7 +47,7 @@ object ImageView {
 
 		<div id="image_sidebar" class="app_sidebarDiv">
 		{ imageCollectionsContainer.bind }
-		{ imagePreviewImg.bind }
+		{ imagePreviewDiv.bind }
 		{ imageMappedDataDiv.bind }
 		</div>
 
@@ -140,12 +140,10 @@ def mappedUrnP(iroi:ImageModel.ImageROI) = {
 	}
 	val idx:Int = iroi.index
 	val pId = ImageModel.idForMappedUrn(idx)
-	g.console.log(s"ImageView: ${imgU}, ${u}, ${idx}, ${pId}")
 	<p class={ s"image_mappedUrn image_roiGroup_${iroi.roiGroup} ${ImageModel.idForMappedUrn(idx)}"}
 		id={ pId }
 			onmouseover={ event: Event => {
 				val roiId = ImageModel.idForMappedROI(idx)
-				g.console.log(roiId)
 				val hoveredROI = document.getElementById(ImageModel.idForMappedROI(idx)).asInstanceOf[HTMLAnchorElement]
 				hoveredROI.classList.add("image_roi_hovered")
 			}}
@@ -168,7 +166,7 @@ def mappedUrnSpan(u:Urn, imgU:Cite2Urn) = {
 				<a onclick={ event: Event => { CiteMainController.retrieveTextPassage(u.asInstanceOf[CtsUrn]) }}>
 				<strong>Text Passage:</strong> {u.toString}
 				</a>
-				<br/> { binaryImageLink(imgU).bind }
+				<br/> { previewImageLink(imgU).bind }
 				</span>
 			}
 			case Cite2Urn(_) => {
@@ -189,7 +187,7 @@ def mappedUrnSpan(u:Urn, imgU:Cite2Urn) = {
 									CiteMainController.retrieveImage(None,c2u)
 								}
 							}>View as Image</a> <br/>
-							<br/> { binaryImageLink(imgU).bind }
+							<br/> { previewImageLink(imgU).bind }
 							</span>
 						}
 					} else {
@@ -200,9 +198,10 @@ def mappedUrnSpan(u:Urn, imgU:Cite2Urn) = {
 								CiteMainController.retrieveObject(None,c2u)
 								}
 							} >
+								Object:
 								{ s"${c2u.toString}" }
 							</a>
-							<br/> { binaryImageLink(imgU).bind }
+							<br/> { previewImageLink(imgU).bind }
 							</span>
 						}
 					}
@@ -218,12 +217,12 @@ def mappedUrnSpan(u:Urn, imgU:Cite2Urn) = {
 }
 
 @dom
-def binaryImageLink(u:Cite2Urn) = {
+def previewImageLink(u:Cite2Urn) = {
 	<a
 	onclick={ event: Event => {
-		ImageController.getBinaryImage(u)
+		ImageController.previewImage(u)
 		}
-	}>{ u.toString }</a>
+	}>Preview region-of-interest</a>
 }
 
 @dom
@@ -270,12 +269,9 @@ def thumbnailView(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 
 
 @dom
-def imagePreviewImg = {
+def imagePreviewDiv = {
 	<div id="image_imagePreviewDiv">
-	<h2>Image Preview</h2>
 	<img id="image_previewImg" src=""/>
-	<br/>
-	<a>Download Full Sized Image</a>
 	</div>
 }
 
