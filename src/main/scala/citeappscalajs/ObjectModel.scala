@@ -71,6 +71,7 @@ object ObjectModel {
 	val objectOrCollection = Var("none")
 
 
+
 	// The big data repo from the .cex file
 	var collectionRepository: CiteCollectionRepository = null
 
@@ -252,6 +253,11 @@ object ObjectModel {
 		for ( cc <- ObjectModel.collectionRepository.catalog.collections){
 			ObjectModel.collections.get += cc
 		}
+			QueryObjectModel.currentQueryCollection := Some(ObjectModel.collections.get(0).urn)
+			QueryObjectModel.currentQueryCollectionProps.get.clear
+			for (p <- ObjectModel.collectionRepository.collectionDefinition(QueryObjectModel.currentQueryCollection.get.get).get.propertyDefs) {
+				QueryObjectModel.currentQueryCollectionProps.get += p
+			}
 	}
 
 	def countObjects(urn:Cite2Urn):Int = {

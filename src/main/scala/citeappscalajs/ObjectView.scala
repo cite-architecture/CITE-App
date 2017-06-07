@@ -12,7 +12,6 @@ import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.scalajs.js.Dynamic.{ global => g }
 import scala.scalajs.js.annotation.JSExport
-import scala.concurrent.Future
 
 @JSExport
 object ObjectView {
@@ -45,8 +44,8 @@ object ObjectView {
 		<div id="object_Container">
 
 		<div id="object_sidebar" class="app_sidebarDiv">
+		{ objectQueryForms.bind }
 		{ objectCollectionsContainer.bind }
-		{ textSearchForm.bind }
 		</div>
 
 		{ objectMessageDiv.bind }
@@ -396,26 +395,9 @@ def propertyUrnSpan(urnStr:String) = {
 
 /* Search Properties Forms */
 @dom
-def textSearchForm = {
-	<div id="object_searchForm">
-	<h2>Search Property Values</h2>
-	<p id="object_whichCollectionToSearch">Searching: <strong>{ ObjectModel.urn.bind.dropSelector.toString }</strong></p>
-	<label for="object_searchTextbox">Search text</label>
-	<input
-		type="text"
-		placeholder="Find text in image metadata"
-		size={ 20 }
-		id="object_searchTextbox"/>
-	<br/>
-	<button
-		id="object_searchSubmit"
-			onclick={ event: Event => {
-					val s: String = js.Dynamic.global.document.getElementById("object_searchTextbox").value.toString
-					ObjectController.updateUserMessage("Searching property values. Please be patient…",1)
-					g.console.log(s"Searching for ${s}")
-				}
-			}
-		>Search Image Metadata</button>
+def objectQueryForms = {
+	<div id="object_queryForms">
+	{ QueryObjectView.collectionQueryDiv.bind }
 	</div>
 }
 

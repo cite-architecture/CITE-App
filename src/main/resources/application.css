@@ -87,6 +87,30 @@ div#object_objectContainer li.list:before {
 	clear: both;
 }
 
+
+/* Object Query Stuff */
+.queryObject_qform {
+}
+
+button#queryObject_Submit {
+	margin-left: -2px;
+	margin-top: 15px;
+}
+
+
+
+.queryObject_formhidden, .queryObject_fieldhidden  {
+	display: none;
+}
+
+.queryObject_fieldvisible {
+	display: inline;
+}
+
+.queryObject_formvisible{
+	display: block;
+}
+
 /* =================================================== */
 /* Image Formating */
 /* =================================================== */

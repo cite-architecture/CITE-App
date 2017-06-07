@@ -86,7 +86,7 @@ object CiteMainView {
 
 				<div class="app_tab">
 					<input type="radio" id="tab-3" name="tab-group-1" checked={ true }/>
-					<label class="tab_label" for="tab-3">Objects</label>
+					<label class="tab_label" for="tab-3">Collections</label>
 						<div class="content">
 						 { objectView.bind }
 						</div>
