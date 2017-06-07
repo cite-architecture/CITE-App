@@ -26,15 +26,78 @@ object QueryObjectModel {
 	val queryProperty = Var[Option[CitePropertyDef]](None)
 	val selectedPropertyType = Var[Option[CitePropertyType]](Some(StringType))
 	val currentControlledVocabulary = Vars.empty[String]
+	val currentControlledVocabItem = Var[Option[String]](None)
+	val currentSearchString = Var[Option[String]](None)
 
-	val currentNumericQuery1 = Var[Double](1.0)
-	val currentNumericQuery2 = Var[Double](2.0)
+	val currentNumericQuery1 = Var[Option[Double]](None)
+	val currentNumericQuery2 = Var[Option[Double]](None)
 	val currentNumericOperator = Var("eq")
 
 	val currentBooleanVal = Var(true)
 
-	var currentCtsUrnQuery:CtsUrn = null
-	var currentCite2UrnQuery:Cite2Urn = null
+	val currentCtsUrnQuery = Var[Option[CtsUrn]](None)
+	val currentCite2UrnQuery = Var[Option[Cite2Urn]](None)
+
+	case class CiteCollectionQuery(
+			val qCollection: Option[Cite2Urn],
+			val qProperty: Option[CitePropertyDef],
+			val qPropertyType: Option[CitePropertyType],
+			val qControlledVocabItem: Option[String],
+			val qSearchString: Option[String],
+			val qNum1: Option[Double],
+			val qNum2: Option[Double],
+			val qNumOperator: Option[String],
+			val qBoolVal: Option[Boolean],
+			val qCtsUrn: Option[CtsUrn],
+			val qCite2Urn: Option[Cite2Urn]
+	)
+	{
+		override def toString:String = {
+			var qds:String = "Query: "
+			qCollection match {
+				case Some(x) => qds += s"${x.toString} :"
+				case None => qds += s"All collections. "
+			}
+			qProperty match {
+				case Some(x) => qds += s"Property: ${x.label}. "
+				case _ => qds += s"All properties. "
+			}
+			qPropertyType match {
+				case Some(x) => qds += s"${x}. "
+				case _ => qds += s"No property type. "
+			}
+			qSearchString match {
+				case Some(x) => qds += s"Search for “${x}”. "
+				case _ => qds += ""
+			}
+			qBoolVal match {
+				case Some(x) => qds += s"Search for Boolean value [${x}]. "
+				case _ => qds += ""
+			}
+			qCtsUrn match {
+				case Some(x) => qds += s"Search for Cts Urn ${x}. "
+				case _ => qds += ""
+			}
+			qCtsUrn match {
+				case Some(x) => qds += s"Search for Cite2 Urn ${x}. "
+				case _ => qds += ""
+			}
+			qNumOperator match {
+				case Some(x) => {
+					x match {
+							case "inRange" => qds += s"Search for value in range ${qNum1.get}–${qNum2.get}. "
+							case "eq" => qds += s"Search for value = ${qNum1.get}. "
+							case "gt" => qds += s"Search for value > ${qNum1.get}. "
+							case "lt" => qds += s"Search for value < ${qNum1.get}. "
+							case "gteq" => qds += s"Search for value >= ${qNum1.get}. "
+							case "lteq" => qds += s"Search for value <= ${qNum1.get}. "
+							}
+					}
+				case _ => qds += ""
+			}
+			qds
+		}
+	}
 
 	// Change this to Vars[ObjectQueries]
 	val pastQueries = Var("yep")
@@ -42,17 +105,17 @@ object QueryObjectModel {
 	def validateNumericEntry(thisEvent: Event):Unit = {
 		val thisTarget = thisEvent.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]
 		val testText = thisTarget.value.toString
-		var previousEntry:Double = 0
+		var previousEntry:Option[Double] = None
 		thisTarget.id match {
 				case "queryObject_numeric1" => previousEntry = currentNumericQuery1.get
 				case "queryObject_numeric2" => previousEntry = currentNumericQuery2.get
-				case _ => previousEntry = 0
+				case _ => previousEntry = None
 		}
 		try{
 			val mo:Double = testText.toDouble
 			thisTarget.id match {
-					case "queryObject_numeric1" => currentNumericQuery1 := mo
-					case "queryObject_numeric2" => currentNumericQuery2 := mo
+					case "queryObject_numeric1" => currentNumericQuery1 := Some(mo)
+					case "queryObject_numeric2" => currentNumericQuery2 := Some(mo)
 			}
 		} catch {
 			case e: Exception => {
@@ -68,7 +131,7 @@ object QueryObjectModel {
 		val testText = thisTarget.value.toString
 		try{
 			val testCts:CtsUrn = CtsUrn(testText)
-			currentCtsUrnQuery = testCts
+			currentCtsUrnQuery := Some(testCts)
 		} catch {
 			case e: Exception => {
 				val badMo: String = testText
@@ -83,7 +146,7 @@ object QueryObjectModel {
 		val testText = thisTarget.value.toString
 		try{
 			val testCite2:Cite2Urn = Cite2Urn(testText)
-			currentCite2UrnQuery = testCite2
+			currentCite2UrnQuery := Some(testCite2)
 		} catch {
 			case e: Exception => {
 				val badMo: String = testText

@@ -18,6 +18,7 @@ object QueryObjectController {
 
 	def initQuery:Unit = {
 		g.console.log("Doing query…")
+		// Construct Query Object
 	}
 
 
