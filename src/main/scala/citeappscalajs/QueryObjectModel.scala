@@ -21,6 +21,8 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport
 object QueryObjectModel {
 
+	val isValidSearch = Var(false)
+
 	val currentQueryCollection = Var[Option[Cite2Urn]](None)
 	val currentQueryCollectionProps = Vars.empty[CitePropertyDef]
 	val queryProperty = Var[Option[CitePropertyDef]](None)
@@ -38,22 +40,38 @@ object QueryObjectModel {
 	val currentCtsUrnQuery = Var[Option[CtsUrn]](None)
 	val currentCite2UrnQuery = Var[Option[Cite2Urn]](None)
 
+	def clearAll = {
+		isValidSearch := false
+		currentQueryCollectionProps.get.clear
+		queryProperty := None
+		selectedPropertyType := Some(StringType)
+		currentControlledVocabulary.get.clear
+		currentControlledVocabItem := None
+		currentSearchString := None
+		currentNumericQuery1 := None
+		currentNumericQuery2 := None
+		currentBooleanVal := true
+		currentCtsUrnQuery := None
+	  currentCite2UrnQuery := None
+	}
+
 	case class CiteCollectionQuery(
-			val qCollection: Option[Cite2Urn],
-			val qProperty: Option[CitePropertyDef],
-			val qPropertyType: Option[CitePropertyType],
-			val qControlledVocabItem: Option[String],
-			val qSearchString: Option[String],
-			val qNum1: Option[Double],
-			val qNum2: Option[Double],
-			val qNumOperator: Option[String],
-			val qBoolVal: Option[Boolean],
-			val qCtsUrn: Option[CtsUrn],
-			val qCite2Urn: Option[Cite2Urn]
+		val qCollection: Option[Cite2Urn],
+		val qProperty: Option[CitePropertyDef] = None ,
+		val qPropertyType: Option[CitePropertyType],
+		val qControlledVocabItem: Option[String] = None,
+		val qSearchString: Option[String] = None,
+		val qRegex:Option[Boolean] = None,
+		val qNum1: Option[Double] = None,
+		val qNum2: Option[Double] = None,
+		val qNumOperator: Option[String] = None,
+		val qBoolVal: Option[Boolean] = None,
+		val qCtsUrn: Option[CtsUrn] = None,
+		val qCite2Urn: Option[Cite2Urn] = None
 	)
 	{
 		override def toString:String = {
-			var qds:String = "Query: "
+			var qds:String = "Search collection: "
 			qCollection match {
 				case Some(x) => qds += s"${x.toString} :"
 				case None => qds += s"All collections. "
@@ -67,7 +85,13 @@ object QueryObjectModel {
 				case _ => qds += s"No property type. "
 			}
 			qSearchString match {
-				case Some(x) => qds += s"Search for “${x}”. "
+				case Some(x) => {
+					qds += s"Search for “${x}” "
+					qRegex match {
+						case Some(true) => qds += s"(with Regex). "
+						case _ => qds += "."
+					}
+				}
 				case _ => qds += ""
 			}
 			qBoolVal match {
@@ -85,14 +109,14 @@ object QueryObjectModel {
 			qNumOperator match {
 				case Some(x) => {
 					x match {
-							case "inRange" => qds += s"Search for value in range ${qNum1.get}–${qNum2.get}. "
-							case "eq" => qds += s"Search for value = ${qNum1.get}. "
-							case "gt" => qds += s"Search for value > ${qNum1.get}. "
-							case "lt" => qds += s"Search for value < ${qNum1.get}. "
-							case "gteq" => qds += s"Search for value >= ${qNum1.get}. "
-							case "lteq" => qds += s"Search for value <= ${qNum1.get}. "
-							}
+						case "inRange" => qds += s"Search for value in range ${qNum1.get}–${qNum2.get}. "
+						case "eq" => qds += s"Search for value = ${qNum1.get}. "
+						case "gt" => qds += s"Search for value > ${qNum1.get}. "
+						case "lt" => qds += s"Search for value < ${qNum1.get}. "
+						case "gteq" => qds += s"Search for value >= ${qNum1.get}. "
+						case "lteq" => qds += s"Search for value <= ${qNum1.get}. "
 					}
+				}
 				case _ => qds += ""
 			}
 			qds
@@ -107,15 +131,15 @@ object QueryObjectModel {
 		val testText = thisTarget.value.toString
 		var previousEntry:Option[Double] = None
 		thisTarget.id match {
-				case "queryObject_numeric1" => previousEntry = currentNumericQuery1.get
-				case "queryObject_numeric2" => previousEntry = currentNumericQuery2.get
-				case _ => previousEntry = None
+			case "queryObject_numeric1" => previousEntry = currentNumericQuery1.get
+			case "queryObject_numeric2" => previousEntry = currentNumericQuery2.get
+			case _ => previousEntry = None
 		}
 		try{
 			val mo:Double = testText.toDouble
 			thisTarget.id match {
-					case "queryObject_numeric1" => currentNumericQuery1 := Some(mo)
-					case "queryObject_numeric2" => currentNumericQuery2 := Some(mo)
+				case "queryObject_numeric1" => currentNumericQuery1 := Some(mo)
+				case "queryObject_numeric2" => currentNumericQuery2 := Some(mo)
 			}
 		} catch {
 			case e: Exception => {
@@ -155,4 +179,65 @@ object QueryObjectModel {
 			}
 		}
 	}
+
+	/* Based on whether we're set up to query all properties or a single one,
+	load controlled vocabulary into a binding Vars */
+	@dom
+	def loadControlledVocabulary = {
+		QueryObjectModel.currentQueryCollection.get match {
+			case None => loadControlledVocablAll
+			case _ => loadControlledVocablOne
+		}
+	}
+
+	@dom
+	def loadControlledVocablAll = {
+			QueryObjectModel.currentControlledVocabulary.get.clear
+			var vList = new ListBuffer[String]
+			for (c <- ObjectModel.collections.get ){
+				for (p <- c.propertyDefs){
+					for (v <- p.vocabularyList)
+						vList += v
+				}
+			}
+			val vSet = vList.toSet
+			for (vs <- vSet ){
+					QueryObjectModel.currentControlledVocabulary.get += vs
+			}
+			if (vSet.size > 0){
+				QueryObjectModel.currentControlledVocabItem := Some(vSet.head)
+			}
+
+
+	}
+
+	@dom
+	def loadControlledVocablOne = {
+		QueryObjectModel.queryProperty.bind match {
+			case None => {
+				QueryObjectModel.currentControlledVocabulary.get.clear
+				for (p <- QueryObjectModel.currentQueryCollectionProps.get){
+					if (p.propertyType == ControlledVocabType){
+						for (v <- p.vocabularyList){
+							QueryObjectModel.currentControlledVocabulary.get += v
+						}
+					}
+				}
+				if (QueryObjectModel.currentControlledVocabulary.get.size > 0){
+						QueryObjectModel.currentControlledVocabItem := Some(QueryObjectModel.currentControlledVocabulary.get.head)
+				}
+			}
+			case _ => {
+				QueryObjectModel.currentControlledVocabulary.get.clear
+				for (v <- QueryObjectModel.queryProperty.get.get.vocabularyList){
+					QueryObjectModel.currentControlledVocabulary.get += v
+				}
+				QueryObjectModel.currentControlledVocabItem := Some(QueryObjectModel.currentControlledVocabulary.get.head)
+			}
+		}
+		//QueryObjectModel.currentControlledVocabItem := Some(QueryObjectModel.currentControlledVocabulary.get.head)
+	}
+
+
+
 }

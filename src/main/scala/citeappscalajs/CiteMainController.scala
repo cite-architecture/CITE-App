@@ -136,6 +136,8 @@ object CiteMainController {
 					ObjectController.clearHistory
 					ObjectModel.clearObject
 					ObjectController.preloadUrn
+					QueryObjectModel.clearAll
+					QueryObjectModel.currentQueryCollection := None
 					loadMessage += s"Updated collection repository: ${ cr.collections.size  } collections."
 
 				}

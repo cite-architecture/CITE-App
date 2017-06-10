@@ -253,11 +253,8 @@ object ObjectModel {
 		for ( cc <- ObjectModel.collectionRepository.catalog.collections){
 			ObjectModel.collections.get += cc
 		}
-			QueryObjectModel.currentQueryCollection := Some(ObjectModel.collections.get(0).urn)
+			QueryObjectModel.currentQueryCollection := None
 			QueryObjectModel.currentQueryCollectionProps.get.clear
-			for (p <- ObjectModel.collectionRepository.collectionDefinition(QueryObjectModel.currentQueryCollection.get.get).get.propertyDefs) {
-				QueryObjectModel.currentQueryCollectionProps.get += p
-			}
 	}
 
 	def countObjects(urn:Cite2Urn):Int = {

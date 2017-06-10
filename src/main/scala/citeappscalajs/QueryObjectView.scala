@@ -32,7 +32,7 @@ object QueryObjectView {
 	/* Div containing controls for querying all properties of a collection */
 	@dom
 	def queryAllProps = {
-		QueryObjectView.loadControlledVocabulary
+		QueryObjectModel.loadControlledVocabulary
 		<div class={
 			//val pselect = QueryObjectModel.queryProperty.get
 			QueryObjectModel.queryProperty.bind match {
@@ -58,12 +58,19 @@ object QueryObjectView {
 	def queryButton = {
 	<button
 		id="queryObject_Submit"
+		disabled={ QueryObjectModel.isValidSearch.bind == false }
 			onclick={ event: Event => {
 					ObjectController.updateUserMessage("Querying Collection. Please be patient…",1)
 					js.timers.setTimeout(500){ QueryObjectController.initQuery }
 				}
 			}
-		>Search Collection</button>
+		>{ if (QueryObjectModel.isValidSearch.bind){
+			"Search Collections"
+		} else {
+			"Enter Search Terms"
+		}
+			}
+	</button>
 	}
 
 
@@ -95,6 +102,11 @@ object QueryObjectView {
 	def propertyTypeSelector = {
 		<label for="queryObject_typeSelector">Select Data Type</label>
 		<select id="queryObject_typeSelector"
+		value={ QueryObjectModel.selectedPropertyType.bind match{
+				case Some(t) => t.toString
+				case None => ""
+			}
+		}
 		onchange={ event: Event => {
 			val thisSelect = document.getElementById("queryObject_typeSelector").asInstanceOf[HTMLSelectElement]
 			thisSelect.value match {
@@ -104,11 +116,12 @@ object QueryObjectView {
 				case "CtsUrnType" => QueryObjectModel.selectedPropertyType := Some(CtsUrnType)
 				case "NumericType" => QueryObjectModel.selectedPropertyType := Some(NumericType)
 				case "ControlledVocabType" => {
-					QueryObjectView.loadControlledVocabulary
+					QueryObjectModel.loadControlledVocabulary
 					QueryObjectModel.selectedPropertyType := Some(ControlledVocabType)
 				}
 				case _ => QueryObjectModel.selectedPropertyType := None
 			}
+			QueryObjectController.isValidSearch
 		}
 	}>
 	<option value="StringType">String</option>
@@ -121,33 +134,17 @@ object QueryObjectView {
 }
 
 
-/* Based on whether we're set up to query all properties or a single one,
-load controlled vocabulary into a binding Vars */
-@dom
-def loadControlledVocabulary = {
-	QueryObjectModel.queryProperty.bind match {
-		case None => {
-			QueryObjectModel.currentControlledVocabulary.get.clear
-			for (p <- QueryObjectModel.currentQueryCollectionProps.get){
-				if (p.propertyType == ControlledVocabType){
-					for (v <- p.vocabularyList){
-						QueryObjectModel.currentControlledVocabulary.get += v
-					}
-				}
-			}
-		}
-		case _ => {
-			QueryObjectModel.currentControlledVocabulary.get.clear
-			for (v <- QueryObjectModel.queryProperty.get.get.vocabularyList){
-				QueryObjectModel.currentControlledVocabulary.get += v
-			}
-		}
-	}
-}
 
 @dom
 def controlledVocabSelect = {
 	<div id="queryObject_controlledVocabSelectorDiv"
+	onchange={ event: Event => {
+		val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLSelectElement]
+		val testText:String = thisTarget.value.toString
+		QueryObjectModel.currentControlledVocabItem := Some(testText)
+		QueryObjectController.isValidSearch
+		}
+	}
 	class={
 		QueryObjectModel.queryProperty.bind match {
 			case None => {
@@ -224,6 +221,7 @@ def numericSearch = {
 		val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLSelectElement]
 		val testText = thisTarget.value.toString
 		QueryObjectModel.currentNumericOperator := testText
+		QueryObjectController.isValidSearch
 	}
 } >
 <option value="eq">=</option>
@@ -234,8 +232,18 @@ def numericSearch = {
 <option value="inRange">in range</option>
 </select>
 <input id="queryObject_numeric1" type="text" size={8} placeholder="1.0"
-onchange={ event: Event => QueryObjectModel.validateNumericEntry( event )}
-/>
+onchange={
+	event: Event => {
+		QueryObjectModel.validateNumericEntry( event )
+		QueryObjectController.isValidSearch
+	}
+}
+onkeyup={
+	event: Event => {
+		QueryObjectModel.validateNumericEntry( event )
+		QueryObjectController.isValidSearch
+	}
+} />
 <label for="queryObject_numeric2"
 class={
 	QueryObjectModel.currentNumericOperator.bind match {
@@ -244,7 +252,17 @@ class={
 	}
 } > – </label>
 <input id="queryObject_numeric2" type="text" size={8} placeholder="2.0"
-onchange={ event: Event => QueryObjectModel.validateNumericEntry( event )}
+onchange={ event: Event => {
+	QueryObjectModel.validateNumericEntry( event )
+	QueryObjectController.isValidSearch
+	}
+}
+onkeyup={
+	event: Event => {
+		QueryObjectModel.validateNumericEntry( event )
+		QueryObjectController.isValidSearch
+	}
+}
 class={
 	QueryObjectModel.currentNumericOperator.bind match {
 		case "inRange" => "queryObject_fieldvisible"
@@ -267,8 +285,11 @@ def ctsUrnSearch = {
 	}>
 	<label for="queryObject_ctsUrnField">Cts Urn</label>
 	<input id="queryObject_ctsUrnField" type="text" size={30} placeholder="CTS URN Here"
-	onchange={ event: Event => QueryObjectModel.validateCtsUrnEntry( event )}
-	/>
+	onchange={ event: Event => {
+			QueryObjectModel.validateCtsUrnEntry( event )
+			QueryObjectController.isValidSearch
+		}
+	} />
 	</div>
 }
 
@@ -284,8 +305,11 @@ def cite2UrnSearch = {
 	}>
 	<label for="queryObject_cite2UrnField">Cite2 Urn</label>
 	<input id="queryObject_cite2UrnField" type="text" size={30} placeholder="CITE2 URN Here"
-	onchange={ event: Event => QueryObjectModel.validateCite2UrnEntry( event )}
-	/>
+	onchange={ event: Event => {
+			QueryObjectModel.validateCite2UrnEntry( event )
+			QueryObjectController.isValidSearch
+		}
+	} />
 	</div>
 }
 
@@ -299,7 +323,30 @@ def stringSearch = {
 			case _ => "queryObject_formhidden"
 		}
 	}>
-	<textarea id="queryObject_stringField"  cols={40} rows={3} placeholder="Query Text" />
+	<textarea id="queryObject_stringField"  cols={40} rows={3} placeholder="Query Text"
+		onchange={ event: Event => {
+			val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLTextAreaElement]
+			val thisVal = thisTarget.value
+			if (thisVal.size == 0 ){
+				QueryObjectModel.currentSearchString := None
+			} else {
+			  QueryObjectModel.currentSearchString := Some(thisTarget.value)
+			}
+			QueryObjectController.isValidSearch
+			}
+		}
+		onkeyup={ event: Event => {
+			val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLTextAreaElement]
+			val thisVal = thisTarget.value
+			if (thisVal.size == 0 ){
+				QueryObjectModel.currentSearchString := None
+			} else {
+			  QueryObjectModel.currentSearchString := Some(thisTarget.value)
+			}
+			QueryObjectController.isValidSearch
+			}
+		}
+	/>
 	<br/>
 	<input type="checkbox" id="queryObject_regexSelect" checked={ false }/>
 	<label for="queryObject_regexSelect">Regular Expression</label>
@@ -312,15 +359,26 @@ def collectionListSelect = {
 	<label for="objectQuery_collectionList">Collection</label>
 	<select id="objectQuery_collectionList"
 	onchange={ event: Event => {
+		QueryObjectModel.clearAll
 		val thisSelect = document.getElementById("objectQuery_collectionList").asInstanceOf[HTMLSelectElement]
-		QueryObjectModel.currentQueryCollection := Some(Cite2Urn(thisSelect.value))
-		QueryObjectModel.currentQueryCollectionProps.get.clear
-		for (p <- ObjectModel.collectionRepository.collectionDefinition(Cite2Urn(thisSelect.value)).get.propertyDefs) {
-			QueryObjectModel.currentQueryCollectionProps.get += p
+		if (thisSelect.value == "all") {
+			QueryObjectModel.currentQueryCollection := None
+			QueryObjectModel.queryProperty := None
+			QueryObjectModel.loadControlledVocabulary
+		} else {
+			QueryObjectModel.currentQueryCollection := Some(Cite2Urn(thisSelect.value))
+			QueryObjectModel.currentQueryCollectionProps.get.clear
+			QueryObjectModel.selectedPropertyType := Some(StringType)
+			for (p <- ObjectModel.collectionRepository.collectionDefinition(Cite2Urn(thisSelect.value)).get.propertyDefs) {
+				QueryObjectModel.currentQueryCollectionProps.get += p
+			}
+			QueryObjectModel.queryProperty := None
+			QueryObjectModel.loadControlledVocabulary
 		}
-		QueryObjectModel.queryProperty := None
+		QueryObjectController.isValidSearch
 	}
 } >
+	<option value="all">All Collections</option>
 {
 	for (c <- ObjectModel.collections) yield {
 		<option value={ c.urn.toString } >{ c.collectionLabel }</option>
@@ -333,8 +391,23 @@ def collectionListSelect = {
 /* selector for which property of the current selector to search */
 @dom
 def propertyListSelect = {
-	<label for="objectQuery_propertyList">Limit to Property</label>
+	<label for="objectQuery_propertyList"
+	class={
+			QueryObjectModel.currentQueryCollection.bind match {
+				case None => "queryObject_formhidden"
+				case _ => {
+					"queryObject_fieldvisible"
+				}
+			}
+	}>Property</label>
+
 	<select id="objectQuery_propertyList"
+	class={
+			QueryObjectModel.currentQueryCollection.bind match {
+				case None => "queryObject_formhidden"
+				case _ => "queryObject_fieldvisible"
+			}
+	}
 	onchange={ event: Event => {
 		val thisSelect = document.getElementById("objectQuery_propertyList").asInstanceOf[HTMLSelectElement]
 		(thisSelect.value:String) match {
@@ -351,7 +424,8 @@ def propertyListSelect = {
 				QueryObjectModel.selectedPropertyType := Some(pt)
 			}
 		}
-		QueryObjectView.loadControlledVocabulary
+		QueryObjectModel.loadControlledVocabulary
+		QueryObjectController.isValidSearch
 	}
 }>
 <option value="all">-All Properties-</option>
