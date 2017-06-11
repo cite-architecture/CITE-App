@@ -103,18 +103,18 @@ object ObjectController {
 	//    - changeUrn
 	//    - changeObject
 	def changeObject:Unit = {
-		val tempUrn:Cite2Urn = ObjectModel.urn.get
+		val tempUrn:Cite2Urn = ObjectModel.urn.get.get
 		ObjectModel.clearObject
-		val collUrn = ObjectModel.urn.get.dropSelector
+		val collUrn = ObjectModel.urn.get.get.dropSelector
 
 		// Based on the new URN, set image, ordered, browsable flags
 		ObjectModel.isOrdered := ObjectModel.collectionRepository.isOrdered(collUrn)
 
 		if (
 				(ObjectModel.objectOrCollection.get == true) ||
-				(ObjectModel.urn.get.isRange == true) ||
+				(ObjectModel.urn.get.get.isRange == true) ||
 				(ObjectModel.isOrdered.get == true) ||
-				(ObjectModel.urn.get.objectOption == None)
+				(ObjectModel.urn.get.get.objectOption == None)
 			){
 			  	ObjectModel.browsable := true
 			} else { ObjectModel.browsable := false }
@@ -143,15 +143,15 @@ object ObjectController {
 
 	def changeUrn(urn: Cite2Urn): Unit = {
 		try {
-			ObjectModel.urn := urn
+			ObjectModel.urn := Some(urn)
 			val collUrn = urn.dropSelector
-			ObjectModel.displayUrn := urn
-			ObjectModel.urn.get.objectComponentOption match {
+			ObjectModel.displayUrn := Some(urn)
+			ObjectModel.urn.get.get.objectComponentOption match {
 				case Some(o) => {
 					// test for range
-					ObjectModel.urn.get.rangeBeginOption match {
+					ObjectModel.urn.get.get.rangeBeginOption match {
 						case Some(rb) => {
-							ObjectModel.urn.get.rangeEndOption match {
+							ObjectModel.urn.get.get.rangeEndOption match {
 								case Some(re) => {
 									ObjectModel.objectOrCollection := "range"
 									ObjectModel.isOrdered := ObjectModel.collectionRepository.isOrdered(collUrn)
@@ -222,10 +222,9 @@ object ObjectController {
 
 	@dom
 	def getNext:Unit = {
-		g.console.log("getNext")
 		ObjectModel.currentNext.get match {
 			case Some(u) => {
-				val nu:Cite2Urn = u._1
+				val nu:Cite2Urn = u._1.get
 				val no:Int = u._2
 				val nl:Int = u._3
 				ObjectModel.objectOrCollection.get match {
@@ -235,7 +234,7 @@ object ObjectController {
 					case "none" => {
 						ObjectController.updateUserMessage("There is no object. getNext should not have been called. Please file an issue on GitHub.",2)
 					}
-					// range or paged collection
+					// range, search results, or paged collection
 					case _ => {
 						ObjectModel.limit := nl
 						ObjectModel.offset := no
@@ -253,7 +252,7 @@ object ObjectController {
 	def getPrev:Unit = {
 		ObjectModel.currentPrev.get match {
 			case Some(u) => {
-				val nu:Cite2Urn = u._1
+				val nu:Cite2Urn = u._1.get
 				val no:Int = u._2
 				val nl:Int = u._3
 				ObjectModel.objectOrCollection.get match {
@@ -279,7 +278,7 @@ object ObjectController {
 	// Sets the display to a [possible] subset of the current objects
 	@dom
 	def setDisplay:Unit = {
-		 val collUrn:Cite2Urn = ObjectModel.urn.get.dropSelector
+		 val collUrn:Cite2Urn = ObjectModel.urn.get.get.dropSelector
 		 val numObj:Int = ObjectModel.boundObjects.get.size
 		 val tLim:Int = ObjectModel.limit.get
 		 val tOff:Int = ObjectModel.offset.get
@@ -313,7 +312,7 @@ object ObjectController {
 	}
 
 	def updateReport:Unit = {
-		val collUrn:Cite2Urn = ObjectModel.urn.get.dropSelector
+		val collUrn:Cite2Urn = ObjectModel.urn.get.get.dropSelector
 		val collLabel:String = ObjectModel.collectionRepository.collectionDefinition(collUrn).get.collectionLabel
 		val n:Int = ObjectModel.boundDisplayObjects.get.size
 		val total:Int = ObjectModel.collectionRepository.collectionData(collUrn).objects.size

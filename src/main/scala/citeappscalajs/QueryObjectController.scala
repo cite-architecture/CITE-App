@@ -51,8 +51,6 @@ object QueryObjectController {
 			case _ => { isValid = false }
 		}
 		QueryObjectModel.isValidSearch := isValid
-		g.console.log(s"Checked validity: ${isValid}")
-		g.console.log(s"selected vocab: ${QueryObjectModel.currentControlledVocabItem.get}")
 
 	}
 
@@ -74,36 +72,127 @@ object QueryObjectController {
 
 		} catch {
 			case e: Exception => {
-				g.console.log(s"Cannot make query. ${}")
+				g.console.log(s"Cannot make query. ${e}")
 
 			}
 		}
 	}
 
-	def initStringSearch = {
+	/*
+qCollection: Option[Cite2Urn]
+qProperty: Option[CitePropertyDef]
+qPropertyType: Option[CitePropertyType]
+qControlledVocabItem: Option[String]
+qSearchString: Option[String]
+qRegex:Option[Boolean]
+qNum1: Option[Double]
+qNum2: Option[Double]
+qNumOperator: Option[String]
+qBoolVal: Option[Boolean]
+qCtsUrn: Option[CtsUrn]
+qCite2Urn: Option[Cite2Urn]
+
+*/
+
+	def initStringSearch:Unit = {
 		g.console.log("Doing initStringSearch…")
+		val collUrn = {
+			QueryObjectModel.currentQueryCollection.get match {
+				case None => None
+				case Some(u) => Some(u)
+			}
+		}
+		g.console.log(collUrn.toString)
+		val cq = QueryObjectModel.CiteCollectionQuery(
+			qCollection = collUrn,
+			qProperty = QueryObjectModel.queryProperty.get,
+			qPropertyType = QueryObjectModel.selectedPropertyType.get,
+			qSearchString = QueryObjectModel.currentSearchString.get,
+			qCaseSensitive = Some(QueryObjectModel.currentCaseSensitiveState.get),
+			qRegex = Some(QueryObjectModel.currentRegexState.get)
+		)
+		doStringSearch(cq)
 	}
 
-	def initNumericSearch = {
+	def doStringSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
+		if (cq.qRegex.get) {
+			cq.qProperty match {
+				case None =>{
+						val ov:Vector[CiteObject] = ObjectModel.collectionRepository.regexMatch(cq.qSearchString.get)
+						loadSearchResults(cq,ov)
+				}
+				case _ => {
+						val ov:Vector[CiteObject] = ObjectModel.collectionRepository.regexMatch(cq.qProperty.get.urn,cq.qSearchString.get)
+						loadSearchResults(cq,ov)
+				}
+			}
+		} else {
+			cq.qProperty match {
+				case None =>{
+						val ov:Vector[CiteObject] = ObjectModel.collectionRepository.stringContains(cq.qSearchString.get,cq.qCaseSensitive.get)
+						loadSearchResults(cq,ov)
+				}
+				case _ => {
+						val ov:Vector[CiteObject] = ObjectModel.collectionRepository.stringContains(cq.qProperty.get.urn,cq.qSearchString.get,cq.qCaseSensitive.get)
+						loadSearchResults(cq,ov)
+				}
+			}
+		}
+	}
+
+	def initNumericSearch:Unit = {
 		g.console.log("Doing initNumericSearch…")
+		ObjectController.updateUserMessage("Numeric searching is not yet implemented.",1)
 	}
 
-	def initContVocabSearch = {
+	def doNumericSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit  = {
+
+	}
+
+	def initContVocabSearch:Unit = {
 		g.console.log("Doing initContVocabSearch…")
+		ObjectController.updateUserMessage("Controlled vocabulary searching is not yet implemented.",1)
 	}
 
-	def initBooleanSearch = {
+	def doContVocabSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
+
+	}
+
+	def initBooleanSearch:Unit = {
 		g.console.log("Doing initBooleanSearch…")
+		ObjectController.updateUserMessage("Boolean searching is not yet implemented.",1)
 	}
 
-	def initCtsUrnSearch = {
+	def doBooleanSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
+
+	}
+
+	def initCtsUrnSearch:Unit = {
 		g.console.log("Doing initCtsUrnSearch…")
+		ObjectController.updateUserMessage("Cts Urn searching is not yet implemented.",1)
 	}
 
-	def initCite2UrnSearch = {
+	def doCtsUrnSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
+
+	}
+
+	def initCite2UrnSearch:Unit = {
 		g.console.log("Doing initCite2UrnSearch…")
+		ObjectController.updateUserMessage("Cite2 Urnk searching is not yet implemented.",1)
 	}
 
+	def doCite2UrnSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
 
+	}
+
+	def loadSearchResults(cq:QueryObjectModel.CiteCollectionQuery, ov:Vector[CiteObject]):Unit = {
+				cq.numResults = ov.size
+				QueryObjectModel.currentQuery := Some(cq)
+				if (ov.size > 0 ){
+						ObjectModel.clearObject
+						// Add to saved list
+					  //display objects
+				}
+	}
 
 }

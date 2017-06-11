@@ -324,6 +324,12 @@ def stringSearch = {
 		}
 	}>
 	<textarea id="queryObject_stringField"  cols={40} rows={3} placeholder="Query Text"
+	  value={
+			QueryObjectModel.currentSearchString.bind match {
+				case Some(s) => s
+				case _ => ""
+			}
+		}
 		onchange={ event: Event => {
 			val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLTextAreaElement]
 			val thisVal = thisTarget.value
@@ -348,7 +354,33 @@ def stringSearch = {
 		}
 	/>
 	<br/>
-	<input type="checkbox" id="queryObject_regexSelect" checked={ false }/>
+	<input type="checkbox" id="queryObject_caseSensitiveSelect" checked={ QueryObjectModel.currentCaseSensitiveState.bind }
+	  class={
+			QueryObjectModel.currentRegexState.bind match{
+					case true => "queryObject_formhidden"
+					case _ => "queryObject_fieldvisible"
+			}
+		}
+		onchange={ event: Event => {
+			val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]
+			val thisVal = thisTarget.checked
+			QueryObjectModel.currentCaseSensitiveState := thisVal
+		}
+	}/>
+	<label for="queryObject_caseSensitiveSelect"
+	  class={
+			QueryObjectModel.currentRegexState.bind match{
+					case true => "queryObject_formhidden"
+					case _ => "queryObject_fieldvisible"
+			}
+	} >Case Sensitive</label>
+	<input type="checkbox" id="queryObject_regexSelect" checked={ QueryObjectModel.currentRegexState.bind }
+		onchange={ event: Event => {
+			val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]
+			val thisVal = thisTarget.checked
+			QueryObjectModel.currentRegexState := thisVal
+		}
+	}/>
 	<label for="queryObject_regexSelect">Regular Expression</label>
 	</div>
 }
@@ -424,7 +456,9 @@ def propertyListSelect = {
 				QueryObjectModel.selectedPropertyType := Some(pt)
 			}
 		}
-		QueryObjectModel.loadControlledVocabulary
+		if (QueryObjectModel.selectedPropertyType.get == Some(ControlledVocabType)){
+			QueryObjectModel.loadControlledVocabulary
+		}
 		QueryObjectController.isValidSearch
 	}
 }>
@@ -459,6 +493,26 @@ def previousQueries = {
 	<p>two</p>
 	<p>three</p>
 	</div>
+}
+
+@dom
+def searchReportContainer = {
+	<p id="queryObject_searchReport"
+	class={
+		QueryObjectModel.currentQuery.bind match {
+			case None => "queryObject_formhidden"
+			case _ => "queryObject_formvisible"
+		}
+	}>
+
+		{ QueryObjectModel.currentQuery.bind match{
+			case Some(c) => c.toString
+			case _ => ""
+
+			}
+		}
+
+	</p>
 }
 
 

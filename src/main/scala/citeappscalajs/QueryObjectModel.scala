@@ -21,6 +21,8 @@ import scala.scalajs.js.annotation.JSExport
 @JSExport
 object QueryObjectModel {
 
+	val pastQueries = Vars.empty[CiteCollectionQuery]
+	val currentQuery = Var[Option[CiteCollectionQuery]](None)
 	val isValidSearch = Var(false)
 
 	val currentQueryCollection = Var[Option[Cite2Urn]](None)
@@ -30,6 +32,8 @@ object QueryObjectModel {
 	val currentControlledVocabulary = Vars.empty[String]
 	val currentControlledVocabItem = Var[Option[String]](None)
 	val currentSearchString = Var[Option[String]](None)
+	val currentRegexState = Var(false)
+	val currentCaseSensitiveState = Var(false)
 
 	val currentNumericQuery1 = Var[Option[Double]](None)
 	val currentNumericQuery2 = Var[Option[Double]](None)
@@ -41,6 +45,7 @@ object QueryObjectModel {
 	val currentCite2UrnQuery = Var[Option[Cite2Urn]](None)
 
 	def clearAll = {
+		currentQuery := None
 		isValidSearch := false
 		currentQueryCollectionProps.get.clear
 		queryProperty := None
@@ -48,6 +53,8 @@ object QueryObjectModel {
 		currentControlledVocabulary.get.clear
 		currentControlledVocabItem := None
 		currentSearchString := None
+		currentRegexState := false
+		currentCaseSensitiveState := false
 		currentNumericQuery1 := None
 		currentNumericQuery2 := None
 		currentBooleanVal := true
@@ -62,16 +69,19 @@ object QueryObjectModel {
 		val qControlledVocabItem: Option[String] = None,
 		val qSearchString: Option[String] = None,
 		val qRegex:Option[Boolean] = None,
+		val qCaseSensitive: Option[Boolean] = None,
 		val qNum1: Option[Double] = None,
 		val qNum2: Option[Double] = None,
 		val qNumOperator: Option[String] = None,
 		val qBoolVal: Option[Boolean] = None,
 		val qCtsUrn: Option[CtsUrn] = None,
 		val qCite2Urn: Option[Cite2Urn] = None
-	)
-	{
+	) {
+
+		var numResults:Int = 0
+
 		override def toString:String = {
-			var qds:String = "Search collection: "
+			var qds:String = "Search: "
 			qCollection match {
 				case Some(x) => qds += s"${x.toString} :"
 				case None => qds += s"All collections. "
@@ -86,10 +96,14 @@ object QueryObjectModel {
 			}
 			qSearchString match {
 				case Some(x) => {
-					qds += s"Search for “${x}” "
+					qds += s"Search for “${x}”. "
+					qCaseSensitive match {
+						case Some(true) => qds += s"Case sensitive. "
+						case _ => qds += ""
+					}
 					qRegex match {
-						case Some(true) => qds += s"(with Regex). "
-						case _ => qds += "."
+						case Some(true) => qds += s"With Regex. "
+						case _ => qds += ""
 					}
 				}
 				case _ => qds += ""
@@ -119,12 +133,11 @@ object QueryObjectModel {
 				}
 				case _ => qds += ""
 			}
+			qds += s" (${numResults} Objects)"
 			qds
 		}
 	}
 
-	// Change this to Vars[ObjectQueries]
-	val pastQueries = Var("yep")
 
 	def validateNumericEntry(thisEvent: Event):Unit = {
 		val thisTarget = thisEvent.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]

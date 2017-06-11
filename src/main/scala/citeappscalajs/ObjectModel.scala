@@ -29,15 +29,16 @@ object ObjectModel {
 
 
 	// urn is what the user requested
-	val urn = Var(Cite2Urn("urn:cite2:hmt:vaimg.v1:VA012RN_0013"))
+	val urn = Var[Option[Cite2Urn]](None)
 	// displayUrn is what will be shown
-	val displayUrn = Var(Cite2Urn("urn:cite2:hmt:vaimg.v1:VA012RN_0013"))
+	val displayUrn = Var[Option[Cite2Urn]](None)
 
 	// Keeping track of current collection data
 	val collections = Vars.empty[CiteCollectionDef]
 
 	// Binding up objects, their properties, and extensions
-	val citeObject:Var[CiteObject] = null
+	// Is this used?
+	//val citeObject:Var[CiteObject] = null
 
 	case class BoundCiteProperty(urn:Var[Cite2Urn],propertyType:Var[CitePropertyType],propertyValue:Var[String])
 
@@ -61,13 +62,13 @@ object ObjectModel {
 	val objectReport = Var("")
 
 	// for navigation
-	val prevOption:Option[Tuple3[Cite2Urn,Int,Int]] = None
-	val nextOption:Option[Tuple3[Cite2Urn,Int,Int]] = None
+	val prevOption:Option[Tuple3[Option[Cite2Urn],Int,Int]] = None
+	val nextOption:Option[Tuple3[Option[Cite2Urn],Int,Int]] = None
 	val currentPrev = Var(prevOption)
 	val currentNext = Var(nextOption)
 
 	// Object-or-collection? (based on current request)
-	//    Choices: "none","object","collection","range"
+	//    Choices: "none","object","collection","range","search"
 	val objectOrCollection = Var("none")
 
 
@@ -113,6 +114,7 @@ object ObjectModel {
 	// Clears all current object data, and with it, displayed objects
 	@dom
 	def clearObject:Unit = {
+			QueryObjectModel.clearAll
 			boundObjects.get.clear
 			boundDisplayObjects.get.clear
 			browsable := false
@@ -124,19 +126,19 @@ object ObjectModel {
 
 	@dom
 	def updatePrevNext:Unit = {
-		val currentColl:Cite2Urn = urn.get.dropSelector
 		ObjectModel.objectOrCollection.get match {
 			case "object" => {
 				if (isOrdered.get) {
+					val currentColl:Cite2Urn = urn.get.get.dropSelector
 					val thisIndex = collectionRepository.indexOf(boundObjects.get(0))
 					val numInCollection:Int = collectionRepository.citableObjects(currentColl).size
 					if (thisIndex + 1 < numInCollection){
-							currentNext := Option(collectionRepository.citableObjects(thisIndex + 1).urn,offset.get,limit.get)
+							currentNext := Option(Some(collectionRepository.citableObjects(thisIndex + 1).urn),offset.get,limit.get)
 					} else {
 						currentNext := None
 					}
 					if (thisIndex > 0){
-							currentPrev := Option(collectionRepository.citableObjects(thisIndex - 1).urn,offset.get,limit.get)
+							currentPrev := Option(Some(collectionRepository.citableObjects(thisIndex - 1).urn),offset.get,limit.get)
 					} else {
 						currentPrev := None
 					}
@@ -149,10 +151,35 @@ object ObjectModel {
 					currentPrev := None
 					currentNext := None
 			}
+			case "search" => {
+				val numC = boundObjects.get.size
+				if(limit.get >= numC){
+					currentPrev := None
+					currentNext := None
+				} else {
+					if ((offset.get + limit.get) > numC){
+						currentNext := None
+					} else {
+						// get next
+						val o:Int = offset.get + limit.get
+
+						currentNext := Option(None,o,limit.get)
+					}
+					if (offset.get == 1 ){
+						currentPrev := None
+					} else {
+						// get prev
+						val o:Int = {
+							if ((offset.get - limit.get) > 0){
+								offset.get - limit.get
+							} else { 1 }
+						}
+						//val u:Cite2Urn = objects.get(o).urn
+						currentPrev := Option(None,o,limit.get)
+					}
+				}
+			}
 			case _ => {
-				//g.console.log("updating pn")
-				//g.console.log(s"current p: ${currentPrev.get}; n: ${currentNext.get}")
-				//g.console.log(s"num in c: ${ObjectModel.objects.get.size}")
 				val numC = boundObjects.get.size
 				if(limit.get >= numC){
 					currentPrev := None

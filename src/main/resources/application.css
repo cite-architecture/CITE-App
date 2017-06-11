@@ -16,6 +16,11 @@ div#object_objectContainer ul li {
 	clear: left;
 }
 
+p#object_urnInputP {
+	max-width: 60%;
+	margin-top: 0;
+}
+
 p#objects_objectInfo {
 	display: block;
 	font-size: 80%;
@@ -83,6 +88,11 @@ div#object_objectContainer li.list:before {
 	margin-left: 2em;
 }
 
+#object_navButtonContainer_top, #object_navButtonContainer_bottom {
+	max-width: 30%;
+}
+
+
 #object_navButtonContainer_bottom {
 	clear: both;
 }
@@ -97,6 +107,10 @@ button#queryObject_Submit {
 	margin-top: 15px;
 }
 
+p#queryObject_searchReport {
+	font-size: 80%;
+	margin: 0;
+}
 
 
 .queryObject_formhidden, .queryObject_fieldhidden  {

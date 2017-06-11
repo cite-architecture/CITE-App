@@ -50,8 +50,12 @@ object ObjectView {
 
 		{ objectMessageDiv.bind }
 
-		<p id="object_reportingCurrentUrn" class="app_reportingCurrentUrn"> { ObjectModel.urn.bind.toString } </p>
+		<p id="object_reportingCurrentUrn" class="app_reportingCurrentUrn"> { ObjectModel.urn.bind match{
+			case Some(u) => u.toString
+			case _ => ""
+		} } </p>
 
+	{ QueryObjectView.searchReportContainer.bind }
 
 		<p id="object_urnInputP">
 		<input
@@ -59,7 +63,10 @@ object ObjectView {
 		id="object_urnInput"
 		size={ 40 }
 		type="text"
-		value={ ObjectModel.urn.bind.toString }
+		value={ ObjectModel.urn.bind match {
+			case Some(u) => u.toString
+			case _ => ""
+		} }
 		onkeyup={ urnValidatingKeyUpHandler }>
 		</input>
 
@@ -69,6 +76,7 @@ object ObjectView {
 	{ collectionBrowseControls.bind }
 
 	</p>
+
 
 	{ objectContainer.bind }
 
@@ -80,7 +88,7 @@ def retrieveObjectButton = {
 	<button
 			onclick={ event: Event => {
 				val s:String = js.Dynamic.global.document.getElementById("object_urnInput").value.toString
-				ObjectModel.urn := Cite2Urn(s)
+				ObjectModel.urn := Some(Cite2Urn(s))
 				ObjectController.updateUserMessage("Retrieving object…",1)
 				js.timers.setTimeout(500){ ObjectController.changeObject }
 				}
@@ -107,7 +115,7 @@ def objectToCollectionButton = {
 	<button
 			onclick={ event: Event => {
 				val s:String = js.Dynamic.global.document.getElementById("object_urnInput").value.toString
-				ObjectModel.urn := Cite2Urn(s).dropSelector
+				ObjectModel.urn := Some(Cite2Urn(s).dropSelector)
 				//ObjectModel.offset := 1
 				//ObjectModel.limit := 2
 				ObjectModel.objectOrCollection := "collection"
