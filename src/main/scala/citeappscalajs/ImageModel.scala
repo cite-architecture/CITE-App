@@ -32,9 +32,9 @@ object ImageModel {
 	val imageCollections = Vars.empty[Cite2Urn]
 
 	// urn is what the user requested
-	val urn = Var(Cite2Urn("urn:cite2:ns:coll.v1:obj"))
+	val urn = Var[Option[Cite2Urn]](None)
 	// displayUrn is what will be shown
-	val displayUrn = Var(Cite2Urn("urn:cite2:ns:coll.v1:obj"))
+	val displayUrn = Var[Option[Cite2Urn]](None)
 	val versionsForCurrentUrn = Var(1)
 
 	//We might have zero+ ROIs on this image

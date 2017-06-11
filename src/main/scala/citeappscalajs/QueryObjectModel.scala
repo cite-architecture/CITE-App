@@ -81,7 +81,7 @@ object QueryObjectModel {
 		var numResults:Int = 0
 
 		override def toString:String = {
-			var qds:String = "Search: "
+			var qds:String = ""
 			qCollection match {
 				case Some(x) => qds += s"${x.toString} :"
 				case None => qds += s"All collections. "

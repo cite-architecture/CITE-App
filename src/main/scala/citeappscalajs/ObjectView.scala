@@ -306,6 +306,7 @@ def collectionBrowseControls = {
 			ObjectModel.objectOrCollection.bind match {
 				case "collection" => "app_visible"
 				case "range" => "app_visible"
+				case "search" => "app_visible"
 				case _ => "app_hidden"
 			}
 		}

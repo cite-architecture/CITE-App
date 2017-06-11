@@ -479,7 +479,7 @@ def propertyListEnumeration = {
 def previousQueryMenu = {
 	<div
 	class={
-		{ if (QueryObjectModel.pastQueries.bind == 0) { "dropdown empty" } else {"dropdown"} }
+		{ if (QueryObjectModel.pastQueries.bind.size == 0) { "dropdown empty" } else {"dropdown"} }
 	} >
 	<span>Previous Queries</span>
 	{ QueryObjectView.previousQueries.bind }
@@ -489,9 +489,11 @@ def previousQueryMenu = {
 @dom
 def previousQueries = {
 	<div class="dropdown-content">
-	<p>one</p>
-	<p>two</p>
-	<p>three</p>
+		{
+			for (q <- QueryObjectModel.pastQueries) yield {
+				<p>{ q.toString }</p>
+			}
+		}
 	</div>
 }
 

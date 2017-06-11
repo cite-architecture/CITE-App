@@ -7,6 +7,8 @@ import scala.scalajs.js._
 import org.scalajs.dom._
 import org.scalajs.dom.ext._
 import org.scalajs.dom.raw._
+import collection.mutable
+import collection.mutable._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
@@ -186,13 +188,26 @@ qCite2Urn: Option[Cite2Urn]
 	}
 
 	def loadSearchResults(cq:QueryObjectModel.CiteCollectionQuery, ov:Vector[CiteObject]):Unit = {
+				ObjectModel.clearObject
 				cq.numResults = ov.size
 				QueryObjectModel.currentQuery := Some(cq)
 				if (ov.size > 0 ){
-						ObjectModel.clearObject
+						addToSearchHistory(cq)
 						// Add to saved list
 					  //display objects
 				}
+	}
+
+	def addToSearchHistory(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
+			var vList = new ListBuffer[QueryObjectModel.CiteCollectionQuery]
+			for (qh <- QueryObjectModel.pastQueries.get ){
+				vList += qh
+			}
+			vList += cq
+			val vSet = vList.toSet
+			QueryObjectModel.pastQueries.get.clear
+			for (q <- vSet ){ QueryObjectModel.pastQueries.get += q }
+
 	}
 
 }
