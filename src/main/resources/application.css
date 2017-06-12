@@ -17,7 +17,7 @@ div#object_objectContainer ul li {
 }
 
 p#object_urnInputP {
-	max-width: 60%;
+	max-width: 66%;
 	margin-top: 0;
 }
 
@@ -383,7 +383,7 @@ a:hover {
 }
 
 .app_hidden {
-	/* display: none; */
+	display: none;
 	visibility: hidden;
 	-webkit-opacity: 0;
 	-moz-opacity: 0;

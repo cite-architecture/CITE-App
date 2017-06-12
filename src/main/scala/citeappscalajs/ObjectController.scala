@@ -215,13 +215,13 @@ object ObjectController {
 	}
 
 	def insertFirstObjectUrn(urn: Cite2Urn): Unit = {
-		ObjectModel.clearObject
-		QueryObjectModel.clearAll
+		//ObjectModel.clearObject
+		//QueryObjectModel.clearAll
 		val firstUrn:Cite2Urn = ObjectModel.collectionRepository.citableObjects(urn)(0).urn
-
 		//js.Dynamic.global.document.getElementById("object_urnInput").value = firstUrn.toString
 		ObjectModel.urn := Some(firstUrn)
 		ObjectModel.objectOrCollection := "object"
+		document.getElementById("object_urnInput").asInstanceOf[HTMLInputElement].value = firstUrn.toString
 	}
 
 	@dom

@@ -104,7 +104,6 @@ qCite2Urn: Option[Cite2Urn]
 				case Some(u) => Some(u)
 			}
 		}
-		g.console.log(collUrn.toString)
 		val cq = QueryObjectModel.CiteCollectionQuery(
 			qCollection = collUrn,
 			qProperty = QueryObjectModel.queryProperty.get,
@@ -121,7 +120,13 @@ qCite2Urn: Option[Cite2Urn]
 			cq.qProperty match {
 				case None =>{
 						val ov:Vector[CiteObject] = ObjectModel.collectionRepository.regexMatch(cq.qSearchString.get)
-						loadSearchResults(cq,ov)
+						cq.qCollection match {
+							case Some(u) =>{
+								val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+								 loadSearchResults(cq,fv)
+							}
+						  case _ => loadSearchResults(cq,ov)
+						}
 				}
 				case _ => {
 						val ov:Vector[CiteObject] = ObjectModel.collectionRepository.regexMatch(cq.qProperty.get.urn,cq.qSearchString.get)
@@ -132,7 +137,13 @@ qCite2Urn: Option[Cite2Urn]
 			cq.qProperty match {
 				case None =>{
 						val ov:Vector[CiteObject] = ObjectModel.collectionRepository.stringContains(cq.qSearchString.get,cq.qCaseSensitive.get)
-						loadSearchResults(cq,ov)
+						cq.qCollection match {
+							case Some(u) =>{
+								val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+								 loadSearchResults(cq,fv)
+							}
+						  case _ => loadSearchResults(cq,ov)
+						}
 				}
 				case _ => {
 						val ov:Vector[CiteObject] = ObjectModel.collectionRepository.stringContains(cq.qProperty.get.urn,cq.qSearchString.get,cq.qCaseSensitive.get)
