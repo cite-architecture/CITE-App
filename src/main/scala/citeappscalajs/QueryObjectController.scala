@@ -58,10 +58,8 @@ object QueryObjectController {
 
 
 	def initQuery:Unit = {
-		g.console.log("Doing query…")
 
 		try {
-			g.console.log("Trying…")
 			QueryObjectModel.selectedPropertyType.get match {
 				case Some(StringType) => initStringSearch
 				case Some(NumericType) => initNumericSearch
@@ -74,30 +72,13 @@ object QueryObjectController {
 
 		} catch {
 			case e: Exception => {
-				g.console.log(s"Cannot make query. ${e}")
-
+				ObjectController.updateUserMessage(s"Cannot construct query-object from the given parameters. ${e}",2)
 			}
 		}
 	}
 
-	/*
-qCollection: Option[Cite2Urn]
-qProperty: Option[CitePropertyDef]
-qPropertyType: Option[CitePropertyType]
-qControlledVocabItem: Option[String]
-qSearchString: Option[String]
-qRegex:Option[Boolean]
-qNum1: Option[Double]
-qNum2: Option[Double]
-qNumOperator: Option[String]
-qBoolVal: Option[Boolean]
-qCtsUrn: Option[CtsUrn]
-qCite2Urn: Option[Cite2Urn]
-
-*/
 
 	def initStringSearch:Unit = {
-		g.console.log("Doing initStringSearch…")
 		val collUrn = {
 			QueryObjectModel.currentQueryCollection.get match {
 				case None => None
@@ -154,30 +135,261 @@ qCite2Urn: Option[Cite2Urn]
 	}
 
 	def initNumericSearch:Unit = {
-		g.console.log("Doing initNumericSearch…")
-		ObjectController.updateUserMessage("Numeric searching is not yet implemented.",1)
+		val collUrn = {
+			QueryObjectModel.currentQueryCollection.get match {
+				case None => None
+				case Some(u) => Some(u)
+			}
+		}
+		val cq = QueryObjectModel.CiteCollectionQuery(
+			qCollection = collUrn,
+			qProperty = QueryObjectModel.queryProperty.get,
+			qPropertyType = QueryObjectModel.selectedPropertyType.get,
+			qNum1 = QueryObjectModel.currentNumericQuery1.get,
+			qNum2 = QueryObjectModel.currentNumericQuery2.get,
+			qNumOperator = Some(QueryObjectModel.currentNumericOperator.get)
+		)
+		doNumericSearch(cq)
 	}
 
 	def doNumericSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit  = {
 
+			cq.qProperty match {
+				case None =>{
+					cq.qNumOperator.get match {
+						case "eq" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.valueEquals(cq.qNum1.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case "lt" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThan(cq.qNum1.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case "gt" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThan(cq.qNum1.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case "lteq" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThanOrEqual(cq.qNum1.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case "gteq" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThanOrEqual(cq.qNum1.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case "inRange" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericWithin(cq.qNum1.get,cq.qNum2.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case _ @ op => {
+							ObjectController.updateUserMessage(s"Unrecognized numeric operator: ${op}.",2)
+						}
+
+					}
+				}
+				case _ => {
+					cq.qNumOperator.get match {
+						case "eq" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.valueEquals(cq.qProperty.get.urn,cq.qNum1.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case "lt" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThan(cq.qProperty.get.urn,cq.qNum1.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case "gt" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThan(cq.qProperty.get.urn,cq.qNum1.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case "lteq" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThanOrEqual(cq.qProperty.get.urn,cq.qNum1.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case "gteq" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThanOrEqual(cq.qProperty.get.urn,cq.qNum1.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case "inRange" => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericWithin(cq.qProperty.get.urn,cq.qNum1.get,cq.qNum2.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+						}
+						case _ @ op => {
+							ObjectController.updateUserMessage(s"Unrecognized numeric operator: ${op}.",2)
+						}
+
+					}
+				}
+			}
 	}
 
+	/*
+qCollection: Option[Cite2Urn]
+qProperty: Option[CitePropertyDef]
+qPropertyType: Option[CitePropertyType]
+qControlledVocabItem: Option[String]
+qSearchString: Option[String]
+qRegex:Option[Boolean]
+qNum1: Option[BigDecimal]
+qNum2: Option[BigDecimal]
+qNumOperator: Option[String]
+qBoolVal: Option[Boolean]
+qCtsUrn: Option[CtsUrn]
+qCite2Urn: Option[Cite2Urn]
+
+*/
+
 	def initContVocabSearch:Unit = {
-		g.console.log("Doing initContVocabSearch…")
-		ObjectController.updateUserMessage("Controlled vocabulary searching is not yet implemented.",1)
+		val collUrn = {
+			QueryObjectModel.currentQueryCollection.get match {
+				case None => None
+				case Some(u) => Some(u)
+			}
+		}
+		val cq = QueryObjectModel.CiteCollectionQuery(
+			qCollection = collUrn,
+			qProperty = QueryObjectModel.queryProperty.get,
+			qPropertyType = QueryObjectModel.selectedPropertyType.get,
+			qControlledVocabItem = QueryObjectModel.currentControlledVocabItem.get
+		)
+		doContVocabSearch(cq)
 	}
 
 	def doContVocabSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
-
+			cq.qProperty match {
+				case None =>{
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.valueEquals(cq.qControlledVocabItem.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+				}
+				case _ => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.valueEquals(cq.qProperty.get.urn, cq.qControlledVocabItem.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+				}
+			}
 	}
 
 	def initBooleanSearch:Unit = {
-		g.console.log("Doing initBooleanSearch…")
-		ObjectController.updateUserMessage("Boolean searching is not yet implemented.",1)
+		val collUrn = {
+			QueryObjectModel.currentQueryCollection.get match {
+				case None => None
+				case Some(u) => Some(u)
+			}
+		}
+		val cq = QueryObjectModel.CiteCollectionQuery(
+			qCollection = collUrn,
+			qProperty = QueryObjectModel.queryProperty.get,
+			qPropertyType = QueryObjectModel.selectedPropertyType.get,
+			qBoolVal = Some(QueryObjectModel.currentBooleanVal.get)
+		)
+		doBooleanSearch(cq)
 	}
 
 	def doBooleanSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
-
+			cq.qProperty match {
+				case None =>{
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.valueEquals(cq.qBoolVal.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+				}
+				case _ => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.valueEquals(cq.qProperty.get.urn, cq.qBoolVal.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+				}
+			}
 	}
 
 	def initCtsUrnSearch:Unit = {

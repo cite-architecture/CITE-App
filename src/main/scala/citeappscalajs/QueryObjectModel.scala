@@ -35,8 +35,8 @@ object QueryObjectModel {
 	val currentRegexState = Var(false)
 	val currentCaseSensitiveState = Var(false)
 
-	val currentNumericQuery1 = Var[Option[Double]](None)
-	val currentNumericQuery2 = Var[Option[Double]](None)
+	val currentNumericQuery1 = Var[Option[BigDecimal]](None)
+	val currentNumericQuery2 = Var[Option[BigDecimal]](None)
 	val currentNumericOperator = Var("eq")
 
 	val currentBooleanVal = Var(true)
@@ -70,8 +70,8 @@ object QueryObjectModel {
 		val qSearchString: Option[String] = None,
 		val qRegex:Option[Boolean] = None,
 		val qCaseSensitive: Option[Boolean] = None,
-		val qNum1: Option[Double] = None,
-		val qNum2: Option[Double] = None,
+		val qNum1: Option[BigDecimal] = None,
+		val qNum2: Option[BigDecimal] = None,
 		val qNumOperator: Option[String] = None,
 		val qBoolVal: Option[Boolean] = None,
 		val qCtsUrn: Option[CtsUrn] = None,
@@ -142,14 +142,14 @@ object QueryObjectModel {
 	def validateNumericEntry(thisEvent: Event):Unit = {
 		val thisTarget = thisEvent.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]
 		val testText = thisTarget.value.toString
-		var previousEntry:Option[Double] = None
+		var previousEntry:Option[BigDecimal] = None
 		thisTarget.id match {
 			case "queryObject_numeric1" => previousEntry = currentNumericQuery1.get
 			case "queryObject_numeric2" => previousEntry = currentNumericQuery2.get
 			case _ => previousEntry = None
 		}
 		try{
-			val mo:Double = testText.toDouble
+			val mo:BigDecimal = testText.toDouble
 			thisTarget.id match {
 				case "queryObject_numeric1" => currentNumericQuery1 := Some(mo)
 				case "queryObject_numeric2" => currentNumericQuery2 := Some(mo)
@@ -158,7 +158,7 @@ object QueryObjectModel {
 			case e: Exception => {
 				val badMo: String = testText
 				thisTarget.value = ""
-				ObjectController.updateUserMessage(s"${badMo} is not an numeric value.", 2)
+				ObjectController.updateUserMessage(s""" "${badMo}" is not a numeric value.""", 2)
 			}
 		}
 	}

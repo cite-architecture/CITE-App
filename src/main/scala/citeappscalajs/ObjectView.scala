@@ -311,11 +311,25 @@ def collectionBrowseControls = {
 
 			<label for="object_browseOffset">Start at</label>
 			<input type="text" id="object_browseOffset" size={5} value={ObjectModel.offset.bind.toString}
-			onchange={ event: Event => ObjectController.validateNumericEntry( event )}
-			/>
+			onchange={ event: Event => {
+				val currentOffset = ObjectModel.offset.get
+				ObjectController.validateNumericEntry( event )
+				if (ObjectModel.offset.get != currentOffset){
+					ObjectController.setDisplay
+				}
+			}
+			}/>
 			<label for="object_browseLimit">Show</label>
 			<input type="text" id="object_browseLimit" size={3} value={ObjectModel.limit.bind.toString}
-			onchange={ event: Event => ObjectController.validateNumericEntry( event )} />
+			onchange={ event: Event => {
+				val currentLimit = ObjectModel.limit.get
+				ObjectController.validateNumericEntry( event )
+				if (ObjectModel.limit.get != currentLimit){
+					ObjectController.setDisplay
+				}
+
+				}
+			}/>
 
 			<div class="onoffswitch">
 			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="browse_onoffswitch" checked={false}
