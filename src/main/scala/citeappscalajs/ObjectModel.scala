@@ -114,9 +114,9 @@ object ObjectModel {
 	// Clears all current object data, and with it, displayed objects
 	@dom
 	def clearObject:Unit = {
-			QueryObjectModel.clearAll
 			boundObjects.get.clear
 			boundDisplayObjects.get.clear
+			urn := None
 			browsable := false
 			currentPrev := None
 			currentNext := None
@@ -236,6 +236,7 @@ object ObjectModel {
 			case e: Exception => {
 				ObjectController.updateUserMessage(s"Unable to retrieve a range of objects between ${fromUrn} and ${toUrn}.",2)
 				ObjectModel.clearObject
+				QueryObjectModel.clearAll
 			}
 		}
 	}

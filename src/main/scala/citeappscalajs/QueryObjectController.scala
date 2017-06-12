@@ -188,14 +188,37 @@ qCite2Urn: Option[Cite2Urn]
 	}
 
 	def loadSearchResults(cq:QueryObjectModel.CiteCollectionQuery, ov:Vector[CiteObject]):Unit = {
-				ObjectModel.clearObject
 				cq.numResults = ov.size
-				QueryObjectModel.currentQuery := Some(cq)
 				if (ov.size > 0 ){
+						ov.size match {
+							case 1 => ObjectController.updateUserMessage(s"Search found ${ov.size} matching object.",0)
+							case _ => ObjectController.updateUserMessage(s"Search found ${ov.size} matching objects.",0)
+						}
+						ObjectModel.clearObject
+						QueryObjectModel.currentQuery := Some(cq)
 						addToSearchHistory(cq)
-						// Add to saved list
-					  //display objects
+						ObjectModel.objectOrCollection := "search"
+						if (ObjectModel.limit.get > ov.size){ ObjectModel.limit := ov.size }
+						ObjectModel.offset := 1
+						ObjectModel.browsable := true
+					  // display objects
+						ObjectModel.clearObject
+						ObjectModel.offset := 1
+						if (ObjectModel.limit.get > ov.size){
+							ObjectModel.limit := ov.size
+						}
+						ObjectModel.browsable := true
+						ObjectModel.objectOrCollection := "search"
+						for (o <- ov ){
+							ObjectModel.boundObjects.get += o
+						}
+						ObjectController.setDisplay
+				} else {
+						ObjectModel.clearObject
+						QueryObjectModel.currentQuery := Some(cq)
+						ObjectController.updateUserMessage("Search found no matching objects.",1)
 				}
+
 	}
 
 	def addToSearchHistory(cq:QueryObjectModel.CiteCollectionQuery):Unit = {

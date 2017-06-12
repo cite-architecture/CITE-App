@@ -81,14 +81,16 @@ object ObjectView {
 	{ objectContainer.bind }
 
 	</div>
-}
+	}
 
 @dom
 def retrieveObjectButton = {
 	<button
 			onclick={ event: Event => {
 				val s:String = js.Dynamic.global.document.getElementById("object_urnInput").value.toString
+				g.console.log(s)
 				ObjectModel.urn := Some(Cite2Urn(s))
+				g.console.log(ObjectModel.urn.get.get.toString)
 				ObjectController.updateUserMessage("Retrieving object…",1)
 				js.timers.setTimeout(500){ ObjectController.changeObject }
 				}

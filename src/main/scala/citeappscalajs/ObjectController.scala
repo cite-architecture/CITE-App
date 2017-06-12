@@ -105,6 +105,8 @@ object ObjectController {
 	def changeObject:Unit = {
 		val tempUrn:Cite2Urn = ObjectModel.urn.get.get
 		ObjectModel.clearObject
+		QueryObjectModel.clearAll
+		ObjectModel.urn := Some(tempUrn)
 		val collUrn = ObjectModel.urn.get.get.dropSelector
 
 		// Based on the new URN, set image, ordered, browsable flags
@@ -214,9 +216,11 @@ object ObjectController {
 
 	def insertFirstObjectUrn(urn: Cite2Urn): Unit = {
 		ObjectModel.clearObject
+		QueryObjectModel.clearAll
 		val firstUrn:Cite2Urn = ObjectModel.collectionRepository.citableObjects(urn)(0).urn
 
-		js.Dynamic.global.document.getElementById("object_urnInput").value = firstUrn.toString
+		//js.Dynamic.global.document.getElementById("object_urnInput").value = firstUrn.toString
+		ObjectModel.urn := Some(firstUrn)
 		ObjectModel.objectOrCollection := "object"
 	}
 
@@ -224,12 +228,14 @@ object ObjectController {
 	def getNext:Unit = {
 		ObjectModel.currentNext.get match {
 			case Some(u) => {
-				val nu:Cite2Urn = u._1.get
 				val no:Int = u._2
 				val nl:Int = u._3
 				ObjectModel.objectOrCollection.get match {
 					case "object" => {
-						ObjectController.changeUrn(nu)
+						u._1 match {
+							case Some(cu) => ObjectController.changeUrn(cu)
+							case _ => ObjectController.updateUserMessage("The URN for the next object is None. This is an error. Please file an issue on GitHub.",2)
+						}
 					}
 					case "none" => {
 						ObjectController.updateUserMessage("There is no object. getNext should not have been called. Please file an issue on GitHub.",2)
@@ -252,12 +258,14 @@ object ObjectController {
 	def getPrev:Unit = {
 		ObjectModel.currentPrev.get match {
 			case Some(u) => {
-				val nu:Cite2Urn = u._1.get
 				val no:Int = u._2
 				val nl:Int = u._3
 				ObjectModel.objectOrCollection.get match {
 					case "object" => {
-						ObjectController.changeUrn(nu)
+						u._1 match {
+							case Some(cu) => ObjectController.changeUrn(cu)
+							case _ => ObjectController.updateUserMessage("The URN for the previous object is None. This is an error. Please file an issue on GitHub.",2)
+						}
 					}
 					case "none" => {
 						ObjectController.updateUserMessage("There is no object. getPrev should not have been called",2)
@@ -278,35 +286,51 @@ object ObjectController {
 	// Sets the display to a [possible] subset of the current objects
 	@dom
 	def setDisplay:Unit = {
-		 val collUrn:Cite2Urn = ObjectModel.urn.get.get.dropSelector
-		 val numObj:Int = ObjectModel.boundObjects.get.size
-		 val tLim:Int = ObjectModel.limit.get
-		 val tOff:Int = ObjectModel.offset.get
-		 val startIndex:Int = tOff - 1
-		 val endIndex:Int = {
-			 if ( (tOff + tLim - 1)  >= numObj ) {
-				 (numObj - 1)
-			 } else {
-				 ((tOff - 1) + (tLim - 1))
-			 }
-		 }
-		 if (ObjectModel.objectOrCollection.get == "object"){
-			 	ObjectModel.boundDisplayObjects.get.clear
+		val numObj:Int = ObjectModel.boundObjects.get.size
+		val tLim:Int = ObjectModel.limit.get
+		val tOff:Int = ObjectModel.offset.get
+		val startIndex:Int = tOff - 1
+		val endIndex:Int = {
+			if ( (tOff + tLim - 1)  >= numObj ) {
+				(numObj - 1)
+			} else {
+				((tOff - 1) + (tLim - 1))
+			}
+		}
+		ObjectModel.objectOrCollection.get match {
+			case "object" => {
+				ObjectModel.boundDisplayObjects.get.clear
 				// Here we need to send off to construct displayObjects that are bound
 				ObjectModel.boundDisplayObjects.get += ObjectModel.constructBoundDisplayObject(ObjectModel.boundObjects.get(0))
 
 				ObjectModel.updatePrevNext
 				ObjectController.updateReport
-		 } else {
-			 if (tOff > numObj){
-				 ObjectController.updateUserMessage(s"There are ${numObj} objects in the requested ${ObjectModel.objectOrCollection.get}, so an offset of ${tOff} is invalid.",2)
-			 } else {
-				ObjectModel.boundDisplayObjects.get.clear
-				for (i <- startIndex to endIndex){
-					ObjectModel.boundDisplayObjects.get += ObjectModel.constructBoundDisplayObject(ObjectModel.collectionRepository.citableObjects(collUrn)(i))
+			}
+			case "search" => {
+							ObjectModel.boundDisplayObjects.get.clear
+							for (i <- startIndex to endIndex){
+									ObjectModel.boundDisplayObjects.get += ObjectModel.constructBoundDisplayObject(ObjectModel.boundObjects.get(i))
+								}
+								ObjectModel.updatePrevNext
+			}
+			case _ => {
+				try {
+							val collUrn:Cite2Urn = ObjectModel.urn.get.get.dropSelector
+							if (tOff > numObj){
+								ObjectController.updateUserMessage(s"There are ${numObj} objects in the requested ${ObjectModel.objectOrCollection.get}, so an offset of ${tOff} is invalid.",2)
+							} else {
+								ObjectModel.boundDisplayObjects.get.clear
+								for (i <- startIndex to endIndex){
+									ObjectModel.boundDisplayObjects.get += ObjectModel.constructBoundDisplayObject(ObjectModel.collectionRepository.citableObjects(collUrn)(i))
+								}
+								ObjectModel.updatePrevNext
+							}
+				} catch {
+					case e: Exception => {
+						ObjectController.updateUserMessage(s"Failed on setDisplay. ${e}",2 )
+					}
+
 				}
-				ObjectModel.updatePrevNext
-				ObjectController.updateReport
 			}
 		}
 	}
