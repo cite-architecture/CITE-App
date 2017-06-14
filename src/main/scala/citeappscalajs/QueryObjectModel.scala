@@ -116,7 +116,7 @@ object QueryObjectModel {
 				case Some(x) => qds += s"Search for Cts Urn ${x}. "
 				case _ => qds += ""
 			}
-			qCtsUrn match {
+			qCite2Urn match {
 				case Some(x) => qds += s"Search for Cite2 Urn ${x}. "
 				case _ => qds += ""
 			}

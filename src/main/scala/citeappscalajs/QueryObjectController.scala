@@ -393,21 +393,88 @@ qCite2Urn: Option[Cite2Urn]
 	}
 
 	def initCtsUrnSearch:Unit = {
-		g.console.log("Doing initCtsUrnSearch…")
-		ObjectController.updateUserMessage("Cts Urn searching is not yet implemented.",1)
+		g.console.log("got here 1")
+		val collUrn = {
+			QueryObjectModel.currentQueryCollection.get match {
+				case None => None
+				case Some(u) => Some(u)
+			}
+		}
+		val cq = QueryObjectModel.CiteCollectionQuery(
+			qCollection = collUrn,
+			qProperty = QueryObjectModel.queryProperty.get,
+			qPropertyType = QueryObjectModel.selectedPropertyType.get,
+			qCtsUrn = QueryObjectModel.currentCtsUrnQuery.get
+		)
+		doCtsUrnSearch(cq)
 	}
 
 	def doCtsUrnSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
-
+		g.console.log("got here 2")
+			cq.qProperty match {
+				case None =>{
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.urnMatch(cq.qCtsUrn.get)
+							g.console.log("got here 3")
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+				}
+				case _ => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.urnMatch(cq.qProperty.get.urn, cq.qCtsUrn.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+				}
+			}
 	}
 
 	def initCite2UrnSearch:Unit = {
-		g.console.log("Doing initCite2UrnSearch…")
-		ObjectController.updateUserMessage("Cite2 Urnk searching is not yet implemented.",1)
+		val collUrn = {
+			QueryObjectModel.currentQueryCollection.get match {
+				case None => None
+				case Some(u) => Some(u)
+			}
+		}
+		val cq = QueryObjectModel.CiteCollectionQuery(
+			qCollection = collUrn,
+			qProperty = QueryObjectModel.queryProperty.get,
+			qPropertyType = QueryObjectModel.selectedPropertyType.get,
+			qCite2Urn =  QueryObjectModel.currentCite2UrnQuery.get
+		)
+		doCite2UrnSearch(cq)
 	}
 
 	def doCite2UrnSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
-
+			cq.qProperty match {
+				case None =>{
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.urnMatch(cq.qCite2Urn.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+				}
+				case _ => {
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.urnMatch(cq.qProperty.get.urn, cq.qCite2Urn.get)
+							cq.qCollection match {
+								case Some(u) =>{
+									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
+									 loadSearchResults(cq,fv)
+								}
+							  case _ => loadSearchResults(cq,ov)
+							}
+				}
+			}
 	}
 
 	def loadSearchResults(cq:QueryObjectModel.CiteCollectionQuery, ov:Vector[CiteObject]):Unit = {

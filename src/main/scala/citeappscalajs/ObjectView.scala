@@ -262,6 +262,11 @@ def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 					}
 				} >View as Object</a> |
 				<a
+				onclick={ event: Event => {
+					CiteMainController.retrieveImageLinks(propVal)
+					}
+				} >Links to Image</a> |
+				<a
 					onclick={ event: Event => {
 						CiteMainController.retrieveImage(contextUrn,propVal)
 					}

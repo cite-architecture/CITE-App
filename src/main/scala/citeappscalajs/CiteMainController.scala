@@ -82,6 +82,10 @@ object CiteMainController {
 			js.Dynamic.global.document.getElementById("tab-1").checked = true
 	}
 
+	def retrieveImageLinks(urn:Cite2Urn) = {
+		g.console.log(s"Will find image links to ${urn}.")
+	}
+
 	def retrieveObject(mappedUrn:Option[Cite2Urn], objUrn:Cite2Urn):Unit = {
 			val urn:Cite2Urn = objUrn.dropExtensions
 			ObjectController.updateUserMessage("Retrieving object…",1)
@@ -143,7 +147,7 @@ object CiteMainController {
 				}
 
 				case None => {
-					loadMessage += "Chosen repository does not seem to include a TextRepository. "
+					loadMessage += "Chosen repository does not seem to include a CollectionRepository. "
 				}
 			}
 

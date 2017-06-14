@@ -587,6 +587,17 @@ div#o2_navButtonContainer_top{
 	padding-bottom: 15px;
 }
 
+
+
+.o2_passageUrn:hover:before{
+	content: "⚭";
+	width: 2em;
+	position:absolute;
+	left: -1em;
+	font-size: 150%;
+	color: #7273af;
+}
+
 .o2_passageUrn {
 	color: rgb(171, 0, 0);
 	font-size: 80%;
