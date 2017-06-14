@@ -77,6 +77,12 @@ object QueryObjectController {
 		}
 	}
 
+	def loadQuery(q:QueryObjectModel.CiteCollectionQuery):Unit = {
+		QueryObjectModel.currentQuery := Some(q)
+		QueryObjectModel.selectedPropertyType := q.qPropertyType
+		initQuery
+	}
+
 
 	def initStringSearch:Unit = {
 		val collUrn = {

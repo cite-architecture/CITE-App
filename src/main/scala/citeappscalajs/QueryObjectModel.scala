@@ -108,6 +108,10 @@ object QueryObjectModel {
 				}
 				case _ => qds += ""
 			}
+			qControlledVocabItem match {
+				case Some(x) => qds += s"Search for Controlled Vocabulary Item “${x}”. "
+				case _ => qds += ""
+			}
 			qBoolVal match {
 				case Some(x) => qds += s"Search for Boolean value [${x}]. "
 				case _ => qds += ""

@@ -477,7 +477,7 @@ def propertyListEnumeration = {
 /* Previous Searches */
 @dom
 def previousQueryMenu = {
-	<div
+	<div id="queryObject_previousMenu"
 	class={
 		{ if (QueryObjectModel.pastQueries.bind.size == 0) { "dropdown empty" } else {"dropdown"} }
 	} >
@@ -491,7 +491,11 @@ def previousQueries = {
 	<div class="dropdown-content">
 		{
 			for (q <- QueryObjectModel.pastQueries) yield {
-				<p>{ q.toString }</p>
+
+				<p onclick={ event: Event => {
+						QueryObjectController.loadQuery(q)
+					}
+				}>{ q.toString }</p>
 			}
 		}
 	</div>
