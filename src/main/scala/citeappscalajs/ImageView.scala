@@ -251,9 +251,11 @@ def thumbnailView(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 	}
 
 	val canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
+	canvas.setAttribute("crossOrigin","Anonymous")
 	val ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
 	val offScreenImg = document.createElement("img").asInstanceOf[HTMLImageElement]
 	val onScreenImg = document.createElement("img").asInstanceOf[HTMLImageElement]
+	offScreenImg.setAttribute("crossOrigin","Anonymous")
 	offScreenImg.setAttribute("src",path)
 	//Wait for that to load, then proceed
 	offScreenImg.onload = (e: Event) => {
@@ -261,6 +263,7 @@ def thumbnailView(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 			canvas.height = (offScreenImg.height * rH).round
 			ctx.drawImage(offScreenImg,(0-(offScreenImg.width * rL)).round,(0-(offScreenImg.height*rT)).round)
 			val s:String = canvas.toDataURL("image/png")
+			onScreenImg.setAttribute("crossOrigin","Anonymous")
 			onScreenImg.setAttribute("src",s)
 			onScreenImg.setAttribute("class","object_imgThumb")
 	}

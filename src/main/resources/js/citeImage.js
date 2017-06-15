@@ -78,6 +78,7 @@ function initOpenSeadragon(imagePath) {
 		viewer = OpenSeadragon({
         id: "image_imageContainer",
         prefixUrl: "js/images/",
+			  crossOriginPolicy: "Anonymous",
         tileSources: imagePath,
 				springStiffness: 20,
 				animationTime: 8,

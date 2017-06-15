@@ -79,8 +79,10 @@ object ImageController {
 			}
 
 			val canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
+			canvas.setAttribute("crossOrigin","Anonymous")
 			val ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
 			val offScreenImg = document.createElement("img").asInstanceOf[HTMLImageElement]
+			offScreenImg.setAttribute("crossOrigin","Anonymous")
 			offScreenImg.setAttribute("src",path)
 			//Wait for that to load, then proceed
 			offScreenImg.onload = (e: Event) => {
@@ -91,6 +93,7 @@ object ImageController {
 
 				val s:String = canvas.toDataURL("image/png")
 				val prevImg = document.getElementById("image_previewImg").asInstanceOf[HTMLImageElement]
+				prevImg.setAttribute("crossOrigin","Anonymous")
 				prevImg.setAttribute("src",s)
 			}
 
