@@ -28,4 +28,9 @@ object CiteMainModel {
 		val objectProtocol = "ObjectProtocol"
 		val localImageProtocol = "LocalImageProtocol"
 
+		val showTexts = Var(true)
+		val showNg = Var(true)
+		val showCollections = Var(true)
+		val showImages = Var(true)
+
 }

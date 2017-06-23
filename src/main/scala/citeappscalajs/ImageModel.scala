@@ -28,7 +28,7 @@ object ImageModel {
 
   // Image Collections here
 	val imgArchivePath:String = "../../../image_archive/"
-	var imageExtensions:ImageExtensions = null
+	var imageExtensions:Option[ImageExtensions] = None
 	val imageCollections = Vars.empty[Cite2Urn]
 
 	// urn is what the user requested
@@ -63,7 +63,10 @@ object ImageModel {
 
 	def updateImageCollections = {
 		imageCollections.get.clear
-		imageExtensions.protocolMap.foreach(k => imageCollections.get += k._1)
+		imageExtensions match {
+				case Some(ie) => ie.protocolMap.foreach(k => imageCollections.get += k._1)
+				case _ => ;
+		}
 	}
 
   // Eventually, do something clever to assign groups to ROIs based on their mapped URNs

@@ -735,6 +735,7 @@ header {
 footer {
 	font-size: 80%;
 	bottom: -50px;
+	z-index: -1;
 	position: absolute;
 	padding-right: 60px;
 }

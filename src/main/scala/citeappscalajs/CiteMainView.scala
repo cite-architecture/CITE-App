@@ -68,7 +68,13 @@ object CiteMainView {
 			{ mainMessageDiv.bind }
 			<div class="app_tabs">
 
-				<div class="app_tab">
+				<div id="app_tab_texts"
+					class={
+							CiteMainModel.showTexts.bind match {
+								case true => "app_visible app_tab"
+								case _ => "app_hidden app_tab"
+							}
+					}>
 					<input type="radio" id="tab-1" name="tab-group-1" checked={ false }/>
 					<label class="tab_label" for="tab-1">Browse Texts</label>
 						<div class="content">
@@ -76,7 +82,13 @@ object CiteMainView {
 						</div>
 				</div>
 
-				<div class="app_tab">
+				<div id="app_tab_ng"
+					class={
+							CiteMainModel.showNg.bind match {
+								case true => "app_visible app_tab"
+								case _ => "app_hidden app_tab"
+							}
+					}>
 					<input type="radio" id="tab-2" name="tab-group-1" checked={ false }/>
 					<label class="tab_label" for="tab-2">Explore Texts</label>
 						<div class="content">
@@ -84,15 +96,27 @@ object CiteMainView {
 						</div>
 				</div>
 
-				<div class="app_tab">
-					<input type="radio" id="tab-3" name="tab-group-1" checked={ true }/>
+				<div id="app_tab_collections"
+					class={
+							CiteMainModel.showCollections.bind match {
+								case true => "app_visible app_tab"
+								case _ => "app_hidden app_tab"
+							}
+					}>
+					<input type="radio" id="tab-3" name="tab-group-1" checked={ false }/>
 					<label class="tab_label" for="tab-3">Collections</label>
 						<div class="content">
 						 { objectView.bind }
 						</div>
 				</div>
 
-				<div class="app_tab">
+				<div id="app_tab_images"
+					class={
+							CiteMainModel.showImages.bind match {
+								case true => "app_visible app_tab"
+								case _ => "app_hidden app_tab"
+							}
+					}>
 					<input type="radio" id="tab-4" name="tab-group-1" checked={ false }/>
 					<label class="tab_label" for="tab-4">Images</label>
 						<div class="content">

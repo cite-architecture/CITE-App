@@ -173,37 +173,57 @@ def mappedUrnSpan(u:Urn, imgU:Cite2Urn) = {
 				val c2u = u.asInstanceOf[Cite2Urn].dropProperty
 				val collUrn = c2u.dropSelector
 				if (ObjectController.objectIsPresent(c2u)){
-					if (ImageModel.imageExtensions.extensions(collUrn).size > 0){
-						{
-							<span>
-							<strong>Object:</strong> { s"${c2u.toString}" }
-							<a
-							onclick={ event: Event => {
-								CiteMainController.retrieveObject(None,c2u)
+					ImageModel.imageExtensions match {
+							case Some(ie) => {
+								if (ie.extensions(collUrn).size > 0){
+									{
+										<span>
+										<strong>Object:</strong> { s"${c2u.toString}" }
+										<a
+										onclick={ event: Event => {
+											CiteMainController.retrieveObject(None,c2u)
+											}
+										} >View as Object</a> |
+										<a
+											onclick={ event: Event => {
+												CiteMainController.retrieveImage(None,c2u)
+											}
+										}>View as Image</a> <br/>
+										<br/> { previewImageLink(imgU).bind }
+										</span>
+									}
+								} else {
+									{
+										<span>
+										<a
+										onclick={ event: Event => {
+											CiteMainController.retrieveObject(None,c2u)
+											}
+										} >
+											Object:
+											{ s"${c2u.toString}" }
+										</a>
+										<br/> { previewImageLink(imgU).bind }
+										</span>
+									}
 								}
-							} >View as Object</a> |
-							<a
-								onclick={ event: Event => {
-									CiteMainController.retrieveImage(None,c2u)
-								}
-							}>View as Image</a> <br/>
-							<br/> { previewImageLink(imgU).bind }
-							</span>
-						}
-					} else {
-						{
-							<span>
-							<a
-							onclick={ event: Event => {
-								CiteMainController.retrieveObject(None,c2u)
-								}
-							} >
-								Object:
-								{ s"${c2u.toString}" }
-							</a>
-							<br/> { previewImageLink(imgU).bind }
-							</span>
-						}
+							}
+							case _ => {
+									{
+										<span>
+										<a
+										onclick={ event: Event => {
+											CiteMainController.retrieveObject(None,c2u)
+											}
+										} >
+											Object:
+											{ s"${c2u.toString}" }
+										</a>
+										<br/> { previewImageLink(imgU).bind }
+										</span>
+									}
+							}
+
 					}
 				} else {
 					<span> { s"${c2u}"} <br/> {"(This object is not present in the current library.)"} </span>

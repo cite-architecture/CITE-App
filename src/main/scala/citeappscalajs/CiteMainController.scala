@@ -99,11 +99,39 @@ object CiteMainController {
 			js.Dynamic.global.document.getElementById("tab-4").checked = true
 	}
 
+	def hideTabs:Unit = {
+
+	  CiteMainModel.showTexts := false
+		CiteMainModel.showNg := false
+		CiteMainModel.showCollections := false
+		CiteMainModel.showImages :=false
+	}
+
+	def checkDefaultTab:Unit = {
+		if (CiteMainModel.showTexts.get) {
+			js.Dynamic.global.document.getElementById("tab-1").checked = true
+		} else {
+			if (CiteMainModel.showCollections.get) {
+			js.Dynamic.global.document.getElementById("tab-3").checked = true
+			}
+		}
+	}
+
+	def clearRepositories:Unit = {
+		O2Model.textRepository = null
+		ObjectModel.collectionRepository = null
+		ImageModel.imageCollections.get.clear
+		ImageModel.imageExtensions = null
+	}
+
 
 	// Reads CEX file, creates repositories for Texts, Objects, and Images
 	// *** Apropos Microservice ***
 	@dom
 	def updateRepository(cexString: String, columnDelimiter: String = "\t", fieldDelimiter: String = ",") = {
+
+		hideTabs
+		clearRepositories
 
 		try {
 
@@ -113,6 +141,8 @@ object CiteMainController {
 
 			repo.textRepository match {
 				case Some(tr) => {
+					CiteMainModel.showTexts := true
+					CiteMainModel.showNg := true
 					CiteMainModel.currentLibraryMetadataString := mdString
 					O2Model.textRepository = tr
 					CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepository.catalog.size } works. ",0)
@@ -133,7 +163,7 @@ object CiteMainController {
 
 			repo.collectionRepository match {
 				case Some(cr) => {
-
+					CiteMainModel.showCollections := true
 					ObjectModel.collectionRepository = cr
 					ObjectModel.updateCollections
 					ObjectController.clearResults
@@ -153,8 +183,9 @@ object CiteMainController {
 
 			repo.imageExtensions match {
 				case Some(ie) => {
+					  CiteMainModel.showImages := true
 						ImageController.clearAll
-						ImageModel.imageExtensions = ie
+						ImageModel.imageExtensions = Some(ie)
 						ImageModel.updateImageCollections
 						loadMessage += s"Image collections: ${ie.protocolMap.size}."
 				}
@@ -164,6 +195,8 @@ object CiteMainController {
 					loadMessage += "Chosen repository does not seem to include any image collections. "
 				}
 			}
+
+			checkDefaultTab
 
 			CiteMainController.updateUserMessage(loadMessage,0)
 

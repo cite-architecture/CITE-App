@@ -96,13 +96,18 @@ object ObjectModel {
 			// *********************
 			// Now we load other extensions… images for now, but others later!
 			// *********************
-			if (ImageModel.imageCollections != null) {
-				for (ie <- ImageModel.imageExtensions.extensions(collUrn)) {
-					val imageVector = ie
-						if (imageVector.protocol == "Local jpeg string"){
-						   val tempProt1 = Var(CiteMainModel.localImageProtocol)
-							 tempProtocolList.get += BoundCiteProtocol(tempProt1)
+			if (ImageModel.imageCollections.get.size > 0) {
+				ImageModel.imageExtensions match {
+					case Some(ext) =>{
+						for (ie <- ext.extensions(collUrn)) {
+							val imageVector = ie
+								if (imageVector.protocol == "Local jpeg string"){
+								   val tempProt1 = Var(CiteMainModel.localImageProtocol)
+									 tempProtocolList.get += BoundCiteProtocol(tempProt1)
+								}
 						}
+					}
+					case _ => { }
 				}
 			}
 		//BoundDisplayObject(urn:Var[Cite2Urn], label:Var[String],props:Vars[BoundCiteProperty], prot:Vars[BoundCiteProtocol])

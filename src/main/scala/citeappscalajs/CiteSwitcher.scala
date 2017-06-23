@@ -24,24 +24,33 @@ object CiteSwitcher {
 	@dom
 	def objectLinks(u:Cite2Urn) = {
 		val collUrn = u.dropSelector
-		if (ImageModel.imageExtensions.extensions(collUrn).size > 0){
-			{
-				<span>
-				{ s"${u.toString}" } <br/>
-				<a >View as Object</a> |
-				<a >View as Image</a>
-				</span>
+		ImageModel.imageExtensions match {
+			case Some(ie) => {
+				if (ie.extensions(collUrn).size > 0){
+					{
+						<span>
+						{ s"${u.toString}" } <br/>
+						<a >View as Object</a> |
+						<a >View as Image</a>
+						</span>
+					}
+				} else {
+					{
+						<span>
+						{ s"${u.toString}" }
+						<a >View as Object</a>
+						</span>
+					}
+				}
 			}
-		} else {
-			{
-				<span>
-				{ s"${u.toString}" }
-				<a >View as Object</a>
-				</span>
+			case _ =>{
+				{
+					<span>
+					{ s"${u.toString}" }
+					<a >View as Object</a>
+					</span>
+				}
 			}
 		}
 	}
-
-
-
 }
