@@ -218,7 +218,7 @@ def renderObjects = {
 
 @dom def renderCiteUrnProperty(propUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 <p>
-	{ ObjectView.objectLinks(propUrn, propVal).bind }
+	{ CiteLinks.objectLinks(propUrn, propVal).bind }
 </p>
 }
 
@@ -229,7 +229,7 @@ def renderObjects = {
 	<td>{
 		p.propertyType.get match {
 			case Cite2UrnType =>{ <p>{ ObjectView.renderCiteUrnProperty(Some(p.urn.get),Cite2Urn(p.propertyValue.get)).bind }</p>}
-			case CtsUrnType =>{ <p>{ ObjectView.textLinks(CtsUrn(p.propertyValue.get)).bind }</p>}
+			case CtsUrnType =>{ <p>{ CiteLinks.textLinks(CtsUrn(p.propertyValue.get)).bind }</p>}
 			case _ =>{ <p>{ s"${p.propertyValue.bind.toString}"}</p>}
 		}
 
@@ -237,79 +237,6 @@ def renderObjects = {
 	</tr>
 }
 
-@dom
-def textLinks(u:CtsUrn) = {
-	<p><a
-	onclick={ event: Event => {
-		CiteMainController.retrieveTextPassage(u)
-	}}>
-	<strong>Text Passage:</strong> {u.toString}
-	</a>
-	</p>
-}
-
-@dom
-def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
-	val collUrn = propVal.dropSelector
-	if (ObjectController.objectIsPresent(propVal)){
-		ImageModel.imageExtensions match {
-			case Some(ie) =>{
-					if (ie.extensions(collUrn).size > 0){
-						{
-							<span>
-							{ s"${propVal.toString}" } <br/>
-							<a
-							onclick={ event: Event => {
-								CiteMainController.retrieveObject(contextUrn,propVal)
-								}
-							} >View as Object</a> |
-							<a
-							onclick={ event: Event => {
-								CiteMainController.retrieveImageLinks(propVal)
-								}
-							} >Links to Image</a> |
-							<a
-								onclick={ event: Event => {
-									CiteMainController.retrieveImage(contextUrn,propVal)
-								}
-							}>View as Image</a> <br/>
-							{ ObjectView.thumbnailView(contextUrn, propVal).bind }
-							</span>
-						}
-					} else {
-						{
-							<span>
-							<a
-							onclick={ event: Event => {
-								ObjectController.updateUserMessage("Retrieving object…",1)
-								js.timers.setTimeout(500){ ObjectController.changeUrn(propVal) }
-								}
-							}>
-								{ s"${propVal.toString}" }
-							</a>
-							</span>
-						}
-					}
-			}
-			case _ => {
-						{
-							<span>
-							<a
-							onclick={ event: Event => {
-								ObjectController.updateUserMessage("Retrieving object…",1)
-								js.timers.setTimeout(500){ ObjectController.changeUrn(propVal) }
-								}
-							}>
-								{ s"${propVal.toString}" }
-							</a>
-							</span>
-						}
-			}
-		}
-	} else {
-		<span> { s"${propVal}"} <br/> {"(This object is not present in the current library.)"} </span>
-	}
-}
 
 // contextUrn is the URN of the property of which propVal is the value; contextUrn, therefore, provides access to the collection and the object
 @dom def thumbnailView(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
