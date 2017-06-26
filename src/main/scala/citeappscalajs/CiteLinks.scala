@@ -23,13 +23,16 @@ object CiteLinks {
 // Refactor => CiteLinks
 @dom
 def textLinks(u:CtsUrn) = {
-	<p><a
-	onclick={ event: Event => {
-		CiteMainController.retrieveTextPassage(u)
-	}}>
-	<strong>Text Passage:</strong> {u.toString}
-	</a>
-	</p> 
+	<ul class="citeLinks_linksList">
+		<li class="citeLinks_linkItem">
+		<a
+			onclick={ event: Event => {
+				CiteMainController.retrieveTextPassage(u)
+			}}>
+			{u.toString}
+			</a>
+		</li>
+	</ul>
 }
 
 	@dom
@@ -41,58 +44,92 @@ def textLinks(u:CtsUrn) = {
 				case Some(ie) =>{
 					if (ie.extensions(collUrn).size > 0){
 						{
-							<span>
-							{ s"${propVal.toString}" } <br/>
-							<a
-							onclick={ event: Event => {
-								CiteMainController.retrieveObject(contextUrn,propVal)
-							}
-						} >View as Object</a> |
-						<a
-						onclick={ event: Event => {
-							CiteMainController.retrieveImageLinks(propVal)
+							<ul class="citeLinks_linksList">
+
+								<li class="citeLinks_linkItem">
+									<a
+									onclick={ event: Event => {
+											CiteMainController.retrieveObject(contextUrn,propVal)
+										}
+									} >View Object</a>
+								</li>
+								<li class="citeLinks_linkItem">
+									<a
+									onclick={ event: Event => {
+											CiteMainController.retrieveImageLinks(propVal)
+										}
+									} >Links to Image</a>
+								</li>
+								<li class="citeLinks_linkItem">
+									<a
+										onclick={ event: Event => {
+											CiteMainController.retrieveImage(contextUrn,propVal)
+										}
+									}>View as Image</a> <br/>
+									{ ObjectView.thumbnailView(contextUrn, propVal).bind }
+								</li>
+							</ul>
 						}
-					} >Links to Image</a> |
-					<a
-					onclick={ event: Event => {
-						CiteMainController.retrieveImage(contextUrn,propVal)
+					} else {
+						{
+							<ul class="citeLinks_linksList">
+								<li class="citeLinks_linkItem">
+									<a
+										onclick={ event: Event => {
+											ObjectController.updateUserMessage("Retrieving object…",1)
+											js.timers.setTimeout(500){ ObjectController.changeUrn(propVal) }
+										}
+									}>
+										{ s"${propVal.toString}" }
+									</a>
+								</li>
+							</ul>
+						}
 					}
-				}>View as Image</a> <br/>
-				{ ObjectView.thumbnailView(contextUrn, propVal).bind }
-				</span>
+				}
+				case _ => {
+					{
+						<span>
+							<a
+								onclick={ event: Event => {
+									ObjectController.updateUserMessage("Retrieving object…",1)
+									js.timers.setTimeout(500){ ObjectController.changeUrn(propVal) }
+								}
+							}>
+								{ s"${propVal.toString}" }
+							</a>
+						</span>
+					}
+				}
 			}
 		} else {
-			{
-				<span>
-				<a
-				onclick={ event: Event => {
-						ObjectController.updateUserMessage("Retrieving object…",1)
-						js.timers.setTimeout(500){ ObjectController.changeUrn(propVal) }
-					}
-				}>
-				{ s"${propVal.toString}" }
-				</a>
-				</span>
-			}
-		}
-}
-	case _ => {
-		{
-			<span>
-			<a
-				onclick={ event: Event => {
-					ObjectController.updateUserMessage("Retrieving object…",1)
-					js.timers.setTimeout(500){ ObjectController.changeUrn(propVal) }
-				}
-			}>
-			{ s"${propVal.toString}" }
-			</a>
-			</span>
+			<span> { s"${propVal}"} <br/> {"(This object is not present in the current library.)"} </span>
 		}
 	}
-}
-} else {
-	<span> { s"${propVal}"} <br/> {"(This object is not present in the current library.)"} </span>
-}
-}
+
+	@dom
+	def objectLink(contextUrn:Option[Cite2Urn],propVal:Cite2Urn):Unit = {
+			<li class="citeLinks_linkItem"
+					onclick={ event: Event => {
+							CiteMainController.retrieveObject(contextUrn,propVal)
+					}
+			} >View Object</li>
+	}
+
+	def objectIsPresent(u:Cite2Urn):Boolean = {
+		true
+	}
+	def objectIsImage(u:Cite2Urn):Boolean = {
+		true
+	}
+	def urnInDSE(u:Cite2Urn):Boolean = {
+		true
+	}
+	def urnIsRelation(u:Cite2Urn):Boolean = {
+		true
+	}
+	def workIsPresent(u:Cite2Urn):Boolean = {
+		true
+	}
+
 }

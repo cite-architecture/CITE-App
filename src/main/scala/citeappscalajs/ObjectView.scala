@@ -218,6 +218,7 @@ def renderObjects = {
 
 @dom def renderCiteUrnProperty(propUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 <p>
+	{ s"${propVal.toString}" }
 	{ CiteLinks.objectLinks(propUrn, propVal).bind }
 </p>
 }
