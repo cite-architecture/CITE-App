@@ -116,6 +116,43 @@ def textLinks(u:CtsUrn) = {
 			} >View Object</li>
 	}
 
+	@dom
+	def imageLink(contextUrn:Option[Cite2Urn],propVal:Cite2Urn):Unit = {
+			<li class="citeLinks_linkItem">
+					<a onclick={ event: Event => {
+							CiteMainController.retrieveImage(contextUrn,propVal)
+						}
+					}>View Image</a> <br/>
+					{ ObjectView.thumbnailView(contextUrn, propVal).bind }
+			</li>
+	}
+
+	@dom
+	def textLink(u:CtsUrn):Unit = {
+		<li class="citeLinks_linkItem">
+			<a
+				onclick={ event: Event => {
+					CiteMainController.retrieveTextPassage(u)
+				}}>
+				{u.toString}
+			</a>
+		</li>
+	}
+
+	@dom
+	def dseLink(u:Urn):Unit = {
+		<li class="citeLinks_linkItem">
+				View DSE Graph
+		</li>
+	}
+
+	@dom
+	def orcaLink(u:Urn):Unit = {
+		<li class="citeLinks_linkItem">
+				View Reading
+		</li>
+	}
+
 	def objectIsPresent(u:Cite2Urn):Boolean = {
 		true
 	}

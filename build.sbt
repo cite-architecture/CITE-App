@@ -17,7 +17,7 @@ libraryDependencies ++= Seq(
   "edu.holycross.shot.cite" %%% "xcite" % "2.4.0",
   "edu.holycross.shot" %%% "ohco2" % "8.0.1",
   "edu.holycross.shot" %%% "scm" % "4.0.0",
-  "edu.holycross.shot" %%% "citeobj" % "3.1.1",
+  "edu.holycross.shot" %%% "citeobj" % "3.1.3",
   "edu.holycross.shot" %% "citeenv" % "1.1.2",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
 )
