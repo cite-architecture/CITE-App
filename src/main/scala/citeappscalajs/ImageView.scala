@@ -11,6 +11,8 @@ import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 
 import scala.scalajs.js.annotation.JSExport
@@ -101,9 +103,8 @@ object ImageView {
 							val s:String = js.Dynamic.global.document.getElementById("image_urnInput").value.toString
 							//ImageModel.urn := Cite2Urn(s)
 							ImageController.updateUserMessage("Retrieving image…",1)
-							js.timers.setTimeout(500){
+							Future {
 								ImageController.changeUrn(s)
-								//ImageController.changeImage
 							}
 						}
 						}

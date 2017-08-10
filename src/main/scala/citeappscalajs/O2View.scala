@@ -10,6 +10,8 @@ import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 
 import scala.scalajs.js.annotation.JSExport
@@ -81,7 +83,7 @@ def retrievePassageButton = {
 				val s:String = js.Dynamic.global.document.getElementById("o2_urnInput").value.toString
 				O2Model.urn := CtsUrn(s)
 				O2Controller.updateUserMessage("Retrieving passage…",1)
-				js.timers.setTimeout(500){ O2Controller.changePassage }
+				Future{ O2Controller.changePassage }
 				}
 			}
 			disabled={ (O2Controller.validUrnInField.bind == false) }

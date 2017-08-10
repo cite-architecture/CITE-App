@@ -5,6 +5,8 @@ import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
 import scala.scalajs.js
 import scala.scalajs.js._
 import js.annotation._
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 import collection.mutable
 import collection.mutable._
 import scala.scalajs.js.Dynamic.{ global => g }
@@ -65,7 +67,6 @@ def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 
 	@dom
 	def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
-		g.console.log("CiteLinks: deprecated objectLinks")
 		val collUrn = propVal.dropSelector
 		if (ObjectController.objectIsPresent(propVal)){
 
@@ -106,7 +107,9 @@ def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 									<a
 										onclick={ event: Event => {
 											ObjectController.updateUserMessage("Retrieving object…",1)
-											js.timers.setTimeout(500){ ObjectController.changeUrn(propVal) }
+											Future{
+												ObjectController.changeUrn(propVal)
+											}
 										}
 									}>
 										{ s"${propVal.toString}" }
@@ -122,7 +125,9 @@ def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 							<a
 								onclick={ event: Event => {
 									ObjectController.updateUserMessage("Retrieving object…",1)
-									js.timers.setTimeout(500){ ObjectController.changeUrn(propVal) }
+									Future{
+										ObjectController.changeUrn(propVal) 
+									}
 								}
 							}>
 								{ s"${propVal.toString}" }

@@ -69,6 +69,20 @@ function updateImageJS( collection, imageObject, path ){
 		initOpenSeadragon(path)
 	}
 
+	/**
+ * Normalizes the index of the ROI to a number within the given amount of
+ * colors. E.g. If there were only two colors, an index of 4 would return group
+ * number 0 => (index % colorLength)
+ * @param  {int} i index number
+ * @return {int} normalized group number
+ */
+function getGroup(i){
+	var colorArray = ["#f23568", "#6d38ff", "#38ffd7", "#fff238", "#661641", "#275fb3", "#24a669", "#a67b24", "#ff38a2", "#194973", "#35f268", "#7f441c", "#801c79", "#2a8ebf", "#216616", "#d97330", "#da32e6", "#196d73", "#bdff38", "#bf3e2a", "#3d1973", "#30cdd9", "#858c1f", "#661616"	];
+	var limit = colorArray.length
+   var rv = i % limit;
+	return rv;
+}
+
 function initOpenSeadragon(imagePath) {
 
 		if (viewer != null){
@@ -115,8 +129,8 @@ function initOpenSeadragon(imagePath) {
 
     // Add overlays
 			setTimeout(function(){
-				var normH = viewer.world.getItemAt(0).getBounds().height
-				var normW = viewer.world.getItemAt(0).getBounds().width
+				var normH = viewer.world.getItemAt(0).getBounds().height;
+				var normW = viewer.world.getItemAt(0).getBounds().width;
 				if (roiArray.length > 0){
 					for (ol = 0; ol < roiArray.length; ol++){
 						var roi = roiArray[ol].roi
@@ -152,6 +166,6 @@ function initOpenSeadragon(imagePath) {
 								e.target.classList.add("image_roi_selected")
 						}, false);
 					}
-			},1000);
+			},3000);
 
 }

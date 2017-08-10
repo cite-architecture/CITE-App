@@ -10,6 +10,8 @@ import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 
 import scala.scalajs.js.annotation.JSExport
@@ -25,11 +27,15 @@ object O2Controller {
 	def changePassage: Unit = {
 		val timeStart = new js.Date().getTime()
 		val newUrn: CtsUrn = O2Model.urn.get
-		O2Model.versionsForCurrentUrn := O2Model.versionsForUrn(newUrn)
-		O2Model.displayPassage(newUrn)
-		O2Model.getPrevNextUrn(O2Model.urn.get)
-		val timeEnd = new js.Date().getTime()
-		O2Controller.updateUserMessage(s"Fetched ${O2Model.currentCitableNodes.get} citation objects in ${(timeEnd - timeStart)/1000} seconds.",0)
+		Future{
+			O2Model.versionsForCurrentUrn := O2Model.versionsForUrn(newUrn)
+			O2Model.displayPassage(newUrn)
+			val timeEnd = new js.Date().getTime()
+			O2Controller.updateUserMessage(s"Fetched ${O2Model.currentCitableNodes.get} citation objects in ${(timeEnd - timeStart)/1000} seconds.",0)
+		}
+		Future{
+			O2Model.getPrevNextUrn(O2Model.urn.get)
+		}
 	}
 
 
@@ -80,7 +86,7 @@ object O2Controller {
 			O2Model.displayUrn := urn
 			validUrnInField := true
 			O2Controller.updateUserMessage("Retrieving passage…",1)
-			js.timers.setTimeout(500){
+			Future{
 				O2Controller.changePassage
 			}
 

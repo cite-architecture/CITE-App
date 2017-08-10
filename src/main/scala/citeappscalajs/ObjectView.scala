@@ -12,6 +12,8 @@ import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.scalajs.js.Dynamic.{ global => g }
 import scala.scalajs.js.annotation.JSExport
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 @JSExport
 object ObjectView {
@@ -87,7 +89,7 @@ def retrieveObjectButton = {
 				val s:String = js.Dynamic.global.document.getElementById("object_urnInput").value.toString
 				ObjectModel.urn := Some(Cite2Urn(s))
 				ObjectController.updateUserMessage("Retrieving object…",1)
-				js.timers.setTimeout(500){ ObjectController.changeObject }
+				Future{ ObjectController.changeObject }
 				}
 			}
 			disabled={
@@ -117,7 +119,7 @@ def objectToCollectionButton = {
 				//ObjectModel.limit := 2
 				ObjectModel.objectOrCollection := "collection"
 				ObjectController.updateUserMessage("Retrieving collection…",1)
-				js.timers.setTimeout(500){ ObjectController.changeObject }
+				Future{ ObjectController.changeObject }
 				}
 			}
 		class={
@@ -286,7 +288,7 @@ def collectionBrowseControls = {
 
 			<div class="onoffswitch">
 			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="object_browseOrListSwitch" checked={false}
-					onchange={ event: Event => js.timers.setTimeout(500){ ObjectController.switchDisplay( event )}}
+					onchange={ event: Event => Future{ ObjectController.switchDisplay( event )}}
 					/>
 			    <label class="onoffswitch-label" for="object_browseOrListSwitch">
 			        <span class="object_onoffswitch-inner onoffswitch-inner"></span>

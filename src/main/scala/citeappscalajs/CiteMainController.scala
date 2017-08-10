@@ -5,10 +5,9 @@ import org.scalajs.dom.document
 import scala.scalajs.js.Dynamic.{ global => g }
 import org.scalajs.dom.raw._
 import org.scalajs.dom.ext.Ajax
-import scala.concurrent
-.ExecutionContext
-.Implicits
-.global
+import scala.concurrent._
+import ExecutionContext.Implicits.global
+
 import edu.holycross.shot.cite._
 import edu.holycross.shot.scm._
 import edu.holycross.shot.ohco2._
@@ -24,7 +23,11 @@ object CiteMainController {
 		ImageModel.imgArchivePath = localImagePath
 
 		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
-		js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl) }
+
+		Future{ 
+				CiteMainController.loadRemoteLibrary(libUrl)			
+		}
+
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
@@ -87,7 +90,9 @@ object CiteMainController {
 			val urn:Cite2Urn = objUrn.dropExtensions
 			ObjectController.updateUserMessage("Retrieving object…",1)
 			js.Dynamic.global.document.getElementById("tab-3").checked = true
-			js.timers.setTimeout(500){ ObjectController.changeUrn(urn) }
+			Future{
+				ObjectController.changeUrn(urn)
+			}
 	}
 
 	def retrieveImage(mappedUrn:Option[Cite2Urn], propVal:Cite2Urn):Unit = {

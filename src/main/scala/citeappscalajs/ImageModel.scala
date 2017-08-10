@@ -73,10 +73,16 @@ object ImageModel {
   // Eventually, do something clever to assign groups to ROIs based on their mapped URNs
 	def updateRois(u:Cite2Urn, roiVector:Vector[(Option[String],Option[Urn])]):Unit = {
 			imageROIs.get.clear
-			g.console.log(s"updating rois with ${u}")
 			for ((r, i) <- roiVector.zipWithIndex){
 				// For now we're putting each ROI in its own group
-				imageROIs.get += ImageROI(i+1, u, r._1, r._2, (i+1))
+				r._1 match {
+					case Some(s) => {
+						imageROIs.get += ImageROI(i+1, u, r._1, r._2, (i+1))
+					}
+					case _ => {
+						g.console.log(s"no roi for ${roiVector}")
+					}
+				}
 			}
 			// FOR TESTING ONLY! REMOVE BEFORE FLIGHT!!
 			/*

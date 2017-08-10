@@ -14,6 +14,8 @@ import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 import scala.scalajs.js.annotation.JSExport
 
@@ -34,8 +36,6 @@ object ObjectController {
 
 	def objectIsPresent(u:Cite2Urn):Boolean = {
 		val tempU:Cite2Urn = u.dropExtensions
-		g.console.log("+++++++++++++++++")
-		g.console.log(s"ObjectController:objectIsPresent. From ${u} to ${tempU}")
 		if (ObjectModel.collectionRepository.citableObjects.filter(_.urn == tempU).size > 0){
 			true
 		} else { false }
@@ -183,7 +183,7 @@ object ObjectController {
 				}
 			}
 			if (ObjectModel.objectOrCollection.get != "none") {
-				js.timers.setTimeout(500){ ObjectController.changeObject }
+				Future{ ObjectController.changeObject }
 			}
 		} catch {
 			case e: Exception => {

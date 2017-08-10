@@ -12,6 +12,8 @@ import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.scalajs.js.Dynamic.{ global => g }
 import scala.scalajs.js.annotation.JSExport
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 @JSExport
 object QueryObjectView {
@@ -61,7 +63,7 @@ object QueryObjectView {
 		disabled={ QueryObjectModel.isValidSearch.bind == false }
 			onclick={ event: Event => {
 					ObjectController.updateUserMessage("Querying Collection. Please be patient…",1)
-					js.timers.setTimeout(500){ QueryObjectController.initQuery }
+					Future{ QueryObjectController.initQuery }
 				}
 			}
 		>{ if (QueryObjectModel.isValidSearch.bind){

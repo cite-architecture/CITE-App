@@ -10,6 +10,8 @@ import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 
 import scala.scalajs.js.annotation.JSExport
@@ -55,7 +57,7 @@ def previousSearches = {
 			for ( q <- NGModel.pastQueries) yield {
 					<p
 							onclick={ event: Event => {
-								js.timers.setTimeout(600){
+								Future {
 									NGController.loadQuery(q)
 									NGController.executeQuery(q)
 								}
@@ -197,7 +199,7 @@ def nGramForm = {
 		id="ngram_Submit"
 			onclick={ event: Event => {
 					NGController.updateUserMessage("Getting N-Grams. Please be patient…",1)
-					js.timers.setTimeout(500){ NGController.nGramQuery }
+					Future{ NGController.nGramQuery }
 				}
 			}
 		>Query for N-Grams</button>
@@ -216,7 +218,7 @@ def stringSearchForm = {
 		id="stringSearch_Submit"
 			onclick={ event: Event => {
 					NGController.updateUserMessage("Searching for string. Please be patient…",1)
-					js.timers.setTimeout(500){ NGController.stringSearchQuery }
+					Future{ NGController.stringSearchQuery }
 				}
 			}
 		>Search</button>
@@ -245,7 +247,7 @@ def tokenSearchForm = {
 		id="tokenSearch_Submit"
 			onclick={ event: Event => {
 					NGController.updateUserMessage("Conducting token search. Please be patient…",1)
-					js.timers.setTimeout(500){ NGController.tokenSearchQuery }
+					Future{ NGController.tokenSearchQuery }
 				}
 			}
 		>Search</button>
@@ -276,7 +278,7 @@ def nGramSpace = {
 
 					NGController.updateUserMessage(s"Getting URNs for '${ng.s}'. Please be patient…",1)
 
-					js.timers.setTimeout(500){ NGController.getUrnsForNGram( ng.s ) }
+					Future{ NGController.getUrnsForNGram( ng.s ) }
 				} }
 				>
 				{ ng.s }

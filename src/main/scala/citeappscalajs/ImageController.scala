@@ -174,12 +174,9 @@ object ImageController {
 			var justROI:Option[ImageModel.ImageROI] = None
 			ImageModel.imageROIs.get.size match {
 				case 1 => {
-					g.console.log(s"*** 1")
-					g.console.log(ImageModel.imageROIs.get(0).toString)
 					justROI = Some(ImageModel.imageROIs.get(0))
 				}
 				case _ => {
-					g.console.log(s"*** _")
 					justROI = None
 				}
 			}
@@ -249,7 +246,6 @@ object ImageController {
 		ImageModel.urn.get match {
 			case Some(u) => {
 				val tempUrn:Cite2Urn = u
-			g.console.log(s"changeImage tempUrn: ${tempUrn}" )
 				val collection:Cite2Urn = tempUrn.dropSelector
 				val ioo:Option[String] = tempUrn.objectComponentOption
 				ioo match {
