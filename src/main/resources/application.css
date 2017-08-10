@@ -305,14 +305,30 @@ p.image_roi_selected {
     box-sizing: border-box;
 }
 
-.onoffswitch-inner:before {
+.object_onoffswitch-inner:before {
     content: "Show Objects";
     padding-left: 6px;
     background-color: #34A7C1; color: #FFFFFF;
 }
-.onoffswitch-inner:after {
+.object_onoffswitch-inner:after {
     content: "List Objects";
     padding-right: 10px;
+    background-color: #EEEEEE; color: #3f3f3f;
+    text-align: right;
+}
+
+div#imageSourceSwitchContainer {
+	display: inline-block;
+}
+
+.image_onoffswitch-inner:before {
+    content: "Local";
+    padding-left: 24px;
+    background-color: #34A7C1; color: #FFFFFF;
+}
+.image_onoffswitch-inner:after {
+    content: "Remote";
+    padding-right: 22px;
     background-color: #EEEEEE; color: #3f3f3f;
     text-align: right;
 }

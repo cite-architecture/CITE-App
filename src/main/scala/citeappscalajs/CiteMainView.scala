@@ -38,13 +38,27 @@ object CiteMainView {
 				type="file"
 				onchange={ event: Event => CiteMainController.loadLocalLibrary( event )}
 				></input>
-				<label for="app_filePicker_delimiter">Delimiter: </label>
-				<select id="app_filePicker_delimiter">
-					<option value="OCTOTHORP"> # </option>
-					<option value="TAB"> tab </option>
-				</select>
+			{ imageLocalRemoteSwitch.bind }
 		</span>
 	}
+
+	// *** Apropos Microservice ***
+	@dom
+	def imageLocalRemoteSwitch = {
+			<div id="imageSourceSwitchContainer">
+				Image Source:
+				<div class="onoffswitch">
+				    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="citeMain_localImageSwitch" checked={ImageModel.imgUseLocal.bind}
+						onchange={ event: Event => ImageController.setPreferredImageSource}
+						/>
+				    <label class="onoffswitch-label" for="citeMain_localImageSwitch">
+				        <span class="image_onoffswitch-inner onoffswitch-inner"></span>
+				        <span class="image_onoffswitch-switch onoffswitch-switch"></span>
+				    </label>
+				</div>
+			</div>
+	}
+
 
 	@dom
 	def mainMessageDiv = {
@@ -60,7 +74,7 @@ object CiteMainView {
 			{ filePicker.bind }
 			CITE Environment
 			<span id="app_header_versionInfo">version { BuildInfo.version }</span>
-			<span id="app_help_link">[ <a target="_blank" href="https://github.com/cite-architecture/CITE-App/wiki/CITE-App-Help-and-Tips">Online Help</a> ]</span>
+			<span id="app_help_link">[ <a target="_blank" href="https://github.com/cite-architecture/CITE-App/wiki">Online Help</a> ]</span>
 		</header>
 
 		<article id="main_Container">

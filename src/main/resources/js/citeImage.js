@@ -62,10 +62,11 @@ function clearSelectedROIs(){
 	}
 }
 
-function updateImageJS( collection, imageObject ){
-		var collDirectory = collection.replace(new RegExp(':', 'g'), '_');
-		var imagePath = "../../../image_archive/" + collDirectory + "/" + imageObject + ".dzi"
-		initOpenSeadragon(imagePath)
+function updateImageJS( collection, imageObject, path ){
+		//var collDirectory = collection.replace(new RegExp(':', 'g'), '_');
+		//var imagePath = "../../../image_archive/" + collDirectory + "/" + imageObject + ".dzi"
+		console.log("In js: " + collection + ", " + imageObject + ", " + path);
+		initOpenSeadragon(path)
 	}
 
 function initOpenSeadragon(imagePath) {

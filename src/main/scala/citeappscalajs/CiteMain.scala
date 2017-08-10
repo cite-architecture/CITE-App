@@ -14,11 +14,11 @@ import scala.concurrent
 import scala.scalajs.js.annotation.JSExport
 
 @JSExport
-class CiteMain(remoteUrl: String, remoteFileDelimiter: String, remoteFieldDelimiter: String) {
+class CiteMain(remoteUrl:String, localImagePath:String) {
 
 	@JSExport
 	def main(): Unit = {
-		CiteMainController.main(remoteUrl: String, remoteFileDelimiter: String, remoteFieldDelimiter: String)
+		CiteMainController.main(remoteUrl: String, localImagePath:String)
 	}
 
 

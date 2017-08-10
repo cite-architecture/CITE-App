@@ -24,19 +24,48 @@ object CiteLinks {
 @dom
 def textLinks(u:CtsUrn) = {
 	<ul class="citeLinks_linksList">
-		<li class="citeLinks_linkItem">
-		<a
-			onclick={ event: Event => {
-				CiteMainController.retrieveTextPassage(u)
-			}}>
-			{u.toString}
-			</a>
-		</li>
+		{ CiteLinks.textLinkItem(u).bind }
 	</ul>
 }
 
+/*
+@dom
+def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
+	g.console.log("CiteLinks: objectLinks")
+	val collUrn = propVal.dropSelector
+	if (ObjectController.objectIsPresent(propVal)){
+		g.console.log("CiteLinks: object is present")
+   		ImageModel.imageExtensions match {
+				case Some(ie) =>{
+					if (ie.extensions(collUrn).size > 0){
+						g.console.log("CiteLinks: image and object")
+		<ul class="citeLinks_linksList"> {
+						 CiteLinks.imageLinkItem(None,propVal).bind 
+						 CiteLinks.objectLinkItem(None,propVal).bind 
+						 <li>empty</li>
+		} </ul>
+					} else {
+						g.console.log("CiteLinks: object only")
+		<ul class="citeLinks_linksList"> {
+						{ CiteLinks.objectLinkItem(None,propVal).bind }
+		} </ul>
+					}
+				}	
+				case _ => {
+		<ul class="citeLinks_linksList"> {
+					{ CiteLinks.objectLinkItem(None,propVal).bind }
+		} </ul>
+				}
+		} 
+	} else {
+		<span> { s"${propVal}"} <br/> {"(This object is not present in the current library.)"} </span>
+	}
+}
+*/
+
 	@dom
 	def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
+		g.console.log("CiteLinks: deprecated objectLinks")
 		val collUrn = propVal.dropSelector
 		if (ObjectController.objectIsPresent(propVal)){
 
@@ -66,7 +95,7 @@ def textLinks(u:CtsUrn) = {
 											CiteMainController.retrieveImage(contextUrn,propVal)
 										}
 									}>View as Image</a> <br/>
-									{ ObjectView.thumbnailView(contextUrn, propVal).bind }
+									{ ImageView.thumbnailView(contextUrn, propVal).bind }
 								</li>
 							</ul>
 						}
@@ -106,29 +135,32 @@ def textLinks(u:CtsUrn) = {
 			<span> { s"${propVal}"} <br/> {"(This object is not present in the current library.)"} </span>
 		}
 	}
+	
 
 	@dom
-	def objectLink(contextUrn:Option[Cite2Urn],propVal:Cite2Urn):Unit = {
-			<li class="citeLinks_linkItem"
-					onclick={ event: Event => {
+	def objectLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn) = {
+		g.console.log("CiteLinks objectLinkItem")
+			<li class="citeLinks_linkItem">
+				<a onclick={ event: Event => {
 							CiteMainController.retrieveObject(contextUrn,propVal)
 					}
-			} >View Object</li>
+			} >View Object </a></li>
 	}
 
 	@dom
-	def imageLink(contextUrn:Option[Cite2Urn],propVal:Cite2Urn):Unit = {
+	def imageLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn) = {
+		g.console.log("CiteLinks imageLinkItem")
 			<li class="citeLinks_linkItem">
 					<a onclick={ event: Event => {
 							CiteMainController.retrieveImage(contextUrn,propVal)
 						}
 					}>View Image</a> <br/>
-					{ ObjectView.thumbnailView(contextUrn, propVal).bind }
+					{ ImageView.thumbnailView(contextUrn, propVal).bind }
 			</li>
 	}
 
 	@dom
-	def textLink(u:CtsUrn):Unit = {
+	def textLinkItem(u:CtsUrn) = {
 		<li class="citeLinks_linkItem">
 			<a
 				onclick={ event: Event => {
@@ -140,14 +172,14 @@ def textLinks(u:CtsUrn) = {
 	}
 
 	@dom
-	def dseLink(u:Urn):Unit = {
+	def dseLinkItem(u:Urn) = {
 		<li class="citeLinks_linkItem">
 				View DSE Graph
 		</li>
 	}
 
 	@dom
-	def orcaLink(u:Urn):Unit = {
+	def orcaLinkItem(u:Urn) = {
 		<li class="citeLinks_linkItem">
 				View Reading
 		</li>

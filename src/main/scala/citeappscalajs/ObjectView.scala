@@ -240,9 +240,11 @@ def renderObjects = {
 
 
 // contextUrn is the URN of the property of which propVal is the value; contextUrn, therefore, provides access to the collection and the object
+/*
 @dom def thumbnailView(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 	{ ImageView.thumbnailView(contextUrn:Option[Cite2Urn], propVal:Cite2Urn).bind }
 }
+*/
 
 
 /* Controls for limit and offset, as well as listing or showing objects */
@@ -283,12 +285,12 @@ def collectionBrowseControls = {
 			}/>
 
 			<div class="onoffswitch">
-			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="browse_onoffswitch" checked={false}
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="object_browseOrListSwitch" checked={false}
 					onchange={ event: Event => js.timers.setTimeout(500){ ObjectController.switchDisplay( event )}}
 					/>
-			    <label class="onoffswitch-label" for="browse_onoffswitch">
-			        <span class="onoffswitch-inner"></span>
-			        <span class="onoffswitch-switch"></span>
+			    <label class="onoffswitch-label" for="object_browseOrListSwitch">
+			        <span class="object_onoffswitch-inner onoffswitch-inner"></span>
+			        <span class="object_onoffswitch-switch onoffswitch-switch"></span>
 			    </label>
 			</div>
 		</div>

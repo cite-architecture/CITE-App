@@ -24,9 +24,13 @@ object CiteMainModel {
 
 		val currentLibraryMetadataString = Var("No library loaded.")
 
-		val textProtocol = "TextProtocol"
-		val objectProtocol = "ObjectProtocol"
-		val localImageProtocol = "LocalImageProtocol"
+		val textProtocol:String = "TextProtocol"
+		val objectProtocol:String = "ObjectProtocol"
+		val localImageProtocol:String = "LocalImageProtocol"
+
+		val cexMainDelimiter:String = "#"
+		val cexSecondaryDelimiter:String = ","
+
 
 		val showTexts = Var(true)
 		val showNg = Var(true)

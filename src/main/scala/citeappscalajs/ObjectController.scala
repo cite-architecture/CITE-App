@@ -27,13 +27,15 @@ object ObjectController {
 	@dom
 	def switchDisplay(thisEvent: Event):Unit = {
 		val before = ObjectModel.showObjects.get
-		val showObjectsStr:String = js.Dynamic.global.document.getElementById("browse_onoffswitch").checked.toString
+		val showObjectsStr:String = js.Dynamic.global.document.getElementById("object_browseOrListSwitch").checked.toString
 		ObjectModel.showObjects := (showObjectsStr == "true")
 		ObjectController.setDisplay
 	}
 
 	def objectIsPresent(u:Cite2Urn):Boolean = {
 		val tempU:Cite2Urn = u.dropExtensions
+		g.console.log("+++++++++++++++++")
+		g.console.log(s"ObjectController:objectIsPresent. From ${u} to ${tempU}")
 		if (ObjectModel.collectionRepository.citableObjects.filter(_.urn == tempU).size > 0){
 			true
 		} else { false }

@@ -27,7 +27,8 @@ object ImageModel {
 
 
   // Image Collections here
-	val imgArchivePath:String = "../../../image_archive/"
+	var imgUseLocal = Var(true) 
+	var imgArchivePath:String = ""
 	var imageExtensions:Option[ImageExtensions] = None
 	val imageCollections = Vars.empty[Cite2Urn]
 
@@ -44,7 +45,7 @@ object ImageModel {
 	val userAlert = Var("default")
 	val userMessageVisibility = Var("app_hidden")
 
-   	case class ImageObject(val urn:Cite2Urn, val label:String, val rights:String) {
+ 	case class ImageObject(val urn:Cite2Urn, val label:String, val rights:String) {
 			override def toString = s"${urn} - ${label}. ${rights}"
 	}
 
@@ -72,6 +73,7 @@ object ImageModel {
   // Eventually, do something clever to assign groups to ROIs based on their mapped URNs
 	def updateRois(u:Cite2Urn, roiVector:Vector[(Option[String],Option[Urn])]):Unit = {
 			imageROIs.get.clear
+			g.console.log(s"updating rois with ${u}")
 			for ((r, i) <- roiVector.zipWithIndex){
 				// For now we're putting each ROI in its own group
 				imageROIs.get += ImageROI(i+1, u, r._1, r._2, (i+1))

@@ -19,22 +19,24 @@ import scala.scalajs.js.annotation.JSExport
 object CiteMainController {
 
 	@JSExport
-	def main(libUrl: String, libDelim: String, fieldDelim: String): Unit = {
+	def main(libUrl: String, localImagePath:String): Unit = {
+
+		ImageModel.imgArchivePath = localImagePath
 
 		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
-		js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl, libDelim, fieldDelim) }
+		js.timers.setTimeout(500){ CiteMainController.loadRemoteLibrary(libUrl) }
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
 
-	def loadRemoteLibrary(url: String, libDelim: String, fieldDelim: String):Unit = {
+	def loadRemoteLibrary(url: String):Unit = {
 
 		val xhr = new XMLHttpRequest()
 		xhr.open("GET", url )
 		xhr.onload = { (e: Event) =>
 			if (xhr.status == 200) {
 				val contents:String = xhr.responseText
-				CiteMainController.updateRepository(contents, libDelim, fieldDelim)
+				CiteMainController.updateRepository(contents)
 			} else {
 				CiteMainController.updateUserMessage(s"Request for remote library failed with code ${xhr.status}",2)
 			}
@@ -64,16 +66,11 @@ object CiteMainController {
 
 	def loadLocalLibrary(e: Event):Unit = {
 		val reader = new org.scalajs.dom.raw.FileReader()
-		val delimiter:String = {
-			val delimiterChoice = js.Dynamic.global.document.getElementById("app_filePicker_delimiter").value.toString
-			if (delimiterChoice == "TAB" ){ val d = "\t"; d } else { val d = "#"; d }
-		}
 		CiteMainController.updateUserMessage("Loading local library.",0)
 		reader.readAsText(e.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement].files(0))
 		reader.onload = (e: Event) => {
 			val contents = reader.result.asInstanceOf[String]
-			// Do we need to allow users to change the second delimiter?
-			CiteMainController.updateRepository(contents,delimiter,",")
+			CiteMainController.updateRepository(contents)
 		}
 	}
 
@@ -128,14 +125,14 @@ object CiteMainController {
 	// Reads CEX file, creates repositories for Texts, Objects, and Images
 	// *** Apropos Microservice ***
 	@dom
-	def updateRepository(cexString: String, columnDelimiter: String = "\t", fieldDelimiter: String = ",") = {
+	def updateRepository(cexString: String) = {
 
 		hideTabs
 		clearRepositories
 
 		try {
 
-			val repo:CiteLibrary = CiteLibrary(cexString, columnDelimiter, fieldDelimiter)
+			val repo:CiteLibrary = CiteLibrary(cexString, CiteMainModel.cexMainDelimiter, CiteMainModel.cexSecondaryDelimiter)
 			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
 			var loadMessage:String = ""
 
@@ -157,7 +154,7 @@ object CiteMainController {
 					NGController.preloadUrn
 				}
 				case None => {
-					loadMessage += "Chosen repository does not seem to include a TextRepository. "
+					loadMessage += "No texts. "
 				}
 			}
 
@@ -177,7 +174,7 @@ object CiteMainController {
 				}
 
 				case None => {
-					loadMessage += "Chosen repository does not seem to include a CollectionRepository. "
+					loadMessage += "No collections. "
 				}
 			}
 
@@ -192,7 +189,7 @@ object CiteMainController {
 
 				case None => {
 					ImageController.clearAll
-					loadMessage += "Chosen repository does not seem to include any image collections. "
+					loadMessage += "No image collections. "
 				}
 			}
 
@@ -202,7 +199,7 @@ object CiteMainController {
 
 		} catch  {
 			case e: Exception => {
-				CiteMainController.updateUserMessage(s"""${e}. You might check to be sure you specified the correct delimiter (<tab> or "#").""",2)
+				CiteMainController.updateUserMessage(s"""${e}. Invalid CEX file.""",2)
 			}
 		}
 

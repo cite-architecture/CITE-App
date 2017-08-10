@@ -28,6 +28,47 @@ object ImageController {
 
 	val validUrnInField = Var(false)
 
+	def setPreferredImageSource:Unit = {
+		val imgSourceStr:String = js.Dynamic.global.document.getElementById("citeMain_localImageSwitch").checked.toString
+		ImageModel.imgUseLocal := { imgSourceStr == "true" }
+	}
+
+	def protocolsForImage(u:Cite2Urn):Option[Vector[edu.holycross.shot.citeobj.BinaryImageSource[scala.Any]]] = {
+		val collUrn:Cite2Urn = u.dropSelector
+		ImageModel.imageExtensions match {
+			case Some(e) => {
+				val exts = e.extensions(collUrn)
+				val v = Some(exts)
+				v
+			}
+			case None => {
+					val v:Option[Vector[edu.holycross.shot.citeobj.BinaryImageSource[scala.Any]]] = None
+					v
+			}
+		}
+	}
+
+	def hasIipImageDzProtocol(u:Cite2Urn):Boolean = {
+		val b:Boolean = true
+		g.console.log("hasIipImageDzProtocol called. B.S. temp state… ")
+		b
+	}
+	def hasIipImageJpegProtocol(u:Cite2Urn):Boolean = {
+		val b:Boolean = true
+		g.console.log("hasIipImageJpegProtocol called. B.S. temp state… ")
+		b
+	}
+	def hasLocalDzProtocol(u:Cite2Urn):Boolean = {
+		val b:Boolean = true
+		g.console.log("hasLocalDzProtocol called. B.S. temp state… ")
+		b
+	}
+	def hasLocalJpegProtocol(u:Cite2Urn):Boolean = {
+		val b:Boolean = true
+		g.console.log("hasLocalDzProtocol called. B.S. temp state… ")
+		b
+	}
+
 	def updateUserMessage(msg: String, alert: Int): Unit = {
 		ImageModel.userMessageVisibility := "app_visible"
 		ImageModel.userMessage := msg
@@ -37,34 +78,118 @@ object ImageController {
 			case 2 => ImageModel.userAlert := "warn"
 		}
 		js.timers.clearTimeout(ImageModel.msgTimer)
-		ImageModel.msgTimer = js.timers.setTimeout(6000){ ImageModel.userMessageVisibility := "app_hidden" }
+		ImageModel.msgTimer = js.timers.setTimeout(16000){ ImageModel.userMessageVisibility := "app_hidden" }
+	}
+
+	def urnToLocalPath(urn:Cite2Urn):String = {
+		val s:String = s"${ImageModel.imgArchivePath}/${urn.namespace}/${urn.collection}/${urn.version}/"	
+		s
+	}
+
+	def getLocalJpegPath(urn:Cite2Urn):String = {
+		val p:String = s"${ImageController.urnToLocalPath(urn)}${urn.objectComponent}.jpg"
+		p
+	}
+	def getIipImageJpegPath(urn:Cite2Urn):String = {
+		val p:String = "NOT A PATH YET"
+		p
+	}
+	def getIipImageDzPath(urn:Cite2Urn):String = {
+		val p:String = "NOT A PATH YET"
+		p
+	}
+	def getLocalDzPath(urn:Cite2Urn):String = {
+		val p:String = s"${ImageController.urnToLocalPath(urn)}${urn.objectComponent}.dzi"
+		p
+	}
+
+	def getThumbPath(urn:Cite2Urn):String = {
+		var path:String = ""
+		if (ImageController.hasLocalJpegProtocol(urn) & ImageController.hasIipImageJpegProtocol(urn)){
+			if (ImageModel.imgUseLocal.get){
+				path = ImageController.getLocalJpegPath(urn)
+			} else {
+					path = ImageController.getIipImageJpegPath(urn)
+			}
+		}
+	  path
+	}
+
+	def getZoomSource(urn:Cite2Urn):String = {
+
+		if (ImageModel.imgUseLocal.get){
+			val src:String = getLocalDzPath(urn)
+			src
+		} else {
+			g.console.log("ImageController > getZoomSource: using remote path")
+			val src:String = getIipImageDzPath(urn)
+			src
+		}
+	}
+
+	def getFullImageSource(urn:Cite2Urn):String = {
+		val src:String = ""
+		g.console.log("getFullImageSource not implemented, returning empty string.")
+		src
 	}
 
 	// *** Apropos Microservice ***
+	/*
 	def imgThumb(fullUrn:Cite2Urn):String = {
 		val urn:Cite2Urn = fullUrn.dropExtensions
 		val path:String = s"""${ImageModel.imgArchivePath}${urn.dropSelector.toString.replaceAll(":","_")}/${urn.objectComponent}_files/8/0_0.jpeg"""
 		path
 	}
+	*/
 
 	// *** Apropos Microservice ***
+	/*
 	def getFullImagePath(urn:Cite2Urn):String = {
 		val path:String = s"""${ImageModel.imgArchivePath}${urn.dropSelector.toString.replaceAll(":","_")}/${urn.objectComponent}.jpg"""
 		path
 	}
+	*/
 
 	// *** Apropos Microservice ***
 	def previewImage(u:Cite2Urn) = {
+		if (ImageModel.imgUseLocal.get){
+			val path:String = getLocalJpegPath(u)
+			setPreviewImageFromLocal(u,path)
+		} else {
+			//ImageController.remoteIIPPreviewImage(u)
+			g.console.log("Called deprecated ImageController.remoteIIPPreviewImage.")
+		}
+
+	}
+
+	def remoteIIPPreviewImage(u:Cite2Urn) = {
+		g.console.log("Remote Preview Image not implemented")
+
+	}
+
+	// *** Apropos Microservice ***
+	def setPreviewImageFromLocal(u:Cite2Urn, path:String) = {
 		try {
 			val justUrn = u.dropExtensions
-			val justROI = u.objectExtensionOption
+			var justROI:Option[ImageModel.ImageROI] = None
+			ImageModel.imageROIs.get.size match {
+				case 1 => {
+					g.console.log(s"*** 1")
+					g.console.log(ImageModel.imageROIs.get(0).toString)
+					justROI = Some(ImageModel.imageROIs.get(0))
+				}
+				case _ => {
+					g.console.log(s"*** _")
+					justROI = None
+				}
+			}
 			var rT:Float = 0; var rL:Float = 0; var rW:Float = 1; var rH:Float = 1;
 			justROI match {
 				case Some(r) => {
-					rL = r.split(',')(0).toFloat
-					rT = r.split(',')(1).toFloat
-					rW = r.split(',')(2).toFloat
-					rH = r.split(',')(3).toFloat
+					rL = r.roi.get.split(',')(0).toFloat
+					rT = r.roi.get.split(',')(1).toFloat
+					rW = r.roi.get.split(',')(2).toFloat
+					rH = r.roi.get.split(',')(3).toFloat
 				}
 				case _ => {
 					rT = 0; rL = 0; rW = 1; rH = 1;
@@ -72,11 +197,13 @@ object ImageController {
 			}
 
 			// Let's make some decisions about how big this ROI is!
+			/*
 			var path:String = ""
 			(rW * rH) match {
-				case x if x < 0.15 => path = ImageController.getFullImagePath(justUrn)
-				case _ => path = ImageController.imgThumb(justUrn)
+				case x if x < 0.15 => path = ImageController.getThumbPath(justUrn)
+				case _ => path = ImageController.getThumbPath(justUrn)
 			}
+			*/
 
 			val canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
 			canvas.setAttribute("crossOrigin","Anonymous")
@@ -86,10 +213,13 @@ object ImageController {
 			offScreenImg.setAttribute("src",path)
 			//Wait for that to load, then proceed
 			offScreenImg.onload = (e: Event) => {
-				canvas.width = (offScreenImg.width * rW).round
+	 			canvas.width = (offScreenImg.width * rW).round
 				canvas.height = (offScreenImg.height * rH).round
 				// draw it once
-				ctx.drawImage(offScreenImg,(0-(offScreenImg.width * rL)).round,(0-(offScreenImg.height*rT)).round)
+				val osw:Double = 0-(offScreenImg.width.toFloat * rL).round.toDouble
+				val osh:Double = 0-(offScreenImg.height.toFloat * rT).round.toDouble
+				//ctx.drawImage(osw,osh)
+				ctx.drawImage(offScreenImg,(0-(offScreenImg.width.toFloat * rL)).round.toDouble,(0-(offScreenImg.height.toFloat*rT)).round.toDouble)
 
 				val s:String = canvas.toDataURL("image/png")
 				val prevImg = document.getElementById("image_previewImg").asInstanceOf[HTMLImageElement]
@@ -119,13 +249,15 @@ object ImageController {
 		ImageModel.urn.get match {
 			case Some(u) => {
 				val tempUrn:Cite2Urn = u
+			g.console.log(s"changeImage tempUrn: ${tempUrn}" )
 				val collection:Cite2Urn = tempUrn.dropSelector
 				val ioo:Option[String] = tempUrn.objectComponentOption
 				ioo match {
 					case Some(s) => {
 						ImageController.loadJsArray
 						ImageController.previewImage(tempUrn)
-						ImageController.updateImageJS(collection.toString, s )
+						val path:String = ImageController.getZoomSource(u)
+						ImageController.updateImageJS(collection.toString, s, path )
 					}
 					case _ => {
 						ImageController.updateUserMessage(s"No image-object specified in ${tempUrn}",2)
@@ -141,7 +273,6 @@ object ImageController {
 
 	def loadJsArray:Unit = {
 		ImageController.clearJsRoiArray(true)
-		//g.console.log(s"Scala loadJsArray: ${ImageModel.imageROIs.get.size}")
 		for (iroi <- ImageModel.imageROIs.get){
 			val tempRoi:String = {
 				iroi.roi match {
@@ -158,7 +289,6 @@ object ImageController {
 			// We will have to do something clever here to make groups
 			val tempGroup:String = iroi.roiGroup.toString
 			val tempIndex:Int = iroi.index
-			//g.console.log(s"Adding: ${tempIndex}, ${tempRoi}, ${tempMappedData}, ${tempGroup}")
 			ImageController.addToJsRoiArray(tempIndex, tempRoi,tempMappedData,tempGroup)
 		}
 	}
@@ -222,7 +352,7 @@ object ImageController {
 	@JSName("updateImageJS")
 	@js.native
 	object updateImageJS extends js.Any {
-		def apply(collection: String, imageObject: String): js.Dynamic = js.native
+		def apply(collection: String, imageObject: String, path:String): js.Dynamic = js.native
 	}
 
 	/*
