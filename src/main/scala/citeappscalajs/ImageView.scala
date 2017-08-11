@@ -12,7 +12,9 @@ import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.concurrent._
-import ExecutionContext.Implicits.global
+//import ExecutionContext.Implicits.global
+import monix.execution.Scheduler.Implicits.global
+import monix.eval._
 
 
 import scala.scalajs.js.annotation.JSExport
@@ -103,9 +105,15 @@ object ImageView {
 							val s:String = js.Dynamic.global.document.getElementById("image_urnInput").value.toString
 							//ImageModel.urn := Cite2Urn(s)
 							ImageController.updateUserMessage("Retrieving image…",1)
-							Future {
-								ImageController.changeUrn(s)
+							val task = Task{ ImageController.changeUrn(s)}
+							val future = task.runAsync
+							/*
+							js.timers.setTimeout(200){
+								Future {
+									ImageController.changeUrn(s)
+								}
 							}
+							*/
 						}
 						}
 						disabled={ (ImageController.validUrnInField.bind == false) 

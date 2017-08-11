@@ -6,7 +6,7 @@ import scala.scalajs.js
 import scala.scalajs.js._
 import js.annotation._
 import scala.concurrent._
-import ExecutionContext.Implicits.global
+//import ExecutionContext.Implicits.global
 import collection.mutable
 import collection.mutable._
 import scala.scalajs.js.Dynamic.{ global => g }
@@ -16,6 +16,9 @@ import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
+
+import monix.execution.Scheduler.Implicits.global
+import monix.eval._
 
 import scala.scalajs.js.annotation.JSExport
 
@@ -107,9 +110,13 @@ def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 									<a
 										onclick={ event: Event => {
 											ObjectController.updateUserMessage("Retrieving object…",1)
-											Future{
-												ObjectController.changeUrn(propVal)
-											}
+											val task = Task{ ObjectController.changeUrn(propVal)}
+											val future = task.runAsync
+											//js.timers.setTimeout(200){
+												//Future{
+													//ObjectController.changeUrn(propVal)
+												//}
+											//}
 										}
 									}>
 										{ s"${propVal.toString}" }
@@ -125,9 +132,13 @@ def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 							<a
 								onclick={ event: Event => {
 									ObjectController.updateUserMessage("Retrieving object…",1)
-									Future{
-										ObjectController.changeUrn(propVal) 
-									}
+									val task = Task{ ObjectController.changeUrn(propVal) }
+									val future = task.runAsync
+									//js.timers.setTimeout(200){
+										//Future{
+											//ObjectController.changeUrn(propVal) 
+										//}
+									//}
 								}
 							}>
 								{ s"${propVal.toString}" }

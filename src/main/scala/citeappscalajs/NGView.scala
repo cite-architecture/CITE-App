@@ -11,7 +11,9 @@ import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.concurrent._
-import ExecutionContext.Implicits.global
+//import ExecutionContext.Implicits.global
+import monix.execution.Scheduler.Implicits.global
+import monix.eval._
 
 
 import scala.scalajs.js.annotation.JSExport
@@ -57,10 +59,17 @@ def previousSearches = {
 			for ( q <- NGModel.pastQueries) yield {
 					<p
 							onclick={ event: Event => {
-								Future {
-									NGController.loadQuery(q)
-									NGController.executeQuery(q)
+								NGController.loadQuery(q)
+								val task = Task { NGController.executeQuery(q) }
+								val future = task.runAsync
+								/*
+								js.timers.setTimeout(200){
+									Future {
+										NGController.loadQuery(q)
+										NGController.executeQuery(q)
+									}
 								}
+								*/
 							}
 							}
 					>
@@ -199,7 +208,13 @@ def nGramForm = {
 		id="ngram_Submit"
 			onclick={ event: Event => {
 					NGController.updateUserMessage("Getting N-Grams. Please be patient…",1)
-					Future{ NGController.nGramQuery }
+					val task = Task{ NGController.nGramQuery}
+					val future = task.runAsync
+					/*
+					js.timers.setTimeout(200){
+						Future{ NGController.nGramQuery }
+					}
+					*/
 				}
 			}
 		>Query for N-Grams</button>
@@ -218,7 +233,13 @@ def stringSearchForm = {
 		id="stringSearch_Submit"
 			onclick={ event: Event => {
 					NGController.updateUserMessage("Searching for string. Please be patient…",1)
-					Future{ NGController.stringSearchQuery }
+					val task = Task{ NGController.stringSearchQuery }
+					val future = task.runAsync
+					/*
+					js.timers.setTimeout(200){
+						Future{ NGController.stringSearchQuery }
+					}
+					*/
 				}
 			}
 		>Search</button>
@@ -247,7 +268,13 @@ def tokenSearchForm = {
 		id="tokenSearch_Submit"
 			onclick={ event: Event => {
 					NGController.updateUserMessage("Conducting token search. Please be patient…",1)
-					Future{ NGController.tokenSearchQuery }
+					val task = Task{NGController.tokenSearchQuery}
+					val future = task.runAsync
+					/*
+					js.timers.setTimeout(200){
+						Future{ NGController.tokenSearchQuery }
+					}
+					*/
 				}
 			}
 		>Search</button>
@@ -277,8 +304,13 @@ def nGramSpace = {
 				onclick={ event: Event => {
 
 					NGController.updateUserMessage(s"Getting URNs for '${ng.s}'. Please be patient…",1)
-
-					Future{ NGController.getUrnsForNGram( ng.s ) }
+					val task = Task{ NGController.getUrnsForNGram( ng.s ) }
+					val future = task.runAsync
+					/*
+					js.timers.setTimeout(200){
+						Future{ NGController.getUrnsForNGram( ng.s ) }
+					}
+					*/
 				} }
 				>
 				{ ng.s }

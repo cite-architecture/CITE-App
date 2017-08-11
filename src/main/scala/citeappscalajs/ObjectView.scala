@@ -13,7 +13,9 @@ import edu.holycross.shot.citeobj._
 import scala.scalajs.js.Dynamic.{ global => g }
 import scala.scalajs.js.annotation.JSExport
 import scala.concurrent._
-import ExecutionContext.Implicits.global
+//import ExecutionContext.Implicits.global
+import monix.execution.Scheduler.Implicits.global
+import monix.eval._
 
 @JSExport
 object ObjectView {
@@ -89,12 +91,19 @@ def retrieveObjectButton = {
 				val s:String = js.Dynamic.global.document.getElementById("object_urnInput").value.toString
 				ObjectModel.urn := Some(Cite2Urn(s))
 				ObjectController.updateUserMessage("Retrieving object…",1)
-				Future{ ObjectController.changeObject }
+				val task = Task{ ObjectController.changeObject }
+				val future = task.runAsync
+				/*
+				js.timers.setTimeout(200){
+					Future{ ObjectController.changeObject }
 				}
+				*/
 			}
-			disabled={
-						(ObjectModel.objectOrCollection.bind == "none")
-					 }
+			
+		}
+		disabled={
+					(ObjectModel.objectOrCollection.bind == "none")
+				 }
 
 > {
 
@@ -119,7 +128,13 @@ def objectToCollectionButton = {
 				//ObjectModel.limit := 2
 				ObjectModel.objectOrCollection := "collection"
 				ObjectController.updateUserMessage("Retrieving collection…",1)
-				Future{ ObjectController.changeObject }
+				val task = Task{ ObjectController.changeObject }
+				val future = task.runAsync
+				/*
+				js.timers.setTimeout(200){
+					Future{ ObjectController.changeObject }
+				}
+				*/
 				}
 			}
 		class={
@@ -288,8 +303,11 @@ def collectionBrowseControls = {
 
 			<div class="onoffswitch">
 			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="object_browseOrListSwitch" checked={false}
-					onchange={ event: Event => Future{ ObjectController.switchDisplay( event )}}
-					/>
+					onchange={ event: Event => {
+							val task = Task{ObjectController.switchDisplay( event ) }
+							val future = task.runAsync
+						}
+					} />
 			    <label class="onoffswitch-label" for="object_browseOrListSwitch">
 			        <span class="object_onoffswitch-inner onoffswitch-inner"></span>
 			        <span class="object_onoffswitch-switch onoffswitch-switch"></span>

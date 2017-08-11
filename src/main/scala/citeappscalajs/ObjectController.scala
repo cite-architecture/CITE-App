@@ -15,7 +15,9 @@ import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.concurrent._
-import ExecutionContext.Implicits.global
+//import ExecutionContext.Implicits.global
+import monix.execution.Scheduler.Implicits.global
+import monix.eval._
 
 import scala.scalajs.js.annotation.JSExport
 
@@ -183,7 +185,13 @@ object ObjectController {
 				}
 			}
 			if (ObjectModel.objectOrCollection.get != "none") {
-				Future{ ObjectController.changeObject }
+				val task = Task{ ObjectController.changeObject }
+				val future = task.runAsync
+				/*
+				js.timers.setTimeout(200){
+					Future{ ObjectController.changeObject }
+				}
+				*/
 			}
 		} catch {
 			case e: Exception => {

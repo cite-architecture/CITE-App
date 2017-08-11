@@ -13,7 +13,9 @@ import edu.holycross.shot.citeobj._
 import scala.scalajs.js.Dynamic.{ global => g }
 import scala.scalajs.js.annotation.JSExport
 import scala.concurrent._
-import ExecutionContext.Implicits.global
+//import ExecutionContext.Implicits.global
+import monix.execution.Scheduler.Implicits.global
+import monix.eval._
 
 @JSExport
 object QueryObjectView {
@@ -63,7 +65,13 @@ object QueryObjectView {
 		disabled={ QueryObjectModel.isValidSearch.bind == false }
 			onclick={ event: Event => {
 					ObjectController.updateUserMessage("Querying Collection. Please be patient…",1)
-					Future{ QueryObjectController.initQuery }
+					val task = Task{QueryObjectController.initQuery}	
+					val future = task.runAsync
+					/*
+					js.timers.setTimeout(200){
+						Future{ QueryObjectController.initQuery }
+					}
+					*/
 				}
 			}
 		>{ if (QueryObjectModel.isValidSearch.bind){
