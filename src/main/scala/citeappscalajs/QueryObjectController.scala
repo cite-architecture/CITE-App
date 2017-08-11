@@ -174,7 +174,7 @@ object QueryObjectController {
 							}
 						}
 						case "lt" => {
-							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThan(cq.qNum1.get)
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThan(cq.qNum1.get.toDouble)
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
@@ -184,7 +184,7 @@ object QueryObjectController {
 							}
 						}
 						case "gt" => {
-							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThan(cq.qNum1.get)
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThan(cq.qNum1.get.toDouble)
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
@@ -194,7 +194,7 @@ object QueryObjectController {
 							}
 						}
 						case "lteq" => {
-							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThanOrEqual(cq.qNum1.get)
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThanOrEqual(cq.qNum1.get.toDouble)
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
@@ -204,7 +204,7 @@ object QueryObjectController {
 							}
 						}
 						case "gteq" => {
-							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThanOrEqual(cq.qNum1.get)
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThanOrEqual(cq.qNum1.get.toDouble)
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
@@ -214,7 +214,7 @@ object QueryObjectController {
 							}
 						}
 						case "inRange" => {
-							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericWithin(cq.qNum1.get,cq.qNum2.get)
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericWithin(cq.qNum1.get.toDouble,cq.qNum2.get.toDouble)
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
@@ -232,7 +232,7 @@ object QueryObjectController {
 				case _ => {
 					cq.qNumOperator.get match {
 						case "eq" => {
-							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.valueEquals(cq.qProperty.get.urn,cq.qNum1.get)
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.valueEquals(cq.qProperty.get.urn,cq.qNum1.get.toDouble)
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
@@ -242,7 +242,7 @@ object QueryObjectController {
 							}
 						}
 						case "lt" => {
-							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThan(cq.qProperty.get.urn,cq.qNum1.get)
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThan(cq.qProperty.get.urn,cq.qNum1.get.toDouble)
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
@@ -252,7 +252,7 @@ object QueryObjectController {
 							}
 						}
 						case "gt" => {
-							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThan(cq.qProperty.get.urn,cq.qNum1.get)
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThan(cq.qProperty.get.urn,cq.qNum1.get.toDouble)
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
@@ -262,7 +262,7 @@ object QueryObjectController {
 							}
 						}
 						case "lteq" => {
-							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThanOrEqual(cq.qProperty.get.urn,cq.qNum1.get)
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericLessThanOrEqual(cq.qProperty.get.urn,cq.qNum1.get.toDouble)
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
@@ -272,7 +272,7 @@ object QueryObjectController {
 							}
 						}
 						case "gteq" => {
-							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThanOrEqual(cq.qProperty.get.urn,cq.qNum1.get)
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericGreaterThanOrEqual(cq.qProperty.get.urn,cq.qNum1.get.toDouble)
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)
@@ -282,7 +282,7 @@ object QueryObjectController {
 							}
 						}
 						case "inRange" => {
-							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericWithin(cq.qProperty.get.urn,cq.qNum1.get,cq.qNum2.get)
+							val ov:Vector[CiteObject] = ObjectModel.collectionRepository.numericWithin(cq.qProperty.get.urn,cq.qNum1.get.toDouble,cq.qNum2.get.toDouble)
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)

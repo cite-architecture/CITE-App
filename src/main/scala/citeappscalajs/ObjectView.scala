@@ -304,8 +304,9 @@ def collectionBrowseControls = {
 			<div class="onoffswitch">
 			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="object_browseOrListSwitch" checked={false}
 					onchange={ event: Event => {
-							val task = Task{ObjectController.switchDisplay( event ) }
-							val future = task.runAsync
+							js.timers.setTimeout(500){ 
+								ObjectController.switchDisplay( event ) 
+							}
 						}
 					} />
 			    <label class="onoffswitch-label" for="object_browseOrListSwitch">

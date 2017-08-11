@@ -227,7 +227,7 @@ object ObjectController {
 	def insertFirstObjectUrn(urn: Cite2Urn): Unit = {
 		//ObjectModel.clearObject
 		//QueryObjectModel.clearAll
-		val firstUrn:Cite2Urn = ObjectModel.collectionRepository.citableObjects(urn)(0).urn
+		val firstUrn:Cite2Urn = ObjectModel.collectionRepository.objectsForCollection(urn)(0).urn
 		//js.Dynamic.global.document.getElementById("object_urnInput").value = firstUrn.toString
 		ObjectModel.urn := Some(firstUrn)
 		ObjectModel.objectOrCollection := "object"
@@ -331,7 +331,7 @@ object ObjectController {
 							} else {
 								ObjectModel.boundDisplayObjects.get.clear
 								for (i <- startIndex to endIndex){
-									ObjectModel.boundDisplayObjects.get += ObjectModel.constructBoundDisplayObject(ObjectModel.collectionRepository.citableObjects(collUrn)(i))
+									ObjectModel.boundDisplayObjects.get += ObjectModel.constructBoundDisplayObject(ObjectModel.collectionRepository.objectsForCollection(collUrn)(i))
 								}
 								ObjectModel.updatePrevNext
 							}

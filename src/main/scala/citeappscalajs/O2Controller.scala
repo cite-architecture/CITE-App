@@ -126,7 +126,7 @@ object O2Controller {
 
 	@dom
 	def preloadUrn = {
-		O2Model.urn := O2Model.textRepository.corpus.firstNode.urn
+		O2Model.urn := O2Model.textRepository.corpus.firstNode(O2Model.textRepository.corpus.citedWorks(0)).urn
 		O2Controller.validUrnInField := true
 	}
 

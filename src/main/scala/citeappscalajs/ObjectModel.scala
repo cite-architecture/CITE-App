@@ -14,7 +14,6 @@ import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
-import edu.holycross.shot.citeenv._
 
 import scala.scalajs.js.annotation.JSExport
 
@@ -136,7 +135,7 @@ object ObjectModel {
 				if (isOrdered.get) {
 					val currentColl:Cite2Urn = urn.get.get.dropSelector
 					val thisIndex = collectionRepository.indexOf(boundObjects.get(0))
-					val numInCollection:Int = collectionRepository.citableObjects(currentColl).size
+					val numInCollection:Int = collectionRepository.objectsForCollection(currentColl).size
 					if (thisIndex + 1 < numInCollection){
 							currentNext := Option(Some(collectionRepository.citableObjects(thisIndex + 1).urn),offset.get,limit.get)
 					} else {
@@ -235,7 +234,7 @@ object ObjectModel {
 			var y:Int = ObjectModel.collectionRepository.indexOf(toObject)
 
 			for (i <- x to y){
-				ObjectModel.boundObjects.get += ObjectModel.collectionRepository.citableObjects(fromUrn.dropSelector)(i)
+				ObjectModel.boundObjects.get += ObjectModel.collectionRepository.objectsForCollection(fromUrn.dropSelector)(i)
 			}
 		} catch {
 			case e: Exception => {
@@ -269,7 +268,7 @@ object ObjectModel {
 					// collection
 					case None => {
 
-					  val filteredData = ObjectModel.collectionRepository.citableObjects(u)
+					  val filteredData = ObjectModel.collectionRepository.objectsForCollection(u)
 
 					  filteredData.foreach( fc => {
 							ObjectModel.boundObjects.get += fc

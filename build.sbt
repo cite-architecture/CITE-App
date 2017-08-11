@@ -4,7 +4,7 @@ name := "citeapp"
 
 version := "1.3.0"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.3"
 
 resolvers += Resolver.jcenterRepo
 resolvers += Resolver.bintrayRepo("neelsmith", "maven")
@@ -13,13 +13,13 @@ resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases")
 
 libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
-  "org.scala-js" %%% "scalajs-dom" % "0.9.1",
+  "org.scala-js" %%% "scalajs-dom" % "0.9.2",
   "io.monix" %%% "monix" % "2.3.0",
-  "edu.holycross.shot.cite" %%% "xcite" % "2.4.0",
-  "edu.holycross.shot" %%% "ohco2" % "8.0.1",
-  "edu.holycross.shot" %%% "scm" % "4.0.0",
-  "edu.holycross.shot" %%% "citeobj" % "3.1.3",
-  "edu.holycross.shot" %% "citeenv" % "1.1.2",
+  "edu.holycross.shot.cite" %%% "xcite" % "2.7.1",
+  "edu.holycross.shot" %%% "ohco2" % "10.1.2",
+  "edu.holycross.shot" %%% "scm" % "5.1.3",
+  "edu.holycross.shot" %%% "citeobj" % "4.3.3",
+  "edu.holycross.shot" %% "citerelations" % "2.0.1",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
 )
 
@@ -40,9 +40,9 @@ spa := {
   val compileFirst = (fullOptJS in Compile).value
 
   val junk = "//# sourceMappingURL=citeapp-opt.js.map"
-  val js = Source.fromFile("target/scala-2.11/citeapp-opt.js").getLines.mkString("\n").replaceAll(junk,"")
+  val js = Source.fromFile("target/scala-2.12/citeapp-opt.js").getLines.mkString("\n").replaceAll(junk,"")
 
-  val css = Source.fromFile("target/scala-2.11/classes/application.css").getLines.mkString("\n")
+  val css = Source.fromFile("target/scala-2.12/classes/application.css").getLines.mkString("\n")
 
   val template1 = "src/main/resources/cite-TEMPLATE1.html"
   val template1Text = Source.fromFile(template1).getLines.mkString("\n").replaceAll("ACTUALVERSION", version.value).replaceAll("ACTUALCSS",css)

@@ -330,7 +330,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 
 	@dom
 	def preloadUrn = {
-		NGModel.urn := O2Model.textRepository.corpus.firstNode.urn
+		NGModel.urn := O2Model.textRepository.corpus.firstNode(O2Model.textRepository.corpus.citedWorks(0)).urn
 		NGModel.updateShortWorkLabel
 	}
 
