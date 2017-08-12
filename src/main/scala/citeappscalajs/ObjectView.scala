@@ -12,12 +12,13 @@ import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.scalajs.js.Dynamic.{ global => g }
 import scala.scalajs.js.annotation.JSExport
+import js.annotation._
 import scala.concurrent._
 //import ExecutionContext.Implicits.global
 import monix.execution.Scheduler.Implicits.global
 import monix.eval._
 
-@JSExport
+@JSExportTopLevel("citeapp.ObjectView")
 object ObjectView {
 
 

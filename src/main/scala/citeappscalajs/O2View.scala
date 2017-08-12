@@ -14,10 +14,11 @@ import scala.concurrent._
 //import ExecutionContext.Implicits.global
 
 import scala.scalajs.js.annotation.JSExport
+import js.annotation._
 import monix.execution.Scheduler.Implicits.global
 import monix.eval._
 
-@JSExport
+@JSExportTopLevel("citeapp.O2View")
 object O2View {
 
 

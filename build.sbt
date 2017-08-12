@@ -25,7 +25,7 @@ libraryDependencies ++= Seq(
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
-scalacOptions += "-P:scalajs:suppressExportDeprecations"
+//scalacOptions += "-P:scalajs:suppressExportDeprecations"
 //scalacOptions += "-P:scalajs:suppressMissingJSGlobalDeprecations"
 scalacOptions += "-unchecked"
 scalacOptions += "-deprecation"

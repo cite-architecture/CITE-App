@@ -1,23 +1,28 @@
 package citeapp
-import com.thoughtworks.binding._
+import com.thoughtworks.binding.{Binding, dom}
+import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
 import scala.scalajs.js
-import org.scalajs.dom.document
-import scala.scalajs.js.Dynamic.{ global => g }
-import org.scalajs.dom.raw._
-import org.scalajs.dom.ext.Ajax
+import scala.scalajs.js._
+import js.annotation._
 import scala.concurrent._
 //import ExecutionContext.Implicits.global
-
+import collection.mutable
+import collection.mutable._
+import scala.scalajs.js.Dynamic.{ global => g }
+import org.scalajs.dom._
+import org.scalajs.dom.ext._
+import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.scm._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
-import scala.scalajs.js.annotation.JSExport
 
 import monix.execution.Scheduler.Implicits.global
 import monix.eval._
 
-@JSExport
+import scala.scalajs.js.annotation.JSExport
+
+@JSExportTopLevel("citeapp.CiteMainController")
 object CiteMainController {
 
 	@JSExport

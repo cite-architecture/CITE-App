@@ -11,9 +11,11 @@ import scala.concurrent
               .Implicits
               .global
 
-import scala.scalajs.js.annotation.JSExport
+import scala.scalajs.js
+import scala.scalajs.js._
+import js.annotation._
 
-@JSExport
+@JSExportTopLevel("citeapp.CiteMainModel")
 object CiteMainModel {
 
 		val userMessage = Var("Main loaded.")

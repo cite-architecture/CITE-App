@@ -16,8 +16,9 @@ import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 
 import scala.scalajs.js.annotation.JSExport
+import js.annotation._
 
-@JSExport
+@JSExportTopLevel("citeapp.QueryObjectModel")
 object QueryObjectModel {
 
 	val pastQueries = Vars.empty[CiteCollectionQuery]

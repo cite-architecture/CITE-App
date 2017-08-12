@@ -12,10 +12,10 @@ import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 
-
 import scala.scalajs.js.annotation.JSExport
+import js.annotation._
 
-@JSExport
+@JSExportTopLevel("citeapp.O2Model")
 object O2Model {
 
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null

@@ -15,10 +15,10 @@ import scala.concurrent._
 import monix.execution.Scheduler.Implicits.global
 import monix.eval._
 
-
 import scala.scalajs.js.annotation.JSExport
+import js.annotation._
 
-@JSExport
+@JSExportTopLevel("citeapp.NGView")
 object NGView {
 
 

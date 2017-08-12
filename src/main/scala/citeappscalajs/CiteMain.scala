@@ -11,9 +11,12 @@ import scala.concurrent
 											.Implicits
 											.global
 
+import scala.scalajs.js
+import scala.scalajs.js._
+import js.annotation._
 import scala.scalajs.js.annotation.JSExport
 
-@JSExport
+@JSExportTopLevel("CiteMain")
 class CiteMain(remoteUrl:String, localImagePath:String) {
 
 	@JSExport

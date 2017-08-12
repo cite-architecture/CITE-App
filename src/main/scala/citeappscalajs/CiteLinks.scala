@@ -22,7 +22,7 @@ import monix.eval._
 
 import scala.scalajs.js.annotation.JSExport
 
-@JSExport
+@JSExportTopLevel("citeapp.CiteLinks")
 object CiteLinks {
 
 // Refactor => CiteLinks

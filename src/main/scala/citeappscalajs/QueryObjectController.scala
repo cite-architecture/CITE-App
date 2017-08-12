@@ -14,9 +14,10 @@ import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.scalajs.js.Dynamic.{ global => g }
 import scala.scalajs.js.annotation.JSExport
+import js.annotation._
 
 
-@JSExport
+@JSExportTopLevel("citeapp.QueryObjectController")
 object QueryObjectController {
 
 	def isValidSearch:Unit = {
