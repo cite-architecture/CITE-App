@@ -230,7 +230,7 @@ def thumbnailView(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 		}
 	}
 
-	if (ImageModel.imgUseLocal.get){
+	if (ImageModel.imgUseLocal.value){
 
 		var path:String = ""
 		(rW * rH) match {

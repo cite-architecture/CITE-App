@@ -42,7 +42,7 @@ object NGView {
 def previousSearchMenu = {
 	<div
 		class={
-			{ if (NGModel.pastQueries.bind.size < 1) { "dropdown empty" } else {"dropdown"} }
+			{ if (NGModel.pastQueries.value.size < 1) { "dropdown empty" } else {"dropdown"} }
 		}
 
 	>
@@ -103,7 +103,7 @@ def workUrnSpan(urn:CtsUrn, s:String) = {
 	<span
 	class="app_clickable"
 	onclick={ event: Event => {
-		NGModel.urn := urn.dropPassage
+		NGModel.urn.value = urn.dropPassage
 		NGModel.updateShortWorkLabel
 		NGController.clearResults
 
@@ -286,7 +286,7 @@ def tokenSearchForm = {
 def nGramSpace = {
 	<div id="ngram_container"
 	class={
-		if (NGModel.nGramResults.get == null){
+		if (NGModel.nGramResults.value == null){
 			"app_visible"
 		} else {
 			 "app_visible"
@@ -339,18 +339,18 @@ def nGramUrnSpace = {
 /* NGram URN Results List */
 @dom
 def citationResultsList = {
-		<ol class={ if ( NGModel.citationResults.bind.size > 10 ){ "cols" } else { "" } } >
+		<ol class={ if ( NGModel.citationResults.value.size > 10 ){ "cols" } else { "" } } >
 
 		{
 			for (ng <- NGModel.citationResults) yield {
 				<li>
 				{
-					val s:String = s"${O2Model.textRepository.catalog.label(ng.urn.get)}, ${ng.urn.get.passageComponent}"
+					val s:String = s"${O2Model.textRepository.catalog.label(ng.urn.value)}, ${ng.urn.value.passageComponent}"
 
-					passageUrnSpan( ng.urn.get, s ).bind
+					passageUrnSpan( ng.urn.value, s ).bind
 				}
 
-				{ s"  “${ng.kwic.get}”" }
+				{ s"  “${ng.kwic.value}”" }
 
 				</li>
 			}

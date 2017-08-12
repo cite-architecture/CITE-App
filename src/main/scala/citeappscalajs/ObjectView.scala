@@ -89,7 +89,7 @@ def retrieveObjectButton = {
 	<button
 			onclick={ event: Event => {
 				val s:String = js.Dynamic.global.document.getElementById("object_urnInput").value.toString
-				ObjectModel.urn := Some(Cite2Urn(s))
+				ObjectModel.urn.value = Some(Cite2Urn(s))
 				ObjectController.updateUserMessage("Retrieving object…",1)
 				val task = Task{ ObjectController.changeObject }
 				val future = task.runAsync
@@ -123,10 +123,10 @@ def objectToCollectionButton = {
 	<button
 			onclick={ event: Event => {
 				val s:String = js.Dynamic.global.document.getElementById("object_urnInput").value.toString
-				ObjectModel.urn := Some(Cite2Urn(s).dropSelector)
-				//ObjectModel.offset := 1
-				//ObjectModel.limit := 2
-				ObjectModel.objectOrCollection := "collection"
+				ObjectModel.urn.value = Some(Cite2Urn(s).dropSelector)
+				//ObjectModel.offset.value = 1
+				//ObjectModel.limit.value = 2
+				ObjectModel.objectOrCollection.value = "collection"
 				ObjectController.updateUserMessage("Retrieving collection…",1)
 				val task = Task{ ObjectController.changeObject }
 				val future = task.runAsync
@@ -156,7 +156,7 @@ def objectToCollectionButton = {
 @dom
 def objectContainer = {
 	<div id="object_objectContainer" data:bgtext="No Object"
-	class={ s"""${if( ObjectModel.boundObjects.bind.size == 0 ){ "object_empty" } else {"object_not_empty"}}""" }
+	class={ s"""${if( ObjectModel.boundObjects.value.size == 0 ){ "object_empty" } else {"object_not_empty"}}""" }
 	>
 
 		<div id="object_navButtonContainer_top"
@@ -192,7 +192,7 @@ def renderObjects = {
 	<ul>
 	{
 		for (obj <- ObjectModel.boundDisplayObjects ) yield {
-			if ((ObjectModel.showObjects.get) || (ObjectModel.objectOrCollection.get == "object")){
+			if ((ObjectModel.showObjects.value) || (ObjectModel.objectOrCollection.value == "object")){
 
 				<li class="tables">
 					<table>
@@ -205,7 +205,7 @@ def renderObjects = {
 							<td>URN</td>
 							<td>Cite2UrnType</td>
 							<td>
-							{ ObjectView.renderCiteUrnProperty(None, obj.urn.get).bind }
+							{ ObjectView.renderCiteUrnProperty(None, obj.urn.value).bind }
 							</td>
 						</tr>
 						<tr>
@@ -245,9 +245,9 @@ def renderObjects = {
 	<td>{ p.urn.bind.toString }</td>
 	<td>{ p.propertyType.bind.toString }</td>
 	<td>{
-		p.propertyType.get match {
-			case Cite2UrnType =>{ <p>{ ObjectView.renderCiteUrnProperty(Some(p.urn.get),Cite2Urn(p.propertyValue.get)).bind }</p>}
-			case CtsUrnType =>{ <p>{ CiteLinks.textLinks(CtsUrn(p.propertyValue.get)).bind }</p>}
+		p.propertyType.value match {
+			case Cite2UrnType =>{ <p>{ ObjectView.renderCiteUrnProperty(Some(p.urn.value),Cite2Urn(p.propertyValue.value)).bind }</p>}
+			case CtsUrnType =>{ <p>{ CiteLinks.textLinks(CtsUrn(p.propertyValue.value)).bind }</p>}
 			case _ =>{ <p>{ s"${p.propertyValue.bind.toString}"}</p>}
 		}
 
@@ -282,9 +282,9 @@ def collectionBrowseControls = {
 			<label for="object_browseOffset">Start at</label>
 			<input type="text" id="object_browseOffset" size={5} value={ObjectModel.offset.bind.toString}
 			onchange={ event: Event => {
-				val currentOffset = ObjectModel.offset.get
+				val currentOffset = ObjectModel.offset.value
 				ObjectController.validateNumericEntry( event )
-				if (ObjectModel.offset.get != currentOffset){
+				if (ObjectModel.offset.value != currentOffset){
 					ObjectController.setDisplay
 				}
 			}
@@ -292,9 +292,9 @@ def collectionBrowseControls = {
 			<label for="object_browseLimit">Show</label>
 			<input type="text" id="object_browseLimit" size={3} value={ObjectModel.limit.bind.toString}
 			onchange={ event: Event => {
-				val currentLimit = ObjectModel.limit.get
+				val currentLimit = ObjectModel.limit.value
 				ObjectController.validateNumericEntry( event )
-				if (ObjectModel.limit.get != currentLimit){
+				if (ObjectModel.limit.value != currentLimit){
 					ObjectController.setDisplay
 				}
 

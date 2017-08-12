@@ -63,15 +63,15 @@ object CiteMainController {
 }
 
 	def updateUserMessage(msg: String, alert: Int): Unit = {
-		CiteMainModel.userMessageVisibility := "app_visible"
-		CiteMainModel.userMessage := msg
+		CiteMainModel.userMessageVisibility.value = "app_visible"
+		CiteMainModel.userMessage.value = msg
 		alert match {
-			case 0 => CiteMainModel.userAlert := "default"
-			case 1 => CiteMainModel.userAlert := "wait"
-			case 2 => CiteMainModel.userAlert := "warn"
+			case 0 => CiteMainModel.userAlert.value = "default"
+			case 1 => CiteMainModel.userAlert.value = "wait"
+			case 2 => CiteMainModel.userAlert.value = "warn"
 		}
 		js.timers.clearTimeout(CiteMainModel.msgTimer)
-		CiteMainModel.msgTimer = js.timers.setTimeout(10000){ CiteMainModel.userMessageVisibility := "app_hidden" }
+		CiteMainModel.msgTimer = js.timers.setTimeout(10000){ CiteMainModel.userMessageVisibility.value = "app_hidden" }
 	}
 
 
@@ -117,17 +117,17 @@ object CiteMainController {
 
 	def hideTabs:Unit = {
 
-	  CiteMainModel.showTexts := false
-		CiteMainModel.showNg := false
-		CiteMainModel.showCollections := false
-		CiteMainModel.showImages :=false
+	  CiteMainModel.showTexts.value = false
+		CiteMainModel.showNg.value = false
+		CiteMainModel.showCollections.value = false
+		CiteMainModel.showImages.value = false
 	}
 
 	def checkDefaultTab:Unit = {
-		if (CiteMainModel.showTexts.get) {
+		if (CiteMainModel.showTexts.value) {
 			js.Dynamic.global.document.getElementById("tab-1").checked = true
 		} else {
-			if (CiteMainModel.showCollections.get) {
+			if (CiteMainModel.showCollections.value) {
 			js.Dynamic.global.document.getElementById("tab-3").checked = true
 			}
 		}
@@ -136,7 +136,7 @@ object CiteMainController {
 	def clearRepositories:Unit = {
 		O2Model.textRepository = null
 		ObjectModel.collectionRepository = null
-		ImageModel.imageCollections.get.clear
+		ImageModel.imageCollections.value.clear
 		ImageModel.imageExtensions = null
 	}
 
@@ -157,9 +157,9 @@ object CiteMainController {
 
 			repo.textRepository match {
 				case Some(tr) => {
-					CiteMainModel.showTexts := true
-					CiteMainModel.showNg := true
-					CiteMainModel.currentLibraryMetadataString := mdString
+					CiteMainModel.showTexts.value = true
+					CiteMainModel.showNg.value = true
+					CiteMainModel.currentLibraryMetadataString.value = mdString
 					O2Model.textRepository = tr
 					CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepository.catalog.size } works. ",0)
 					loadMessage += s"Updated text repository: ${ O2Model.textRepository.catalog.size } works. "
@@ -179,7 +179,7 @@ object CiteMainController {
 
 			repo.collectionRepository match {
 				case Some(cr) => {
-					CiteMainModel.showCollections := true
+					CiteMainModel.showCollections.value = true
 					ObjectModel.collectionRepository = cr
 					ObjectModel.updateCollections
 					ObjectController.clearResults
@@ -187,7 +187,7 @@ object CiteMainController {
 					ObjectModel.clearObject
 					ObjectController.preloadUrn
 					QueryObjectModel.clearAll
-					QueryObjectModel.currentQueryCollection := None
+					QueryObjectModel.currentQueryCollection.value = None
 					loadMessage += s"Updated collection repository: ${ cr.collections.size  } collections."
 
 				}
@@ -199,7 +199,7 @@ object CiteMainController {
 
 			repo.imageExtensions match {
 				case Some(ie) => {
-					  CiteMainModel.showImages := true
+					  CiteMainModel.showImages.value = true
 						ImageController.clearAll
 						ImageModel.imageExtensions = Some(ie)
 						ImageModel.updateImageCollections

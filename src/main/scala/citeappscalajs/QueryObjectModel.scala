@@ -44,21 +44,21 @@ object QueryObjectModel {
 	val currentCite2UrnQuery = Var[Option[Cite2Urn]](None)
 
 	def clearAll = {
-		currentQuery := None
-		isValidSearch := false
-		currentQueryCollectionProps.get.clear
-		queryProperty := None
-		selectedPropertyType := Some(StringType)
-		currentControlledVocabulary.get.clear
-		currentControlledVocabItem := None
-		currentSearchString := None
-		currentRegexState := false
-		currentCaseSensitiveState := false
-		currentNumericQuery1 := None
-		currentNumericQuery2 := None
-		currentBooleanVal := true
-		currentCtsUrnQuery := None
-	  currentCite2UrnQuery := None
+		currentQuery.value =  None
+		isValidSearch.value =  false
+		currentQueryCollectionProps.value.clear
+		queryProperty.value =  None
+		selectedPropertyType.value =  Some(StringType)
+		currentControlledVocabulary.value.clear
+		currentControlledVocabItem.value =  None
+		currentSearchString.value =  None
+		currentRegexState.value =  false
+		currentCaseSensitiveState.value =  false
+		currentNumericQuery1.value =  None
+		currentNumericQuery2.value =  None
+		currentBooleanVal.value =  true
+		currentCtsUrnQuery.value =  None
+	  currentCite2UrnQuery.value =  None
 	}
 
 	case class CiteCollectionQuery(
@@ -147,15 +147,15 @@ object QueryObjectModel {
 		val testText = thisTarget.value.toString
 		var previousEntry:Option[BigDecimal] = None
 		thisTarget.id match {
-			case "queryObject_numeric1" => previousEntry = currentNumericQuery1.get
-			case "queryObject_numeric2" => previousEntry = currentNumericQuery2.get
+			case "queryObject_numeric1" => previousEntry = currentNumericQuery1.value
+			case "queryObject_numeric2" => previousEntry = currentNumericQuery2.value
 			case _ => previousEntry = None
 		}
 		try{
 			val mo:BigDecimal = testText.toDouble
 			thisTarget.id match {
-				case "queryObject_numeric1" => currentNumericQuery1 := Some(mo)
-				case "queryObject_numeric2" => currentNumericQuery2 := Some(mo)
+				case "queryObject_numeric1" => currentNumericQuery1.value =  Some(mo)
+				case "queryObject_numeric2" => currentNumericQuery2.value =  Some(mo)
 			}
 		} catch {
 			case e: Exception => {
@@ -171,7 +171,7 @@ object QueryObjectModel {
 		val testText = thisTarget.value.toString
 		try{
 			val testCts:CtsUrn = CtsUrn(testText)
-			currentCtsUrnQuery := Some(testCts)
+			currentCtsUrnQuery.value =  Some(testCts)
 		} catch {
 			case e: Exception => {
 				val badMo: String = testText
@@ -186,7 +186,7 @@ object QueryObjectModel {
 		val testText = thisTarget.value.toString
 		try{
 			val testCite2:Cite2Urn = Cite2Urn(testText)
-			currentCite2UrnQuery := Some(testCite2)
+			currentCite2UrnQuery.value =  Some(testCite2)
 		} catch {
 			case e: Exception => {
 				val badMo: String = testText
@@ -200,7 +200,7 @@ object QueryObjectModel {
 	load controlled vocabulary into a binding Vars */
 	@dom
 	def loadControlledVocabulary = {
-		QueryObjectModel.currentQueryCollection.get match {
+		QueryObjectModel.currentQueryCollection.value match {
 			case None => loadControlledVocablAll
 			case _ => loadControlledVocablOne
 		}
@@ -208,9 +208,9 @@ object QueryObjectModel {
 
 	@dom
 	def loadControlledVocablAll = {
-			QueryObjectModel.currentControlledVocabulary.get.clear
+			QueryObjectModel.currentControlledVocabulary.value.clear
 			var vList = new ListBuffer[String]
-			for (c <- ObjectModel.collections.get ){
+			for (c <- ObjectModel.collections.value ){
 				for (p <- c.propertyDefs){
 					for (v <- p.vocabularyList)
 						vList += v
@@ -218,10 +218,10 @@ object QueryObjectModel {
 			}
 			val vSet = vList.toSet
 			for (vs <- vSet ){
-					QueryObjectModel.currentControlledVocabulary.get += vs
+					QueryObjectModel.currentControlledVocabulary.value += vs
 			}
 			if (vSet.size > 0){
-				QueryObjectModel.currentControlledVocabItem := Some(vSet.head)
+				QueryObjectModel.currentControlledVocabItem.value =  Some(vSet.head)
 			}
 
 
@@ -231,27 +231,27 @@ object QueryObjectModel {
 	def loadControlledVocablOne = {
 		QueryObjectModel.queryProperty.bind match {
 			case None => {
-				QueryObjectModel.currentControlledVocabulary.get.clear
-				for (p <- QueryObjectModel.currentQueryCollectionProps.get){
+				QueryObjectModel.currentControlledVocabulary.value.clear
+				for (p <- QueryObjectModel.currentQueryCollectionProps.value){
 					if (p.propertyType == ControlledVocabType){
 						for (v <- p.vocabularyList){
-							QueryObjectModel.currentControlledVocabulary.get += v
+							QueryObjectModel.currentControlledVocabulary.value += v
 						}
 					}
 				}
-				if (QueryObjectModel.currentControlledVocabulary.get.size > 0){
-						QueryObjectModel.currentControlledVocabItem := Some(QueryObjectModel.currentControlledVocabulary.get.head)
+				if (QueryObjectModel.currentControlledVocabulary.value.size > 0){
+						QueryObjectModel.currentControlledVocabItem.value =  Some(QueryObjectModel.currentControlledVocabulary.value.head)
 				}
 			}
 			case _ => {
-				QueryObjectModel.currentControlledVocabulary.get.clear
-				for (v <- QueryObjectModel.queryProperty.get.get.vocabularyList){
-					QueryObjectModel.currentControlledVocabulary.get += v
+				QueryObjectModel.currentControlledVocabulary.value.clear
+				for (v <- QueryObjectModel.queryProperty.value.get.vocabularyList){
+					QueryObjectModel.currentControlledVocabulary.value += v
 				}
-				QueryObjectModel.currentControlledVocabItem := Some(QueryObjectModel.currentControlledVocabulary.get.head)
+				QueryObjectModel.currentControlledVocabItem.value =  Some(QueryObjectModel.currentControlledVocabulary.value.head)
 			}
 		}
-		//QueryObjectModel.currentControlledVocabItem := Some(QueryObjectModel.currentControlledVocabulary.get.head)
+		//QueryObjectModel.currentControlledVocabItem.value =  Some(QueryObjectModel.currentControlledVocabulary.get.head)
 	}
 
 

@@ -88,26 +88,26 @@ object NGModel {
 	@dom
 	def updateShortWorkLabel = {
 		if ( O2Model.textRepository == null){
-					NGModel.shortWorkLabel := "- no selected text -"
+					NGModel.shortWorkLabel.value = "- no selected text -"
 		} else {
-			val longS:String = O2Model.textRepository.catalog.label(NGModel.urn.get)
+			val longS:String = O2Model.textRepository.catalog.label(NGModel.urn.value)
 			if (longS.size > 50){
 				val shortS:String = longS.take(24) + " … " + longS.takeRight(23)
-				NGModel.shortWorkLabel := shortS
+				NGModel.shortWorkLabel.value = shortS
 			} else {
-				NGModel.shortWorkLabel := longS
+				NGModel.shortWorkLabel.value = longS
 			}
 		}
 	}
 
 	@dom
 	def updateCitedWorks = {
-		NGModel.citedWorks.get.clear
+		NGModel.citedWorks.value.clear
 		NGController.clearResults
 		NGController.clearInputs
 		// N.b. The textRepository remains with the Ohco2 Model.
 		for ( cw <- O2Model.textRepository.corpus.citedWorks){
-			NGModel.citedWorks.get += cw
+			NGModel.citedWorks.value += cw
 		}
 	}
 
@@ -153,7 +153,7 @@ object NGModel {
 
 /* String and Token Finding */
 def findString(urn:CtsUrn, s:String):Corpus = {
-		val tempCorpus = O2Model.textRepository.corpus ~~ NGModel.urn.get
+		val tempCorpus = O2Model.textRepository.corpus ~~ NGModel.urn.value
 		val foundCorpus = tempCorpus.find(s)
 		foundCorpus
 }

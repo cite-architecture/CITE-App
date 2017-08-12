@@ -120,16 +120,16 @@ object QueryObjectView {
 		onchange={ event: Event => {
 			val thisSelect = document.getElementById("queryObject_typeSelector").asInstanceOf[HTMLSelectElement]
 			thisSelect.value match {
-				case "StringType" => QueryObjectModel.selectedPropertyType := Some(StringType)
-				case "BooleanType" => QueryObjectModel.selectedPropertyType := Some(BooleanType)
-				case "Cite2UrnType" => QueryObjectModel.selectedPropertyType := Some(Cite2UrnType)
-				case "CtsUrnType" => QueryObjectModel.selectedPropertyType := Some(CtsUrnType)
-				case "NumericType" => QueryObjectModel.selectedPropertyType := Some(NumericType)
+				case "StringType" => QueryObjectModel.selectedPropertyType.value =  Some(StringType)
+				case "BooleanType" => QueryObjectModel.selectedPropertyType.value =  Some(BooleanType)
+				case "Cite2UrnType" => QueryObjectModel.selectedPropertyType.value =  Some(Cite2UrnType)
+				case "CtsUrnType" => QueryObjectModel.selectedPropertyType.value =  Some(CtsUrnType)
+				case "NumericType" => QueryObjectModel.selectedPropertyType.value =  Some(NumericType)
 				case "ControlledVocabType" => {
 					QueryObjectModel.loadControlledVocabulary
-					QueryObjectModel.selectedPropertyType := Some(ControlledVocabType)
+					QueryObjectModel.selectedPropertyType.value =  Some(ControlledVocabType)
 				}
-				case _ => QueryObjectModel.selectedPropertyType := None
+				case _ => QueryObjectModel.selectedPropertyType.value =  None
 			}
 			QueryObjectController.isValidSearch
 		}
@@ -151,7 +151,7 @@ def controlledVocabSelect = {
 	onchange={ event: Event => {
 		val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLSelectElement]
 		val testText:String = thisTarget.value.toString
-		QueryObjectModel.currentControlledVocabItem := Some(testText)
+		QueryObjectModel.currentControlledVocabItem.value =  Some(testText)
 		QueryObjectController.isValidSearch
 		}
 	}
@@ -160,7 +160,7 @@ def controlledVocabSelect = {
 			case None => {
 				QueryObjectModel.selectedPropertyType.bind match {
 					case Some(ControlledVocabType) => {
-						QueryObjectModel.currentControlledVocabulary.bind.size match {
+						QueryObjectModel.currentControlledVocabulary.value.size match {
 							case x if (x > 0) => "queryObject_formvisible"
 							case _ => "queryObject_formhidden"
 						}
@@ -205,7 +205,7 @@ def booleanSearch = {
 	onchange={ event: Event => {
 		val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLSelectElement]
 		val testText:String = thisTarget.value.toString
-		QueryObjectModel.currentBooleanVal := { testText == "true" }
+		QueryObjectModel.currentBooleanVal.value =  { testText == "true" }
 	}
 }>
 <option value="true">true</option>
@@ -230,7 +230,7 @@ def numericSearch = {
 	onchange={ event: Event => {
 		val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLSelectElement]
 		val testText = thisTarget.value.toString
-		QueryObjectModel.currentNumericOperator := testText
+		QueryObjectModel.currentNumericOperator.value =  testText
 		QueryObjectController.isValidSearch
 	}
 } >
@@ -344,9 +344,9 @@ def stringSearch = {
 			val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLTextAreaElement]
 			val thisVal = thisTarget.value
 			if (thisVal.size == 0 ){
-				QueryObjectModel.currentSearchString := None
+				QueryObjectModel.currentSearchString.value =  None
 			} else {
-			  QueryObjectModel.currentSearchString := Some(thisTarget.value)
+			  QueryObjectModel.currentSearchString.value =  Some(thisTarget.value)
 			}
 			QueryObjectController.isValidSearch
 			}
@@ -355,9 +355,9 @@ def stringSearch = {
 			val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLTextAreaElement]
 			val thisVal = thisTarget.value
 			if (thisVal.size == 0 ){
-				QueryObjectModel.currentSearchString := None
+				QueryObjectModel.currentSearchString.value =  None
 			} else {
-			  QueryObjectModel.currentSearchString := Some(thisTarget.value)
+			  QueryObjectModel.currentSearchString.value =  Some(thisTarget.value)
 			}
 			QueryObjectController.isValidSearch
 			}
@@ -374,7 +374,7 @@ def stringSearch = {
 		onchange={ event: Event => {
 			val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]
 			val thisVal = thisTarget.checked
-			QueryObjectModel.currentCaseSensitiveState := thisVal
+			QueryObjectModel.currentCaseSensitiveState.value =  thisVal
 		}
 	}/>
 	<label for="queryObject_caseSensitiveSelect"
@@ -388,7 +388,7 @@ def stringSearch = {
 		onchange={ event: Event => {
 			val thisTarget = event.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement]
 			val thisVal = thisTarget.checked
-			QueryObjectModel.currentRegexState := thisVal
+			QueryObjectModel.currentRegexState.value =  thisVal
 		}
 	}/>
 	<label for="queryObject_regexSelect">Regular Expression</label>
@@ -404,17 +404,17 @@ def collectionListSelect = {
 		QueryObjectModel.clearAll
 		val thisSelect = document.getElementById("objectQuery_collectionList").asInstanceOf[HTMLSelectElement]
 		if (thisSelect.value == "all") {
-			QueryObjectModel.currentQueryCollection := None
-			QueryObjectModel.queryProperty := None
+			QueryObjectModel.currentQueryCollection.value =  None
+			QueryObjectModel.queryProperty.value =  None
 			QueryObjectModel.loadControlledVocabulary
 		} else {
-			QueryObjectModel.currentQueryCollection := Some(Cite2Urn(thisSelect.value))
-			QueryObjectModel.currentQueryCollectionProps.get.clear
-			QueryObjectModel.selectedPropertyType := Some(StringType)
+			QueryObjectModel.currentQueryCollection.value =  Some(Cite2Urn(thisSelect.value))
+			QueryObjectModel.currentQueryCollectionProps.value.clear
+			QueryObjectModel.selectedPropertyType.value =  Some(StringType)
 			for (p <- ObjectModel.collectionRepository.collectionDefinition(Cite2Urn(thisSelect.value)).get.propertyDefs) {
-				QueryObjectModel.currentQueryCollectionProps.get += p
+				QueryObjectModel.currentQueryCollectionProps.value += p
 			}
-			QueryObjectModel.queryProperty := None
+			QueryObjectModel.queryProperty.value =  None
 			QueryObjectModel.loadControlledVocabulary
 		}
 		QueryObjectController.isValidSearch
@@ -454,19 +454,19 @@ def propertyListSelect = {
 		val thisSelect = document.getElementById("objectQuery_propertyList").asInstanceOf[HTMLSelectElement]
 		(thisSelect.value:String) match {
 			case "all" => {
-				QueryObjectModel.queryProperty := None
-				QueryObjectModel.selectedPropertyType := Some(StringType)
+				QueryObjectModel.queryProperty.value =  None
+				QueryObjectModel.selectedPropertyType.value =  Some(StringType)
 			}
 			case x => {
 				val u = Cite2Urn(x)
 				val collU = u.dropProperty
 				val cd = ObjectModel.collectionRepository.collectionDefinition(collU).get
-				QueryObjectModel.queryProperty := Some(cd.propertyDefs.filter(_.urn == u)(0))
-				val pt = QueryObjectModel.queryProperty.get.get.propertyType
-				QueryObjectModel.selectedPropertyType := Some(pt)
+				QueryObjectModel.queryProperty.value =  Some(cd.propertyDefs.filter(_.urn == u)(0))
+				val pt = QueryObjectModel.queryProperty.value.get.propertyType
+				QueryObjectModel.selectedPropertyType.value =  Some(pt)
 			}
 		}
-		if (QueryObjectModel.selectedPropertyType.get == Some(ControlledVocabType)){
+		if (QueryObjectModel.selectedPropertyType.value == Some(ControlledVocabType)){
 			QueryObjectModel.loadControlledVocabulary
 		}
 		QueryObjectController.isValidSearch
@@ -489,7 +489,7 @@ def propertyListEnumeration = {
 def previousQueryMenu = {
 	<div id="queryObject_previousMenu"
 	class={
-		{ if (QueryObjectModel.pastQueries.bind.size == 0) { "dropdown empty" } else {"dropdown"} }
+		{ if (QueryObjectModel.pastQueries.value.size == 0) { "dropdown empty" } else {"dropdown"} }
 	} >
 	<span>Previous Queries</span>
 	{ QueryObjectView.previousQueries.bind }

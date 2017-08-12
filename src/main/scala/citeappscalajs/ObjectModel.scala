@@ -86,23 +86,23 @@ object ObjectModel {
 					val tempT = Var(p.propertyDef.propertyType)
 					val tempP = BoundCiteProperty(tempU,tempT,tempV)
 					val props = Var(tempP)
-					tempPropList.get += tempP
+					tempPropList.value += tempP
 			}
 			val tempProtocolList = Vars.empty[BoundCiteProtocol]
 
 			val tempProt0 = Var(CiteMainModel.objectProtocol)
-			tempProtocolList.get += BoundCiteProtocol(tempProt0)
+			tempProtocolList.value += BoundCiteProtocol(tempProt0)
 			// *********************
 			// Now we load other extensions… images for now, but others later!
 			// *********************
-			if (ImageModel.imageCollections.get.size > 0) {
+			if (ImageModel.imageCollections.value.size > 0) {
 				ImageModel.imageExtensions match {
 					case Some(ext) =>{
 						for (ie <- ext.extensions(collUrn)) {
 							val imageVector = ie
 								if (imageVector.protocol == "Local jpeg string"){
 								   val tempProt1 = Var(CiteMainModel.localImageProtocol)
-									 tempProtocolList.get += BoundCiteProtocol(tempProt1)
+									 tempProtocolList.value += BoundCiteProtocol(tempProt1)
 								}
 						}
 					}
@@ -118,96 +118,96 @@ object ObjectModel {
 	// Clears all current object data, and with it, displayed objects
 	@dom
 	def clearObject:Unit = {
-			boundObjects.get.clear
-			boundDisplayObjects.get.clear
-			urn := None
-			browsable := false
-			currentPrev := None
-			currentNext := None
-			objectReport := ""
-			offset := 1
+			boundObjects.value.clear
+			boundDisplayObjects.value.clear
+			urn.value = None
+			browsable.value = false
+			currentPrev.value = None
+			currentNext.value = None
+			objectReport.value = ""
+			offset.value = 1
 	}
 
 	@dom
 	def updatePrevNext:Unit = {
-		ObjectModel.objectOrCollection.get match {
+		ObjectModel.objectOrCollection.value match {
 			case "object" => {
-				if (isOrdered.get) {
-					val currentColl:Cite2Urn = urn.get.get.dropSelector
-					val thisIndex = collectionRepository.indexOf(boundObjects.get(0))
+				if (isOrdered.value) {
+					val currentColl:Cite2Urn = urn.value.get.dropSelector
+					val thisIndex = collectionRepository.indexOf(boundObjects.value(0))
 					val numInCollection:Int = collectionRepository.objectsForCollection(currentColl).size
 					if (thisIndex + 1 < numInCollection){
-							currentNext := Option(Some(collectionRepository.citableObjects(thisIndex + 1).urn),offset.get,limit.get)
+							currentNext.value = Option(Some(collectionRepository.citableObjects(thisIndex + 1).urn),offset.value,limit.value)
 					} else {
-						currentNext := None
+						currentNext.value = None
 					}
 					if (thisIndex > 0){
-							currentPrev := Option(Some(collectionRepository.citableObjects(thisIndex - 1).urn),offset.get,limit.get)
+							currentPrev.value = Option(Some(collectionRepository.citableObjects(thisIndex - 1).urn),offset.value,limit.value)
 					} else {
-						currentPrev := None
+						currentPrev.value = None
 					}
 				} else {
-					currentPrev := None
-					currentNext := None
+					currentPrev.value = None
+					currentNext.value = None
 				}
 			}
 			case "none" => {
-					currentPrev := None
-					currentNext := None
+					currentPrev.value = None
+					currentNext.value = None
 			}
 			case "search" => {
-				val numC = boundObjects.get.size
-				if(limit.get >= numC){
-					currentPrev := None
-					currentNext := None
+				val numC = boundObjects.value.size
+				if(limit.value >= numC){
+					currentPrev.value = None
+					currentNext.value = None
 				} else {
-					if ((offset.get + limit.get) > numC){
-						currentNext := None
+					if ((offset.value + limit.value) > numC){
+						currentNext.value = None
 					} else {
 						// get next
-						val o:Int = offset.get + limit.get
+						val o:Int = offset.value + limit.value
 
-						currentNext := Option(None,o,limit.get)
+						currentNext.value = Option(None,o,limit.value)
 					}
-					if (offset.get == 1 ){
-						currentPrev := None
+					if (offset.value == 1 ){
+						currentPrev.value = None
 					} else {
 						// get prev
 						val o:Int = {
-							if ((offset.get - limit.get) > 0){
-								offset.get - limit.get
+							if ((offset.value - limit.value) > 0){
+								offset.value - limit.value
 							} else { 1 }
 						}
 						//val u:Cite2Urn = objects.get(o).urn
-						currentPrev := Option(None,o,limit.get)
+						currentPrev.value = Option(None,o,limit.value)
 					}
 				}
 			}
 			case _ => {
-				val numC = boundObjects.get.size
-				if(limit.get >= numC){
-					currentPrev := None
-					currentNext := None
+				val numC = boundObjects.value.size
+				if(limit.value >= numC){
+					currentPrev.value = None
+					currentNext.value = None
 				} else {
-					if ((offset.get + limit.get) > numC){
-						currentNext := None
+					if ((offset.value + limit.value) > numC){
+						currentNext.value = None
 					} else {
 						// get next
-						val o:Int = offset.get + limit.get
+						val o:Int = offset.value + limit.value
 
-						currentNext := Option(urn.get,o,limit.get)
+						currentNext.value = Option(urn.value,o,limit.value)
 					}
-					if (offset.get == 1 ){
-						currentPrev := None
+					if (offset.value == 1 ){
+						currentPrev.value = None
 					} else {
 						// get prev
 						val o:Int = {
-							if ((offset.get - limit.get) > 0){
-								offset.get - limit.get
+							if ((offset.value - limit.value) > 0){
+								offset.value - limit.value
 							} else { 1 }
 						}
 						//val u:Cite2Urn = objects.get(o).urn
-						currentPrev := Option(urn.get,o,limit.get)
+						currentPrev.value = Option(urn.value,o,limit.value)
 					}
 				}
 			}
@@ -234,7 +234,7 @@ object ObjectModel {
 			var y:Int = ObjectModel.collectionRepository.indexOf(toObject)
 
 			for (i <- x to y){
-				ObjectModel.boundObjects.get += ObjectModel.collectionRepository.objectsForCollection(fromUrn.dropSelector)(i)
+				ObjectModel.boundObjects.value += ObjectModel.collectionRepository.objectsForCollection(fromUrn.dropSelector)(i)
 			}
 		} catch {
 			case e: Exception => {
@@ -262,7 +262,7 @@ object ObjectModel {
 				u.objectComponentOption match {
 					// Just object
 					case Some(o) => {
-						 ObjectModel.boundObjects.get += ObjectModel.collectionRepository.citableObjects.filter(_.urn == u)(0)
+						 ObjectModel.boundObjects.value += ObjectModel.collectionRepository.citableObjects.filter(_.urn == u)(0)
 						 //ObjectController.setDisplay
 					}
 					// collection
@@ -271,7 +271,7 @@ object ObjectModel {
 					  val filteredData = ObjectModel.collectionRepository.objectsForCollection(u)
 
 					  filteredData.foreach( fc => {
-							ObjectModel.boundObjects.get += fc
+							ObjectModel.boundObjects.value += fc
 						})
 
 					}
@@ -281,12 +281,12 @@ object ObjectModel {
 
 	@dom
 	def updateCollections = {
-		ObjectModel.collections.get.clear
+		ObjectModel.collections.value.clear
 		for ( cc <- ObjectModel.collectionRepository.catalog.collections){
-			ObjectModel.collections.get += cc
+			ObjectModel.collections.value += cc
 		}
-			QueryObjectModel.currentQueryCollection := None
-			QueryObjectModel.currentQueryCollectionProps.get.clear
+			QueryObjectModel.currentQueryCollection.value = None
+			QueryObjectModel.currentQueryCollectionProps.value.clear
 	}
 
 	def countObjects(urn:Cite2Urn):Int = {

@@ -24,35 +24,35 @@ object QueryObjectController {
 		// one num, or two+range || string || urn || boolean || vocab
 		var isValid = false
 
-		QueryObjectModel.selectedPropertyType.get match {
+		QueryObjectModel.selectedPropertyType.value match {
 			case Some(StringType) =>{
-				if (QueryObjectModel.currentSearchString.get != None ){ isValid = true }
+				if (QueryObjectModel.currentSearchString.value != None ){ isValid = true }
 			}
 			case Some(BooleanType) =>{
 				 isValid = true
 			}
 			case Some(NumericType) =>{
-				if (QueryObjectModel.currentNumericQuery1.get != None ){
-					QueryObjectModel.currentNumericOperator.get match {
+				if (QueryObjectModel.currentNumericQuery1.value != None ){
+					QueryObjectModel.currentNumericOperator.value match {
 						case "inRange" => {
-							if (QueryObjectModel.currentNumericQuery2.get != None ){ isValid = true }
+							if (QueryObjectModel.currentNumericQuery2.value != None ){ isValid = true }
 						}
 						case _ => isValid = true
 					}
 				}
 			}
 			case Some(ControlledVocabType) =>{
-				if (QueryObjectModel.currentControlledVocabItem.get != None ){ isValid = true }
+				if (QueryObjectModel.currentControlledVocabItem.value != None ){ isValid = true }
 			}
 			case Some(CtsUrnType) =>{
-				if (QueryObjectModel.currentCtsUrnQuery.get != None ){ isValid = true }
+				if (QueryObjectModel.currentCtsUrnQuery.value != None ){ isValid = true }
 			}
 			case Some(Cite2UrnType) =>{
-				if (QueryObjectModel.currentCite2UrnQuery.get != None ){ isValid = true }
+				if (QueryObjectModel.currentCite2UrnQuery.value != None ){ isValid = true }
 			}
 			case _ => { isValid = false }
 		}
-		QueryObjectModel.isValidSearch := isValid
+		QueryObjectModel.isValidSearch.value =  isValid
 
 	}
 
@@ -60,7 +60,7 @@ object QueryObjectController {
 	def initQuery:Unit = {
 
 		try {
-			QueryObjectModel.selectedPropertyType.get match {
+			QueryObjectModel.selectedPropertyType.value match {
 				case Some(StringType) => initStringSearch
 				case Some(NumericType) => initNumericSearch
 				case Some(ControlledVocabType) => initContVocabSearch
@@ -78,26 +78,26 @@ object QueryObjectController {
 	}
 
 	def loadQuery(q:QueryObjectModel.CiteCollectionQuery):Unit = {
-		QueryObjectModel.currentQuery := Some(q)
-		QueryObjectModel.selectedPropertyType := q.qPropertyType
+		QueryObjectModel.currentQuery.value =  Some(q)
+		QueryObjectModel.selectedPropertyType.value =  q.qPropertyType
 		initQuery
 	}
 
 
 	def initStringSearch:Unit = {
 		val collUrn = {
-			QueryObjectModel.currentQueryCollection.get match {
+			QueryObjectModel.currentQueryCollection.value match {
 				case None => None
 				case Some(u) => Some(u)
 			}
 		}
 		val cq = QueryObjectModel.CiteCollectionQuery(
 			qCollection = collUrn,
-			qProperty = QueryObjectModel.queryProperty.get,
-			qPropertyType = QueryObjectModel.selectedPropertyType.get,
-			qSearchString = QueryObjectModel.currentSearchString.get,
-			qCaseSensitive = Some(QueryObjectModel.currentCaseSensitiveState.get),
-			qRegex = Some(QueryObjectModel.currentRegexState.get)
+			qProperty = QueryObjectModel.queryProperty.value,
+			qPropertyType = QueryObjectModel.selectedPropertyType.value,
+			qSearchString = QueryObjectModel.currentSearchString.value,
+			qCaseSensitive = Some(QueryObjectModel.currentCaseSensitiveState.value),
+			qRegex = Some(QueryObjectModel.currentRegexState.value)
 		)
 		doStringSearch(cq)
 	}
@@ -142,18 +142,18 @@ object QueryObjectController {
 
 	def initNumericSearch:Unit = {
 		val collUrn = {
-			QueryObjectModel.currentQueryCollection.get match {
+			QueryObjectModel.currentQueryCollection.value match {
 				case None => None
 				case Some(u) => Some(u)
 			}
 		}
 		val cq = QueryObjectModel.CiteCollectionQuery(
 			qCollection = collUrn,
-			qProperty = QueryObjectModel.queryProperty.get,
-			qPropertyType = QueryObjectModel.selectedPropertyType.get,
-			qNum1 = QueryObjectModel.currentNumericQuery1.get,
-			qNum2 = QueryObjectModel.currentNumericQuery2.get,
-			qNumOperator = Some(QueryObjectModel.currentNumericOperator.get)
+			qProperty = QueryObjectModel.queryProperty.value,
+			qPropertyType = QueryObjectModel.selectedPropertyType.value,
+			qNum1 = QueryObjectModel.currentNumericQuery1.value,
+			qNum2 = QueryObjectModel.currentNumericQuery2.value,
+			qNumOperator = Some(QueryObjectModel.currentNumericOperator.value)
 		)
 		doNumericSearch(cq)
 	}
@@ -318,16 +318,16 @@ qCite2Urn: Option[Cite2Urn]
 
 	def initContVocabSearch:Unit = {
 		val collUrn = {
-			QueryObjectModel.currentQueryCollection.get match {
+			QueryObjectModel.currentQueryCollection.value match {
 				case None => None
 				case Some(u) => Some(u)
 			}
 		}
 		val cq = QueryObjectModel.CiteCollectionQuery(
 			qCollection = collUrn,
-			qProperty = QueryObjectModel.queryProperty.get,
-			qPropertyType = QueryObjectModel.selectedPropertyType.get,
-			qControlledVocabItem = QueryObjectModel.currentControlledVocabItem.get
+			qProperty = QueryObjectModel.queryProperty.value,
+			qPropertyType = QueryObjectModel.selectedPropertyType.value,
+			qControlledVocabItem = QueryObjectModel.currentControlledVocabItem.value
 		)
 		doContVocabSearch(cq)
 	}
@@ -359,16 +359,16 @@ qCite2Urn: Option[Cite2Urn]
 
 	def initBooleanSearch:Unit = {
 		val collUrn = {
-			QueryObjectModel.currentQueryCollection.get match {
+			QueryObjectModel.currentQueryCollection.value match {
 				case None => None
 				case Some(u) => Some(u)
 			}
 		}
 		val cq = QueryObjectModel.CiteCollectionQuery(
 			qCollection = collUrn,
-			qProperty = QueryObjectModel.queryProperty.get,
-			qPropertyType = QueryObjectModel.selectedPropertyType.get,
-			qBoolVal = Some(QueryObjectModel.currentBooleanVal.get)
+			qProperty = QueryObjectModel.queryProperty.value,
+			qPropertyType = QueryObjectModel.selectedPropertyType.value,
+			qBoolVal = Some(QueryObjectModel.currentBooleanVal.value)
 		)
 		doBooleanSearch(cq)
 	}
@@ -401,16 +401,16 @@ qCite2Urn: Option[Cite2Urn]
 	def initCtsUrnSearch:Unit = {
 		g.console.log("got here 1")
 		val collUrn = {
-			QueryObjectModel.currentQueryCollection.get match {
+			QueryObjectModel.currentQueryCollection.value match {
 				case None => None
 				case Some(u) => Some(u)
 			}
 		}
 		val cq = QueryObjectModel.CiteCollectionQuery(
 			qCollection = collUrn,
-			qProperty = QueryObjectModel.queryProperty.get,
-			qPropertyType = QueryObjectModel.selectedPropertyType.get,
-			qCtsUrn = QueryObjectModel.currentCtsUrnQuery.get
+			qProperty = QueryObjectModel.queryProperty.value,
+			qPropertyType = QueryObjectModel.selectedPropertyType.value,
+			qCtsUrn = QueryObjectModel.currentCtsUrnQuery.value
 		)
 		doCtsUrnSearch(cq)
 	}
@@ -444,16 +444,16 @@ qCite2Urn: Option[Cite2Urn]
 
 	def initCite2UrnSearch:Unit = {
 		val collUrn = {
-			QueryObjectModel.currentQueryCollection.get match {
+			QueryObjectModel.currentQueryCollection.value match {
 				case None => None
 				case Some(u) => Some(u)
 			}
 		}
 		val cq = QueryObjectModel.CiteCollectionQuery(
 			qCollection = collUrn,
-			qProperty = QueryObjectModel.queryProperty.get,
-			qPropertyType = QueryObjectModel.selectedPropertyType.get,
-			qCite2Urn =  QueryObjectModel.currentCite2UrnQuery.get
+			qProperty = QueryObjectModel.queryProperty.value,
+			qPropertyType = QueryObjectModel.selectedPropertyType.value,
+			qCite2Urn =  QueryObjectModel.currentCite2UrnQuery.value
 		)
 		doCite2UrnSearch(cq)
 	}
@@ -491,27 +491,27 @@ qCite2Urn: Option[Cite2Urn]
 							case _ => ObjectController.updateUserMessage(s"Search found ${ov.size} matching objects.",0)
 						}
 						ObjectModel.clearObject
-						QueryObjectModel.currentQuery := Some(cq)
+						QueryObjectModel.currentQuery.value =  Some(cq)
 						addToSearchHistory(cq)
-						ObjectModel.objectOrCollection := "search"
-						if (ObjectModel.limit.get > ov.size){ ObjectModel.limit := ov.size }
-						ObjectModel.offset := 1
-						ObjectModel.browsable := true
+						ObjectModel.objectOrCollection.value =  "search"
+						if (ObjectModel.limit.value > ov.size){ ObjectModel.limit.value =  ov.size }
+						ObjectModel.offset.value =  1
+						ObjectModel.browsable.value =  true
 					  // display objects
 						ObjectModel.clearObject
-						ObjectModel.offset := 1
-						if (ObjectModel.limit.get > ov.size){
-							ObjectModel.limit := ov.size
+						ObjectModel.offset.value =  1
+						if (ObjectModel.limit.value > ov.size){
+							ObjectModel.limit.value =  ov.size
 						}
-						ObjectModel.browsable := true
-						ObjectModel.objectOrCollection := "search"
+						ObjectModel.browsable.value =  true
+						ObjectModel.objectOrCollection.value =  "search"
 						for (o <- ov ){
-							ObjectModel.boundObjects.get += o
+							ObjectModel.boundObjects.value += o
 						}
 						ObjectController.setDisplay
 				} else {
 						ObjectModel.clearObject
-						QueryObjectModel.currentQuery := Some(cq)
+						QueryObjectModel.currentQuery.value =  Some(cq)
 						ObjectController.updateUserMessage("Search found no matching objects.",1)
 				}
 
@@ -519,13 +519,13 @@ qCite2Urn: Option[Cite2Urn]
 
 	def addToSearchHistory(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
 			var vList = new ListBuffer[QueryObjectModel.CiteCollectionQuery]
-			for (qh <- QueryObjectModel.pastQueries.get ){
+			for (qh <- QueryObjectModel.pastQueries.value ){
 				vList += qh
 			}
 			vList += cq
 			val vSet = vList.toSet
-			QueryObjectModel.pastQueries.get.clear
-			for (q <- vSet ){ QueryObjectModel.pastQueries.get += q }
+			QueryObjectModel.pastQueries.value.clear
+			for (q <- vSet ){ QueryObjectModel.pastQueries.value += q }
 
 	}
 

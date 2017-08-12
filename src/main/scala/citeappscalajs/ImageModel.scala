@@ -62,21 +62,21 @@ object ImageModel {
 	}
 
 	def updateImageCollections = {
-		imageCollections.get.clear
+		imageCollections.value.clear
 		imageExtensions match {
-				case Some(ie) => ie.protocolMap.foreach(k => imageCollections.get += k._1)
+				case Some(ie) => ie.protocolMap.foreach(k => imageCollections.value += k._1)
 				case _ => ;
 		}
 	}
 
   // Eventually, do something clever to assign groups to ROIs based on their mapped URNs
 	def updateRois(u:Cite2Urn, roiVector:Vector[(Option[String],Option[Urn])]):Unit = {
-			imageROIs.get.clear
+			imageROIs.value.clear
 			for ((r, i) <- roiVector.zipWithIndex){
 				// For now we're putting each ROI in its own group
 				r._1 match {
 					case Some(s) => {
-						imageROIs.get += ImageROI(i+1, u, r._1, r._2, (i+1))
+						imageROIs.value += ImageROI(i+1, u, r._1, r._2, (i+1))
 					}
 					case _ => {
 						g.console.log(s"no roi for ${roiVector}")

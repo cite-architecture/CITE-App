@@ -26,7 +26,9 @@ libraryDependencies ++= Seq(
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 scalacOptions += "-P:scalajs:suppressExportDeprecations"
-scalacOptions += "-P:scalajs:suppressMissingJSGlobalDeprecations"
+//scalacOptions += "-P:scalajs:suppressMissingJSGlobalDeprecations"
+scalacOptions += "-unchecked"
+scalacOptions += "-deprecation"
 
 lazy val spa = taskKey[Unit]("Assemble single-page app from html templates and generated CSS and JS output")
 
