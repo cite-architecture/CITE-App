@@ -30,7 +30,7 @@ object ImageController {
 
 	def setPreferredImageSource:Unit = {
 		val imgSourceStr:String = js.Dynamic.global.document.getElementById("citeMain_localImageSwitch").checked.toString
-		ImageModel.imgUseLocal := { imgSourceStr == "true" }
+		ImageModel.imgUseLocal.value = { imgSourceStr == "true" }
 	}
 
 	def protocolsForImage(u:Cite2Urn):Option[Vector[edu.holycross.shot.citeobj.BinaryImageSource[scala.Any]]] = {
@@ -70,15 +70,15 @@ object ImageController {
 	}
 
 	def updateUserMessage(msg: String, alert: Int): Unit = {
-		ImageModel.userMessageVisibility := "app_visible"
-		ImageModel.userMessage := msg
+		ImageModel.userMessageVisibility.value = "app_visible"
+		ImageModel.userMessage.value = msg
 		alert match {
-			case 0 => ImageModel.userAlert := "default"
-			case 1 => ImageModel.userAlert := "wait"
-			case 2 => ImageModel.userAlert := "warn"
+			case 0 => ImageModel.userAlert.value = "default"
+			case 1 => ImageModel.userAlert.value = "wait"
+			case 2 => ImageModel.userAlert.value = "warn"
 		}
 		js.timers.clearTimeout(ImageModel.msgTimer)
-		ImageModel.msgTimer = js.timers.setTimeout(16000){ ImageModel.userMessageVisibility := "app_hidden" }
+		ImageModel.msgTimer = js.timers.setTimeout(16000){ ImageModel.userMessageVisibility.value = "app_hidden" }
 	}
 
 	def urnToLocalPath(urn:Cite2Urn):String = {
@@ -106,7 +106,7 @@ object ImageController {
 	def getThumbPath(urn:Cite2Urn):String = {
 		var path:String = ""
 		if (ImageController.hasLocalJpegProtocol(urn) & ImageController.hasIipImageJpegProtocol(urn)){
-			if (ImageModel.imgUseLocal.get){
+			if (ImageModel.imgUseLocal.value){
 				path = ImageController.getLocalJpegPath(urn)
 			} else {
 					path = ImageController.getIipImageJpegPath(urn)
@@ -117,7 +117,7 @@ object ImageController {
 
 	def getZoomSource(urn:Cite2Urn):String = {
 
-		if (ImageModel.imgUseLocal.get){
+		if (ImageModel.imgUseLocal.value){
 			val src:String = getLocalDzPath(urn)
 			src
 		} else {
@@ -152,7 +152,7 @@ object ImageController {
 
 	// *** Apropos Microservice ***
 	def previewImage(u:Cite2Urn) = {
-		if (ImageModel.imgUseLocal.get){
+		if (ImageModel.imgUseLocal.value){
 			val path:String = getLocalJpegPath(u)
 			setPreviewImageFromLocal(u,path)
 		} else {
@@ -172,9 +172,9 @@ object ImageController {
 		try {
 			val justUrn = u.dropExtensions
 			var justROI:Option[ImageModel.ImageROI] = None
-			ImageModel.imageROIs.get.size match {
+			ImageModel.imageROIs.value.size match {
 				case 1 => {
-					justROI = Some(ImageModel.imageROIs.get(0))
+					justROI = Some(ImageModel.imageROIs.value(0))
 				}
 				case _ => {
 					justROI = None
@@ -234,16 +234,16 @@ object ImageController {
 	def validateUrn(urnString: String): Unit = {
 		try{
 			val newUrn: Cite2Urn = Cite2Urn(urnString)
-			validUrnInField := true
+			validUrnInField.value = true
 		} catch {
 			case e: Exception => {
-				validUrnInField := false
+				validUrnInField.value = false
 			}
 		}
 	}
 
 	def changeImage:Unit = {
-		ImageModel.urn.get match {
+		ImageModel.urn.value match {
 			case Some(u) => {
 				val tempUrn:Cite2Urn = u
 				val collection:Cite2Urn = tempUrn.dropSelector
@@ -269,7 +269,7 @@ object ImageController {
 
 	def loadJsArray:Unit = {
 		ImageController.clearJsRoiArray(true)
-		for (iroi <- ImageModel.imageROIs.get){
+		for (iroi <- ImageModel.imageROIs.value){
 			val tempRoi:String = {
 				iroi.roi match {
 					case Some(r) => r
@@ -310,7 +310,7 @@ object ImageController {
 			changeUrn(urn,Vector((oe,None)))
 		} catch {
 			case e: Exception => {
-				validUrnInField := false
+				validUrnInField.value = false
 				updateUserMessage(s"Invalid URN. Current URN not changed. ${e}",2)
 			}
 		}
@@ -319,33 +319,33 @@ object ImageController {
 	// *** Apropos Microservice ***
 	def changeUrn(urn:Cite2Urn,roiVec:Vector[(Option[String],Option[Urn])]):Unit = {
 		try {
-			ImageModel.displayUrn := Some(urn)
-			validUrnInField := true
-			ImageModel.urn := Some(urn.dropExtensions)
+			ImageModel.displayUrn.value = Some(urn)
+			validUrnInField.value = true
+			ImageModel.urn.value = Some(urn.dropExtensions)
 			val plainUrn:Cite2Urn = urn.dropExtensions
 			ImageModel.updateRois(plainUrn,roiVec)
 			ImageController.changeImage
 		} catch {
 			case e: Exception => {
-				validUrnInField := false
+				validUrnInField.value = false
 				updateUserMessage(s"Invalid URN [2]. Current URN not changed. ${e}",2)
 			}
 		}
 	}
 
-	@JSName("clearJsRoiArray")
+	@JSGlobal("clearJsRoiArray")
 	@js.native
 	object clearJsRoiArray extends js.Any {
 		def apply(really:Boolean): js.Dynamic = js.native
 	}
 
-	@JSName("addToJsRoiArray")
+	@JSGlobal("addToJsRoiArray")
 	@js.native
 	object addToJsRoiArray extends js.Any {
 		def apply(index:Int, roiString:String, urnString:String, groupString:String): js.Dynamic = js.native
 	}
 
-	@JSName("updateImageJS")
+	@JSGlobal("updateImageJS")
 	@js.native
 	object updateImageJS extends js.Any {
 		def apply(collection: String, imageObject: String, path:String): js.Dynamic = js.native
