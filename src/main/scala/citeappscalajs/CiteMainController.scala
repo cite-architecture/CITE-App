@@ -26,21 +26,13 @@ import scala.scalajs.js.annotation.JSExport
 object CiteMainController {
 
 	@JSExport
-	def main(libUrl: String, localImagePath:String): Unit = {
+	def main(libUrl: String): Unit = {
 
-		ImageModel.imgArchivePath = localImagePath
+//		ImageModel.imgArchivePath = localImagePath
 
 		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
 		val task = Task{ CiteMainController.loadRemoteLibrary(libUrl) }
 		val future = task.runAsync
-		/*
-		js.timers.setTimeout(200){
-			Future{ 
-					CiteMainController.loadRemoteLibrary(libUrl)			
-			}
-		}
-		*/
-
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
@@ -95,54 +87,20 @@ object CiteMainController {
 			js.Dynamic.global.document.getElementById("tab-1").checked = true
 	}
 
-	def retrieveImageLinks(urn:Cite2Urn) = {
-		g.console.log(s"Will find image links to ${urn}.")
-	}
-
-	def retrieveObject(mappedUrn:Option[Cite2Urn], objUrn:Cite2Urn):Unit = {
-			val urn:Cite2Urn = objUrn.dropExtensions
-			ObjectController.updateUserMessage("Retrieving object…",1)
-			js.Dynamic.global.document.getElementById("tab-3").checked = true
-			val task = Task{ObjectController.changeUrn(urn) }
-			val future = task.runAsync
-			/*
-			js.timers.setTimeout(200){
-				Future{
-					ObjectController.changeUrn(urn)
-				}
-			}
-			*/
-	}
-
-	def retrieveImage(mappedUrn:Option[Cite2Urn], propVal:Cite2Urn):Unit = {
-			val oe = propVal.objectExtensionOption
-			ImageController.changeUrn(propVal,Vector((oe,mappedUrn)))
-			js.Dynamic.global.document.getElementById("tab-4").checked = true
-	}
-
 	def hideTabs:Unit = {
 
-	  CiteMainModel.showTexts.value = false
-		CiteMainModel.showNg.value = false
-		CiteMainModel.showCollections.value = false
-		CiteMainModel.showImages.value = false
+	  CiteMainModel.showTexts.value = true
+	  CiteMainModel.showNg.value = true
 	}
 
 	def checkDefaultTab:Unit = {
 		if (CiteMainModel.showTexts.value) {
 			js.Dynamic.global.document.getElementById("tab-1").checked = true
-		} else {
-			if (CiteMainModel.showCollections.value) {
-			js.Dynamic.global.document.getElementById("tab-3").checked = true
-			}
-		}
+		} 
 	}
 
 	def clearRepositories:Unit = {
 		O2Model.textRepository = null
-		ObjectModel.collectionRepository = null
-		ImageModel.imageCollections.value.clear
-		ImageModel.imageExtensions = null
 	}
 
 
@@ -179,41 +137,6 @@ object CiteMainController {
 				}
 				case None => {
 					loadMessage += "No texts. "
-				}
-			}
-
-			repo.collectionRepository match {
-				case Some(cr) => {
-					CiteMainModel.showCollections.value = true
-					ObjectModel.collectionRepository = cr
-					ObjectModel.updateCollections
-					ObjectController.clearResults
-					ObjectController.clearHistory
-					ObjectModel.clearObject
-					ObjectController.preloadUrn
-					QueryObjectModel.clearAll
-					QueryObjectModel.currentQueryCollection.value = None
-					loadMessage += s"Updated collection repository: ${ cr.collections.size  } collections."
-
-				}
-
-				case None => {
-					loadMessage += "No collections. "
-				}
-			}
-
-			repo.imageExtensions match {
-				case Some(ie) => {
-					  CiteMainModel.showImages.value = true
-						ImageController.clearAll
-						ImageModel.imageExtensions = Some(ie)
-						ImageModel.updateImageCollections
-						loadMessage += s"Image collections: ${ie.protocolMap.size}."
-				}
-
-				case None => {
-					ImageController.clearAll
-					loadMessage += "No image collections. "
 				}
 			}
 

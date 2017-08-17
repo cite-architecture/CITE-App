@@ -286,10 +286,10 @@ def tokenSearchForm = {
 def nGramSpace = {
 	<div id="ngram_container"
 	class={
-		if (NGModel.nGramResults.value == null){
-			"app_visible"
+		if (NGModel.nGramResults.bind.size == 0){
+			"app_hidden"
 		} else {
-			 "app_visible"
+			"app_visible"
 		}
 	}
 	>

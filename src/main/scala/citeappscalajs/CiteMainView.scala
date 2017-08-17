@@ -22,8 +22,6 @@ object CiteMainView {
 
 	val textView = O2View.o2div
 	val ngramView = NGView.nGdiv
-	val objectView = ObjectView.objectDiv
-	val imageView = ImageView.imageDiv
 
 
 
@@ -38,25 +36,7 @@ object CiteMainView {
 				type="file"
 				onchange={ event: Event => CiteMainController.loadLocalLibrary( event )}
 				></input>
-			{ imageLocalRemoteSwitch.bind }
 		</span>
-	}
-
-	// *** Apropos Microservice ***
-	@dom
-	def imageLocalRemoteSwitch = {
-			<div id="imageSourceSwitchContainer">
-				Image Source:
-				<div class="onoffswitch">
-				    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="citeMain_localImageSwitch" checked={ImageModel.imgUseLocal.bind}
-						onchange={ event: Event => ImageController.setPreferredImageSource}
-						/>
-				    <label class="onoffswitch-label" for="citeMain_localImageSwitch">
-				        <span class="image_onoffswitch-inner onoffswitch-inner"></span>
-				        <span class="image_onoffswitch-switch onoffswitch-switch"></span>
-				    </label>
-				</div>
-			</div>
 	}
 
 
@@ -110,33 +90,6 @@ object CiteMainView {
 						</div>
 				</div>
 
-				<div id="app_tab_collections"
-					class={
-							CiteMainModel.showCollections.bind match {
-								case true => "app_visible app_tab"
-								case _ => "app_hidden app_tab"
-							}
-					}>
-					<input type="radio" id="tab-3" name="tab-group-1" checked={ false }/>
-					<label class="tab_label" for="tab-3">Collections</label>
-						<div class="content">
-						 { objectView.bind }
-						</div>
-				</div>
-
-				<div id="app_tab_images"
-					class={
-							CiteMainModel.showImages.bind match {
-								case true => "app_visible app_tab"
-								case _ => "app_hidden app_tab"
-							}
-					}>
-					<input type="radio" id="tab-4" name="tab-group-1" checked={ false }/>
-					<label class="tab_label" for="tab-4">Images</label>
-						<div class="content">
-						 { imageView.bind }
-						</div>
-				</div>
 
 
 			</div>

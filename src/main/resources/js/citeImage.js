@@ -129,6 +129,16 @@ function initOpenSeadragon(imagePath) {
 
     // Add overlays
 			setTimeout(function(){
+				if (viewer.world.getItemAt(0)){
+					console.log("defined");
+				} else {
+					console.log("undefined");
+				}
+				var baseTimer = 0;
+				while( !(viewer.world.getItemAt(0))){
+					baseTimer = baseTimer + 1;
+				}
+				console.log(baseTimer);
 				var normH = viewer.world.getItemAt(0).getBounds().height;
 				var normW = viewer.world.getItemAt(0).getBounds().width;
 				if (roiArray.length > 0){
@@ -166,6 +176,6 @@ function initOpenSeadragon(imagePath) {
 								e.target.classList.add("image_roi_selected")
 						}, false);
 					}
-			},3000);
+			},8000);
 
 }

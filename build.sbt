@@ -8,7 +8,6 @@ scalaVersion := "2.12.3"
 
 resolvers += Resolver.jcenterRepo
 resolvers += Resolver.bintrayRepo("neelsmith", "maven")
-resolvers += "beta" at "http://beta.hpcc.uh.edu/nexus/content/repositories/releases"
 resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases")
 
 libraryDependencies ++= Seq(
