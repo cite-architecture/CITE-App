@@ -42,7 +42,7 @@ object NGView {
 def previousSearchMenu = {
 	<div
 		class={
-			{ if (NGModel.pastQueries.value.size < 1) { "dropdown empty" } else {"dropdown"} }
+			{ if (NGModel.pastQueries.bind.size < 1) { "dropdown empty" } else {"dropdown"} }
 		}
 
 	>
