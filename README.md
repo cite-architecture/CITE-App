@@ -14,7 +14,7 @@ CITE Application, by default, downloads a sample corpus of texts. Licensing and 
 
 ## Using
 
-CITE Application is a single web page you can open in a browser. Precompiled versions are available in the [downloads directory](compiled-one-file-app), and named `cite-VERSION.html`.
+CITE Application is a single web page you can open in a browser. Precompiled versions are available in the [downloads directory](downloads), and named `cite-VERSION.html`.
 
 ## Building, testing
 
@@ -25,6 +25,10 @@ If `sbt fastOptJS` completes successfully, run the app by opening `CITE-App/targ
 If `sbt fullOptJS` completes successfully, run the app by opening `CITE-App/target/scala-2.11/classes/index-opt.html` in your browser.
 
 In addition, the project defines a custom `spa` task that builds a single-page application named `cite-VERSION.html` (where `VERSION` is the current version defined in `build.sbt`), in the `downloads` directory.
+
+If `sbt fastOptJS` completes successfully, run the app by opening `CITE-App/target/scala-2.11/classes/index-dev.html` in your browser.
+
+If `sbt fullOptJS` completes successfully, run the app by opening `CITE-App/target/scala-2.11/classes/index-opt.html` in your browser.
 
 
 ## Credits
