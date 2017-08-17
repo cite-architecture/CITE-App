@@ -10,11 +10,12 @@ import org.scalajs.dom.ext._
 import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
-import edu.holycross.shot.citeenv._
+import edu.holycross.shot.citeobj._
 
 import scala.scalajs.js.annotation.JSExport
+import js.annotation._
 
-@JSExport
+@JSExportTopLevel("citeapp.O2Model")
 object O2Model {
 
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
@@ -22,6 +23,7 @@ object O2Model {
 	//val passage = Vars.empty[CitableNode]
 	//var xmlPassage = new org.scalajs.dom.raw.DOMParser().parseFromString( "<cts:passage></cts:passage>", "text/xml" )
 	var xmlPassage = js.Dynamic.global.document.createElement("div")
+	val currentCitableNodes = Var(0)
 	val isRtlPassage = Var(false)
 
 	// urn is what the user requested
@@ -53,8 +55,8 @@ object O2Model {
 	}
 
 	def getPrevNextUrn(urn:CtsUrn):Unit = {
-		O2Model.currentPrev := O2Model.textRepository.corpus.prevUrn(urn)
-		O2Model.currentNext := O2Model.textRepository.corpus.nextUrn(urn)
+		O2Model.currentPrev.value = O2Model.textRepository.corpus.prevUrn(urn)
+		O2Model.currentNext.value = O2Model.textRepository.corpus.nextUrn(urn)
 	}
 
 	def collapseToWorkUrn(urn:CtsUrn):CtsUrn = {
@@ -70,12 +72,13 @@ object O2Model {
 	@dom
 	def clearPassage:Unit = {
 		O2Model.xmlPassage.innerHTML = ""
-		O2Model.versionsForCurrentUrn := 0
+		O2Model.versionsForCurrentUrn.value = 0
 	}
 
 	@dom
 	def displayPassage(newUrn: CtsUrn):Unit = {
 		val tempCorpus: Corpus = O2Model.textRepository.corpus ~~ newUrn
+		O2Model.currentCitableNodes.value = tempCorpus.size
 		//O2Model.passage.get.clear
 		O2Model.xmlPassage.innerHTML = ""
 
@@ -83,25 +86,38 @@ object O2Model {
 
 		var currentVersionUrnStr = ""
 
-		// set up columns
-		for ( cn <- tempCorpus.nodes ) {
+		if (tempCorpus.size > 0){
+			// set up columns
+			for ( cn <- tempCorpus.nodes ) {
 
-			var descEl = ""
-			if (cn.urn.dropPassage.toString != currentVersionUrnStr ){
-				currentVersionUrnStr = cn.urn.dropPassage.toString
-				val desc = O2Model.textRepository.catalog.label(cn.urn)
-				descEl = s"""<span class="o2_versionDescription ltr">${desc} : ${cn.urn.dropPassage.toString}</span>"""
+				var descEl = ""
+				if (cn.urn.dropPassage.toString != currentVersionUrnStr ){
+					currentVersionUrnStr = cn.urn.dropPassage.toString
+					val desc = O2Model.textRepository.catalog.label(cn.urn)
+					descEl = s"""<span class="o2_versionDescription ltr">${desc} : ${cn.urn.dropPassage.toString}</span>"""
+				}
+				val citString:String = s"""<span class="o2_passageUrn">${cn.urn.passageComponent}</span>"""
+
+				val txtString:String = """<p class="o2_passage">""" + citString + cn.text + "</p>"
+
+				O2Model.isRtlPassage.value = O2Model.checkForRTL(cn.text)
+
+				val divClass =	if (O2Model.isRtlPassage.value){ "rtl" } else { "ltr" }
+				val elString:String = s"""<div class="p ${divClass}">""" + descEl + txtString + "</div>"
+				wholePassageElement += elString
+				//O2Model.passage.get += cn
 			}
-			val citString:String = s"""<span class="o2_passageUrn">${cn.urn.passageComponent}</span>"""
-
-			val txtString:String = """<p class="o2_passage">""" + citString + cn.text + "</p>"
-
-			O2Model.isRtlPassage := O2Model.checkForRTL(cn.text)
-
-			val divClass =	if (O2Model.isRtlPassage.get){ "rtl" } else { "ltr" }
-			val elString:String = s"""<div class="p ${divClass}">""" + descEl + txtString + "</div>"
+		} else {
+			// Display notice that there was no text found
+			var elString = ""
+			elString = s"""<div class="ltr o2_warnNoText">${newUrn} is not represented in the current library."""
+			if (O2Model.versionsForCurrentUrn.value > 0){
+				val s  = s"urn:cts:${newUrn.namespace}:${newUrn.textGroup}.${newUrn.work}:"
+				elString += s""" However, there are versions of ${s} in the library. “See all versions of passage” will show the requested passage, if it is present in any other version of this work."""
+			}
+			elString += "</div>"
 			wholePassageElement += elString
-			//O2Model.passage.get += cn
+
 		}
 		O2Model.xmlPassage.innerHTML = wholePassageElement
 		js.Dynamic.global.document.getElementById("o2_xmlPassageContainer").appendChild(xmlPassage)
@@ -120,9 +136,9 @@ def checkForRTL(s:String):Boolean = {
 
 	@dom
 	def updateCitedWorks = {
-		O2Model.citedWorks.get.clear
+		O2Model.citedWorks.value.clear
 		for ( cw <- O2Model.textRepository.corpus.citedWorks){
-			O2Model.citedWorks.get += cw
+			O2Model.citedWorks.value += cw
 		}
 	}
 

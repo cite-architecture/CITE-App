@@ -1,5 +1,11 @@
 # Release notes
 
+**1.3.0**: Using updated version of `.cex`. Added support for CITE Collections and Image Extensions.
+
+- Collections, Images, and Texts are integrated.
+- Refactoring toward a future microservice-based app.
+- Querying on CITE Properties with the latest version of the `citeobj` library.
+
 **1.2.1**: Improved import of `.cex` files, using the Scala SCM library and enforcing validity. Numerous bug-fixes in searching texts, finding ngrams, and displaying results. New functionality:
 
 - A UI way to see multiple versions of a passage of text.

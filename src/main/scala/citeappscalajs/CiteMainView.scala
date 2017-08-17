@@ -12,16 +12,21 @@ import org.scalajs.dom.raw.Event
 import org.scalajs.dom.ext.Ajax
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
+import edu.holycross.shot.citeobj._
 
-import scala.scalajs.js.annotation.JSExport
+import js.annotation._
 
 
-@JSExport
+@JSExportTopLevel("citeapp.CiteMainView")
 object CiteMainView {
 
 	val textView = O2View.o2div
 	val ngramView = NGView.nGdiv
 
+
+
+	// *** Apropos Microservice ***
+	// We will want a switch here
 	@dom
 	def filePicker = {
 		<span id="app_filePickerSpan">
@@ -31,13 +36,9 @@ object CiteMainView {
 				type="file"
 				onchange={ event: Event => CiteMainController.loadLocalLibrary( event )}
 				></input>
-				<label for="app_filePicker_delimiter">Delimiter: </label>
-				<select id="app_filePicker_delimiter">
-					<option value="OCTOTHORP"> # </option>
-					<option value="TAB"> tab </option>
-				</select>
 		</span>
 	}
+
 
 	@dom
 	def mainMessageDiv = {
@@ -53,7 +54,7 @@ object CiteMainView {
 			{ filePicker.bind }
 			CITE Environment
 			<span id="app_header_versionInfo">version { BuildInfo.version }</span>
-			<span id="app_help_link">[ <a target="_blank" href="https://github.com/cite-architecture/CITE-App/wiki/CITE-App-Help-and-Tips">Online Help</a> ]</span>
+			<span id="app_help_link">[ <a target="_blank" href="https://github.com/cite-architecture/CITE-App/wiki">Online Help</a> ]</span>
 		</header>
 
 		<article id="main_Container">
@@ -61,21 +62,34 @@ object CiteMainView {
 			{ mainMessageDiv.bind }
 			<div class="app_tabs">
 
-				<div class="app_tab">
-					<input type="radio" id="tab-1" name="tab-group-1" checked={ true }/>
+				<div id="app_tab_texts"
+					class={
+							CiteMainModel.showTexts.bind match {
+								case true => "app_visible app_tab"
+								case _ => "app_hidden app_tab"
+							}
+					}>
+					<input type="radio" id="tab-1" name="tab-group-1" checked={ false }/>
 					<label class="tab_label" for="tab-1">Browse Texts</label>
 						<div class="content">
 						 { textView.bind }
 						</div>
 				</div>
 
-				<div class="app_tab">
+				<div id="app_tab_ng"
+					class={
+							CiteMainModel.showNg.bind match {
+								case true => "app_visible app_tab"
+								case _ => "app_hidden app_tab"
+							}
+					}>
 					<input type="radio" id="tab-2" name="tab-group-1" checked={ false }/>
 					<label class="tab_label" for="tab-2">Explore Texts</label>
 						<div class="content">
 						 { ngramView.bind }
 						</div>
 				</div>
+
 
 
 			</div>

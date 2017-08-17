@@ -11,17 +11,30 @@ import scala.concurrent
               .Implicits
               .global
 
-import scala.scalajs.js.annotation.JSExport
+import scala.scalajs.js
+import scala.scalajs.js._
+import js.annotation._
 
-@JSExport
+@JSExportTopLevel("citeapp.CiteMainModel")
 object CiteMainModel {
 
 		val userMessage = Var("Main loaded.")
 		val userAlert = Var("default")
-	  val userMessageVisibility = Var("app_hidden")
+	    val userMessageVisibility = Var("app_hidden")
 
 		var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 
 		val currentLibraryMetadataString = Var("No library loaded.")
+
+		val textProtocol:String = "TextProtocol"
+		val objectProtocol:String = "ObjectProtocol"
+		val localImageProtocol:String = "LocalImageProtocol"
+
+		val cexMainDelimiter:String = "#"
+		val cexSecondaryDelimiter:String = ","
+
+
+		val showTexts = Var(true)
+		val showNg = Var(true)
 
 }

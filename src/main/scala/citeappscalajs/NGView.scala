@@ -9,10 +9,16 @@ import org.scalajs.dom.ext._
 import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
+import edu.holycross.shot.citeobj._
+import scala.concurrent._
+//import ExecutionContext.Implicits.global
+import monix.execution.Scheduler.Implicits.global
+import monix.eval._
 
 import scala.scalajs.js.annotation.JSExport
+import js.annotation._
 
-@JSExport
+@JSExportTopLevel("citeapp.NGView")
 object NGView {
 
 
@@ -36,7 +42,7 @@ object NGView {
 def previousSearchMenu = {
 	<div
 		class={
-			{ if (NGModel.pastQueries.bind.size < 1) { "dropdown empty" } else {"dropdown"} }
+			{ if (NGModel.pastQueries.value.size < 1) { "dropdown empty" } else {"dropdown"} }
 		}
 
 	>
@@ -53,10 +59,17 @@ def previousSearches = {
 			for ( q <- NGModel.pastQueries) yield {
 					<p
 							onclick={ event: Event => {
-								js.timers.setTimeout(600){
-									NGController.loadQuery(q)
-									NGController.executeQuery(q)
+								NGController.loadQuery(q)
+								val task = Task { NGController.executeQuery(q) }
+								val future = task.runAsync
+								/*
+								js.timers.setTimeout(200){
+									Future {
+										NGController.loadQuery(q)
+										NGController.executeQuery(q)
+									}
 								}
+								*/
 							}
 							}
 					>
@@ -90,7 +103,7 @@ def workUrnSpan(urn:CtsUrn, s:String) = {
 	<span
 	class="app_clickable"
 	onclick={ event: Event => {
-		NGModel.urn := urn.dropPassage
+		NGModel.urn.value = urn.dropPassage
 		NGModel.updateShortWorkLabel
 		NGController.clearResults
 
@@ -195,7 +208,13 @@ def nGramForm = {
 		id="ngram_Submit"
 			onclick={ event: Event => {
 					NGController.updateUserMessage("Getting N-Grams. Please be patient…",1)
-					js.timers.setTimeout(500){ NGController.nGramQuery }
+					val task = Task{ NGController.nGramQuery}
+					val future = task.runAsync
+					/*
+					js.timers.setTimeout(200){
+						Future{ NGController.nGramQuery }
+					}
+					*/
 				}
 			}
 		>Query for N-Grams</button>
@@ -214,7 +233,13 @@ def stringSearchForm = {
 		id="stringSearch_Submit"
 			onclick={ event: Event => {
 					NGController.updateUserMessage("Searching for string. Please be patient…",1)
-					js.timers.setTimeout(500){ NGController.stringSearchQuery }
+					val task = Task{ NGController.stringSearchQuery }
+					val future = task.runAsync
+					/*
+					js.timers.setTimeout(200){
+						Future{ NGController.stringSearchQuery }
+					}
+					*/
 				}
 			}
 		>Search</button>
@@ -243,7 +268,13 @@ def tokenSearchForm = {
 		id="tokenSearch_Submit"
 			onclick={ event: Event => {
 					NGController.updateUserMessage("Conducting token search. Please be patient…",1)
-					js.timers.setTimeout(500){ NGController.tokenSearchQuery }
+					val task = Task{NGController.tokenSearchQuery}
+					val future = task.runAsync
+					/*
+					js.timers.setTimeout(200){
+						Future{ NGController.tokenSearchQuery }
+					}
+					*/
 				}
 			}
 		>Search</button>
@@ -255,10 +286,10 @@ def tokenSearchForm = {
 def nGramSpace = {
 	<div id="ngram_container"
 	class={
-		if (NGModel.nGramResults.get == null){
-			"app_visible"
+		if (NGModel.nGramResults.bind.size == 0){
+			"app_hidden"
 		} else {
-			 "app_visible"
+			"app_visible"
 		}
 	}
 	>
@@ -273,8 +304,13 @@ def nGramSpace = {
 				onclick={ event: Event => {
 
 					NGController.updateUserMessage(s"Getting URNs for '${ng.s}'. Please be patient…",1)
-
-					js.timers.setTimeout(500){ NGController.getUrnsForNGram( ng.s ) }
+					val task = Task{ NGController.getUrnsForNGram( ng.s ) }
+					val future = task.runAsync
+					/*
+					js.timers.setTimeout(200){
+						Future{ NGController.getUrnsForNGram( ng.s ) }
+					}
+					*/
 				} }
 				>
 				{ ng.s }
@@ -303,18 +339,18 @@ def nGramUrnSpace = {
 /* NGram URN Results List */
 @dom
 def citationResultsList = {
-		<ol class={ if ( NGModel.citationResults.bind.size > 10 ){ "cols" } else { "" } } >
+		<ol class={ if ( NGModel.citationResults.value.size > 10 ){ "cols" } else { "" } } >
 
 		{
 			for (ng <- NGModel.citationResults) yield {
 				<li>
 				{
-					val s:String = s"${O2Model.textRepository.catalog.label(ng.urn.get)}, ${ng.urn.get.passageComponent}"
+					val s:String = s"${O2Model.textRepository.catalog.label(ng.urn.value)}, ${ng.urn.value.passageComponent}"
 
-					passageUrnSpan( ng.urn.get, s ).bind
+					passageUrnSpan( ng.urn.value, s ).bind
 				}
 
-				{ s"  “${ng.kwic.get}”" }
+				{ s"  “${ng.kwic.value}”" }
 
 				</li>
 			}

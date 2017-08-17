@@ -9,10 +9,16 @@ import org.scalajs.dom.ext._
 import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
+import edu.holycross.shot.citeobj._
+import scala.concurrent._
+//import ExecutionContext.Implicits.global
 
 import scala.scalajs.js.annotation.JSExport
+import js.annotation._
+import monix.execution.Scheduler.Implicits.global
+import monix.eval._
 
-@JSExport
+@JSExportTopLevel("citeapp.O2View")
 object O2View {
 
 
@@ -77,12 +83,16 @@ def retrievePassageButton = {
 	<button
 			onclick={ event: Event => {
 				val s:String = js.Dynamic.global.document.getElementById("o2_urnInput").value.toString
-				O2Model.urn := CtsUrn(s)
+				O2Model.urn.value = CtsUrn(s)
 				O2Controller.updateUserMessage("Retrieving passage…",1)
-				js.timers.setTimeout(500){ O2Controller.changePassage }
-				}
+				val task = Task{ O2Controller.changePassage }
+				val future = task.runAsync
+//				js.timers.setTimeout(200){
+					//Future{ O2Controller.changePassage }
+//				}
 			}
-			disabled={ (O2Controller.validUrnInField.bind == false) }
+		}
+		disabled={ (O2Controller.validUrnInField.bind == false) }
 > {
 	if ( O2Controller.validUrnInField.bind == true ){
 		"Retrieve Passage"
@@ -97,10 +107,10 @@ def retrievePassageButton = {
 @dom
 def seeAllVersionsButton = {
 	<button
-		disabled = { if (O2Model.versionsForCurrentUrn.bind > 1) false else true }
+		disabled = { if (O2Model.versionsForCurrentUrn.bind > 0) false else true }
 		onclick = { event: Event => {
-				O2Model.displayUrn := O2Model.collapseToWorkUrn(O2Model.urn.get)
-				O2Model.displayNewPassage(O2Model.displayUrn.get)
+				O2Model.displayUrn.value = O2Model.collapseToWorkUrn(O2Model.urn.value)
+				O2Model.displayNewPassage(O2Model.displayUrn.value)
 		}}
 	>
 		See All Versions of Passage
