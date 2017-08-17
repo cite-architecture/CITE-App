@@ -299,7 +299,7 @@ def nGramSpace = {
 	<p> {
 		for (ng <- NGModel.nGramResults ) yield {
 			<span class="ngram_ngram">
-			({ (ng.count - 1).toString })
+			({ (ng.count).toString })
 				<span class="ngram_string app_clickable"
 				onclick={ event: Event => {
 
@@ -358,21 +358,6 @@ def citationResultsList = {
 		</ol>
 }
 
-
-/* Download link for NGram URNs */
-/* Will enable when we figure out what this should look like */
-/*
-@dom
-def nGramUrnDownload = {
-	<a
-		id="ngram_urns_download"
-		data:download="ngram-urns"
-		href = {
-			"data:text/plain;charset=utf-8," + scala.scalajs.js.URIUtils.encodeURIComponent("urns here")
-		}
-		>Download N-Grams URNs</a>
-}
-*/
 
 
 }
