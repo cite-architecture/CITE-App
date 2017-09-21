@@ -2,7 +2,7 @@
 
 A single-page browser application for exploring citable resources, written in [Scala.js](http://www.scala-js.org/).
 
-## Current version: 1.3.0
+## Current version: 1.3.1
 
 See [release notes](releases.md).
 
@@ -29,6 +29,10 @@ In addition, the project defines a custom `spa` task that builds a single-page a
 If `sbt fastOptJS` completes successfully, run the app by opening `CITE-App/target/scala-2.11/classes/index-dev.html` in your browser.
 
 If `sbt fullOptJS` completes successfully, run the app by opening `CITE-App/target/scala-2.11/classes/index-opt.html` in your browser.
+
+## Python SimpleServer
+
+`python -m SimpleHTTPServer`
 
 
 ## Credits

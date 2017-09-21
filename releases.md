@@ -1,5 +1,7 @@
 # Release notes
 
+**1.3.1**: Using updated version of the `ohco2` and `scm` libraries. Adjustments to take advantage of citation- and corpus-algebra.
+
 **1.3.0**: Using updated version of `.cex`. Added support for CITE Collections and Image Extensions.
 
 - Collections, Images, and Texts are integrated.
