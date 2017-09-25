@@ -2,7 +2,7 @@ enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
 name := "citeapp"
 
-version := "1.3.1"
+version := "1.3.2"
 
 scalaVersion := "2.12.3"
 
@@ -15,8 +15,8 @@ libraryDependencies ++= Seq(
   "org.scala-js" %%% "scalajs-dom" % "0.9.2",
   "io.monix" %%% "monix" % "2.3.0",
   "edu.holycross.shot.cite" %%% "xcite" % "3.2.1",
-  "edu.holycross.shot" %%% "ohco2" % "10.3.0",
-  "edu.holycross.shot" %%% "scm" % "5.1.5",
+  "edu.holycross.shot" %%% "ohco2" % "10.4.0",
+  "edu.holycross.shot" %%% "scm" % "5.1.6",
   "edu.holycross.shot" %%% "citeobj" % "5.0.0",
   "edu.holycross.shot" %% "citerelations" % "2.0.1",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
@@ -35,7 +35,7 @@ import scala.io.Source
 import java.io.PrintWriter
 spa := {
 
-	val defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/libraries/million.cex"
+	val defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/libraries/millionplus.cex"
 	val defaultLibraryDelimiter = "#"
 
   val compileFirst = (fullOptJS in Compile).value
