@@ -7,6 +7,7 @@ import scala.scalajs.js._
 import org.scalajs.dom._
 import org.scalajs.dom.ext._
 import org.scalajs.dom.raw._
+import scala.scalajs.js.Dynamic.{ global => g }
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
@@ -178,11 +179,13 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 		q.urn match {
 			case Some(urn) => {
 				for ( sc <- NGModel.getNGram(urn, q.fs, q.n, q.t, q.ip).histogram ) {
+					g.console.log(sc.toString)
 					NGModel.nGramResults.value += sc
 				}
 			}
 			case _ => {
 				for ( sc <- NGModel.getNGram(q.fs, q.n, q.t, q.ip).histogram ) {
+					g.console.log(sc.toString)
 					NGModel.nGramResults.value += sc
 				}
 			}

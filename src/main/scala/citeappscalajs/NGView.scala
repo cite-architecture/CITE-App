@@ -42,7 +42,7 @@ object NGView {
 def previousSearchMenu = {
 	<div
 		class={
-			{ if (NGModel.pastQueries.bind.size < 1) { "dropdown empty" } else {"dropdown"} }
+			{ if (NGModel.pastQueries.value.size < 1) { "dropdown empty" } else {"dropdown"} }
 		}
 
 	>
@@ -286,7 +286,7 @@ def tokenSearchForm = {
 def nGramSpace = {
 	<div id="ngram_container"
 	class={
-		if (NGModel.nGramResults.bind.size == 0){
+		if (NGModel.nGramResults.length == 0){
 			"app_hidden"
 		} else {
 			"app_visible"
