@@ -77,7 +77,7 @@ object O2Model {
 
 	@dom
 	def displayPassage(newUrn: CtsUrn):Unit = {
-		val tempCorpus: Corpus = O2Model.textRepository.corpus ~~ newUrn
+		val tempCorpus: Corpus = O2Model.textRepository.corpus >= newUrn
 		O2Model.currentCitableNodes.value = tempCorpus.size
 		//O2Model.passage.get.clear
 		O2Model.xmlPassage.innerHTML = ""
