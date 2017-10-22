@@ -10,6 +10,7 @@ import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
+import scala.scalajs.js.Dynamic.{ global => g }
 
 import scala.scalajs.js.annotation.JSExport
 import js.annotation._
@@ -141,7 +142,7 @@ object NGModel {
  }
 
  def getUrnsForNGram(ngUrn: CtsUrn, s: String, ignorePunc: Boolean ): Vector[CtsUrn] ={
-	 val newCorpus: Corpus = O2Model.textRepository.corpus ~~ ngUrn
+	 val newCorpus: Corpus = O2Model.textRepository.corpus >= ngUrn
 	 val vurn = newCorpus.urnsForNGram(s, 1, ignorePunc)
 	 vurn
  }
@@ -153,12 +154,13 @@ object NGModel {
 
 /* String and Token Finding */
 def findString(urn:CtsUrn, s:String):Corpus = {
-		val tempCorpus = O2Model.textRepository.corpus ~~ NGModel.urn.value
+		val tempCorpus = O2Model.textRepository.corpus >= urn
 		val foundCorpus = tempCorpus.find(s)
 		foundCorpus
 }
 
 def findString(s:String):Corpus = {
+		g.console.log(s"findString with whole corpus")
 		val foundCorpus = O2Model.textRepository.corpus.find(s)
 		foundCorpus
 }
