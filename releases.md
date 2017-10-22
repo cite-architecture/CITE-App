@@ -1,5 +1,9 @@
 # Release notes
 
+**1.3.4**: Fixed bug that prevented searching for strings in a single work as opposed to the whole corpus.
+
+**1.3.3**: Moved a few blocking UI actions to use `Future[T]` to improve perceived responsiveness.
+
 **1.3.2**: Using updated version of the `ohco2` and `scm` libraries. Improvements to prev and next, and to NGram searching.
 
 **1.3.1**: Using updated version of the `ohco2` and `scm` libraries. Adjustments to take advantage of citation- and corpus-algebra.
