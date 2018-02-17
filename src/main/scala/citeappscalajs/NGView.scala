@@ -11,6 +11,7 @@ import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.concurrent._
+import scala.scalajs.js.Dynamic.{ global => g }
 //import ExecutionContext.Implicits.global
 import monix.execution.Scheduler.Implicits.global
 import monix.eval._
@@ -286,7 +287,7 @@ def tokenSearchForm = {
 def nGramSpace = {
 	<div id="ngram_container"
 	class={
-		if (NGModel.nGramResults.length == 0){
+		if (NGModel.nGramResults.bind.length == 0){
 			"app_hidden"
 		} else {
 			"app_visible"
@@ -345,7 +346,8 @@ def citationResultsList = {
 			for (ng <- NGModel.citationResults) yield {
 				<li>
 				{
-					val s:String = s"${O2Model.textRepository.catalog.label(ng.urn.value)}, ${ng.urn.value.passageComponent}"
+					g.console.log(s"urn: ${ng.urn.value}")
+					val s:String = s"${O2Model.textRepository.catalog.label(ng.urn.value.dropPassage)}, ${ng.urn.value.passageComponent}"
 
 					passageUrnSpan( ng.urn.value, s ).bind
 				}

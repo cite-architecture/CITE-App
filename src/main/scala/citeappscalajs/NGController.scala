@@ -179,13 +179,13 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 		q.urn match {
 			case Some(urn) => {
 				for ( sc <- NGModel.getNGram(urn, q.fs, q.n, q.t, q.ip).histogram ) {
-					g.console.log(sc.toString)
+					//g.console.log(sc.toString)
 					NGModel.nGramResults.value += sc
 				}
 			}
 			case _ => {
 				for ( sc <- NGModel.getNGram(q.fs, q.n, q.t, q.ip).histogram ) {
-					g.console.log(sc.toString)
+					//g.console.log(sc.toString)
 					NGModel.nGramResults.value += sc
 				}
 			}

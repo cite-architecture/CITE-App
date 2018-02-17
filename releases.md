@@ -1,5 +1,9 @@
 # Release notes
 
+**1.3.6**: Fixed bug that prevented NGrams from showing up. Also fixed a bug where URNs for NGrams were not being labelled correctly.
+
+**1.3.5**: Fixed bug that caused erroneous information in the "Works in this Corpus" sidebar. Added sorting of works in listing so all versions and exemplars are together (as opposed to appearing in whatever order their `#!ctsdata` appears in the CEX).
+
 **1.3.4**: Fixed bug that prevented searching for strings in a single work as opposed to the whole corpus.
 
 **1.3.3**: Moved a few blocking UI actions to use `Future[T]` to improve perceived responsiveness.

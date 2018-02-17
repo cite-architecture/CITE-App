@@ -78,6 +78,7 @@ object NGModel {
 	val nGramThreshold = Var(3)
 
 	val nGramResults = Vars.empty[StringCount]
+	
 	val nGramQueryReport = Var("")
 	val otherQueryReport = Var("")
 
