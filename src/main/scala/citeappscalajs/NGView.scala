@@ -86,6 +86,7 @@ def previousSearches = {
 def citedWorksContainer = {
 	<div id="ngram_citedWorksContainer">
 	<h2>Works in this Corpus</h2>
+	<p>(Click text to select it for exploring.)</p>
 	<ul>
 	{
 		for (urn <- NGModel.citedWorks) yield {
@@ -134,8 +135,8 @@ def passageUrnSpan(urn:CtsUrn, s:String) = {
 
 		<div id="ngram_sidebar" class="app_sidebarDiv">
 		{ NGView.previousSearchMenu.bind }
-		{ NGView.toolsContainer.bind }
 		{ NGView.citedWorksContainer.bind }
+		{ NGView.toolsContainer.bind }
 		</div>
 
 		{ nGmessageDiv.bind }

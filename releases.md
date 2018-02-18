@@ -1,5 +1,7 @@
 # Release notes
 
+**1.3.7**: Improved UI for Exploring. Using OHCO2 Library 10.4.2, which fixes bugs in labelling works in Catalogs, and in delivering first-node URNs for corpora.
+
 **1.3.6**: Fixed bug that prevented NGrams from showing up. Also fixed a bug where URNs for NGrams were not being labelled correctly.
 
 **1.3.5**: Fixed bug that caused erroneous information in the "Works in this Corpus" sidebar. Added sorting of works in listing so all versions and exemplars are together (as opposed to appearing in whatever order their `#!ctsdata` appears in the CEX).
