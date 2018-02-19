@@ -295,7 +295,15 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 			NGController.returnCorpusScope match {
 					case Some(urn:CtsUrn) => {
 						val tempVector = NGModel.getUrnsForNGram(urn, s,ignorePunc)
-						val tempCorpus = O2Model.textRepository.corpus ~~ tempVector
+
+						//val tempCorpus:Corpus = O2Model.textRepository.corpus ~~ tempVector
+						val corpora = for (tv <- tempVector) yield {
+							val thisNode:Vector[CitableNode] = O2Model.textRepository.corpus.nodes.filter(_.urn == tv).toVector
+							thisNode	
+						}
+						val tempCorpus:Corpus = Corpus(corpora.flatten)
+
+
 						for ( n <- tempCorpus.nodes) {
 								NGModel.citationResults.value += NGModel.SearchResult(Var(n.urn), Var(n.kwic(s,30)))
 						}

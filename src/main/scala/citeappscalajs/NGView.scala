@@ -186,14 +186,14 @@ def nGramForm = {
 	<option value="8">8</option>
 	<option value="9">9</option>
 	</select>
-	<label for="ngram_minOccurrances">Occurs</label>
+	<label for="ngram_minOccurrances"> Occurs &gt; </label>
 	<input
 	id="ngram_minOccurrances"
 	type="text"
 	size={ 4 }
 	value={ NGModel.nGramThreshold.bind.toString }
 	onchange={ event: Event => NGController.validateThresholdEntry( event )}
-	/>
+	/> <span>times</span>
 	<br/>
 
 	<label for="ng_ngram_filterStringField">Filter String</label>
