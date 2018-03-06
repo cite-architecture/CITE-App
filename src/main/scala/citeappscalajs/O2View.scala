@@ -168,7 +168,6 @@ def citedWorksContainer = {
 	<ul>
 	{
 		for (urn <- O2Model.citedWorks) yield {
-			g.console.log(s"Adding URN to list: ${urn}")
 			<li>
 			{ workUrnSpan( urn, O2Model.textRepository.catalog.label(urn) ).bind }
 			<br/>( { O2Model.textRepository.catalog.entriesForUrn(urn)(0).citationScheme  } )

@@ -1,5 +1,7 @@
 # Release notes
 
+**1.3.9**: Fixed bug that prevented previous-search menu from activating on the "Explore Texts" tab.
+
 **1.3.8**: Improved UI for NGram threshold. Fixed bug where NGram URNs would get returned for every exemplar of an edition, and they should not have been.
 
 **1.3.7**: Improved UI for Exploring. Using OHCO2 Library 10.4.2, which fixes bugs in labelling works in Catalogs, and in delivering first-node URNs for corpora.

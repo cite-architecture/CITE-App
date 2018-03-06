@@ -43,9 +43,13 @@ object NGView {
 def previousSearchMenu = {
 	<div
 		class={
-			{ if (NGModel.pastQueries.value.size < 1) { "dropdown empty" } else {"dropdown"} }
+			{ if (NGModel.pastQueries.bind.size < 1) { 
+				"dropdown empty" 
+			} else {
+				"dropdown"
+			} 
 		}
-
+	}
 	>
 			<span>Previous Searches</span>
 			{ NGView.previousSearches.bind }
@@ -347,7 +351,6 @@ def citationResultsList = {
 			for (ng <- NGModel.citationResults) yield {
 				<li>
 				{
-					g.console.log(s"urn: ${ng.urn.value}")
 					val s:String = s"${O2Model.textRepository.catalog.label(ng.urn.value.dropPassage)}, ${ng.urn.value.passageComponent}"
 
 					passageUrnSpan( ng.urn.value, s ).bind
