@@ -11,6 +11,7 @@ import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.concurrent._
+import scala.scalajs.js.Dynamic.{ global => g }
 //import ExecutionContext.Implicits.global
 import monix.execution.Scheduler.Implicits.global
 import monix.eval._
@@ -42,9 +43,13 @@ object NGView {
 def previousSearchMenu = {
 	<div
 		class={
-			{ if (NGModel.pastQueries.value.size < 1) { "dropdown empty" } else {"dropdown"} }
+			{ if (NGModel.pastQueries.bind.size < 1) { 
+				"dropdown empty" 
+			} else {
+				"dropdown"
+			} 
 		}
-
+	}
 	>
 			<span>Previous Searches</span>
 			{ NGView.previousSearches.bind }
@@ -85,6 +90,7 @@ def previousSearches = {
 def citedWorksContainer = {
 	<div id="ngram_citedWorksContainer">
 	<h2>Works in this Corpus</h2>
+	<p>(Click text to select it for exploring.)</p>
 	<ul>
 	{
 		for (urn <- NGModel.citedWorks) yield {
@@ -133,8 +139,8 @@ def passageUrnSpan(urn:CtsUrn, s:String) = {
 
 		<div id="ngram_sidebar" class="app_sidebarDiv">
 		{ NGView.previousSearchMenu.bind }
-		{ NGView.toolsContainer.bind }
 		{ NGView.citedWorksContainer.bind }
+		{ NGView.toolsContainer.bind }
 		</div>
 
 		{ nGmessageDiv.bind }
@@ -184,14 +190,14 @@ def nGramForm = {
 	<option value="8">8</option>
 	<option value="9">9</option>
 	</select>
-	<label for="ngram_minOccurrances">Occurs</label>
+	<label for="ngram_minOccurrances"> Occurs &gt; </label>
 	<input
 	id="ngram_minOccurrances"
 	type="text"
 	size={ 4 }
 	value={ NGModel.nGramThreshold.bind.toString }
 	onchange={ event: Event => NGController.validateThresholdEntry( event )}
-	/>
+	/> <span>times</span>
 	<br/>
 
 	<label for="ng_ngram_filterStringField">Filter String</label>
@@ -286,7 +292,7 @@ def tokenSearchForm = {
 def nGramSpace = {
 	<div id="ngram_container"
 	class={
-		if (NGModel.nGramResults.length == 0){
+		if (NGModel.nGramResults.bind.length == 0){
 			"app_hidden"
 		} else {
 			"app_visible"
@@ -345,7 +351,7 @@ def citationResultsList = {
 			for (ng <- NGModel.citationResults) yield {
 				<li>
 				{
-					val s:String = s"${O2Model.textRepository.catalog.label(ng.urn.value)}, ${ng.urn.value.passageComponent}"
+					val s:String = s"${O2Model.textRepository.catalog.label(ng.urn.value.dropPassage)}, ${ng.urn.value.passageComponent}"
 
 					passageUrnSpan( ng.urn.value, s ).bind
 				}

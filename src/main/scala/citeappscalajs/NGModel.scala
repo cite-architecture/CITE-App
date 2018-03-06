@@ -78,6 +78,7 @@ object NGModel {
 	val nGramThreshold = Var(3)
 
 	val nGramResults = Vars.empty[StringCount]
+	
 	val nGramQueryReport = Var("")
 	val otherQueryReport = Var("")
 
@@ -160,7 +161,6 @@ def findString(urn:CtsUrn, s:String):Corpus = {
 }
 
 def findString(s:String):Corpus = {
-		g.console.log(s"findString with whole corpus")
 		val foundCorpus = O2Model.textRepository.corpus.find(s)
 		foundCorpus
 }

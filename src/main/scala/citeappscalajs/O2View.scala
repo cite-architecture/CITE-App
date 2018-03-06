@@ -10,6 +10,7 @@ import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
+import scala.scalajs.js.Dynamic.{ global => g }
 import scala.concurrent._
 //import ExecutionContext.Implicits.global
 

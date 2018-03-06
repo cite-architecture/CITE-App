@@ -179,13 +179,11 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 		q.urn match {
 			case Some(urn) => {
 				for ( sc <- NGModel.getNGram(urn, q.fs, q.n, q.t, q.ip).histogram ) {
-					g.console.log(sc.toString)
 					NGModel.nGramResults.value += sc
 				}
 			}
 			case _ => {
 				for ( sc <- NGModel.getNGram(q.fs, q.n, q.t, q.ip).histogram ) {
-					g.console.log(sc.toString)
 					NGModel.nGramResults.value += sc
 				}
 			}
@@ -295,7 +293,15 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 			NGController.returnCorpusScope match {
 					case Some(urn:CtsUrn) => {
 						val tempVector = NGModel.getUrnsForNGram(urn, s,ignorePunc)
-						val tempCorpus = O2Model.textRepository.corpus ~~ tempVector
+
+						//val tempCorpus:Corpus = O2Model.textRepository.corpus ~~ tempVector
+						val corpora = for (tv <- tempVector) yield {
+							val thisNode:Vector[CitableNode] = O2Model.textRepository.corpus.nodes.filter(_.urn == tv).toVector
+							thisNode	
+						}
+						val tempCorpus:Corpus = Corpus(corpora.flatten)
+
+
 						for ( n <- tempCorpus.nodes) {
 								NGModel.citationResults.value += NGModel.SearchResult(Var(n.urn), Var(n.kwic(s,30)))
 						}
