@@ -36,7 +36,7 @@ object O2Model {
 	val userAlert = Var("default")
 	val userMessageVisibility = Var("app_hidden")
 
-	var textRepository: TextRepository = null
+	val textRepo = Var[Option[TextRepository]](None)
 	val citedWorks = Vars.empty[CtsUrn]
 
 	val currentNext = Var[Option[CtsUrn]](None)
@@ -46,17 +46,17 @@ object O2Model {
 	/* Some methods for working the model */
 	def versionsForUrn(urn:CtsUrn):Int = {
 		var versions = 0
-		if (O2Model.textRepository != null){
+		if (O2Model.textRepo.value != None){
 				val s = s"urn:cts:${urn.namespace}:${urn.textGroup}.${urn.work}:"
-				val versionVector = O2Model.textRepository.catalog.entriesForUrn(CtsUrn(s))
+				val versionVector = O2Model.textRepo.value.get.catalog.entriesForUrn(CtsUrn(s))
 				versions = versionVector.size
 		}
 		versions
 	}
 
 	def getPrevNextUrn(urn:CtsUrn):Unit = {
-		O2Model.currentPrev.value = O2Model.textRepository.corpus.prevUrn(urn)
-		O2Model.currentNext.value = O2Model.textRepository.corpus.nextUrn(urn)
+		O2Model.currentPrev.value = O2Model.textRepo.value.get.corpus.prevUrn(urn)
+		O2Model.currentNext.value = O2Model.textRepo.value.get.corpus.nextUrn(urn)
 	}
 
 	def collapseToWorkUrn(urn:CtsUrn):CtsUrn = {
@@ -77,7 +77,7 @@ object O2Model {
 
 	@dom
 	def displayPassage(newUrn: CtsUrn):Unit = {
-		val tempCorpus: Corpus = O2Model.textRepository.corpus >= newUrn
+		val tempCorpus: Corpus = O2Model.textRepo.value.get.corpus >= newUrn
 		O2Model.currentCitableNodes.value = tempCorpus.size
 		//O2Model.passage.get.clear
 		O2Model.xmlPassage.innerHTML = ""
@@ -93,7 +93,7 @@ object O2Model {
 				var descEl = ""
 				if (cn.urn.dropPassage.toString != currentVersionUrnStr ){
 					currentVersionUrnStr = cn.urn.dropPassage.toString
-					val desc = O2Model.textRepository.catalog.label(cn.urn)
+					val desc = O2Model.textRepo.value.get.catalog.label(cn.urn)
 					descEl = s"""<span class="o2_versionDescription ltr">${desc} : ${cn.urn.dropPassage.toString}</span>"""
 				}
 				val citString:String = s"""<span class="o2_passageUrn">${cn.urn.passageComponent}</span>"""
@@ -137,7 +137,7 @@ def checkForRTL(s:String):Boolean = {
 	@dom
 	def updateCitedWorks = {
 		O2Model.citedWorks.value.clear
-		for ( cw <- O2Model.textRepository.corpus.citedWorks){
+		for ( cw <- O2Model.textRepo.value.get.corpus.citedWorks){
 			O2Model.citedWorks.value += cw
 		}
 	}

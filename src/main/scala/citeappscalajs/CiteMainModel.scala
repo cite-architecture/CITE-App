@@ -36,5 +36,6 @@ object CiteMainModel {
 
 		val showTexts = Var(true)
 		val showNg = Var(true)
+		val showCollections = Var(true)
 
 }

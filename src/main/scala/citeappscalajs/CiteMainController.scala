@@ -100,7 +100,7 @@ object CiteMainController {
 	}
 
 	def clearRepositories:Unit = {
-		O2Model.textRepository = null
+		O2Model.textRepo.value = None
 	}
 
 
@@ -123,9 +123,9 @@ object CiteMainController {
 					CiteMainModel.showTexts.value = true
 					CiteMainModel.showNg.value = true
 					CiteMainModel.currentLibraryMetadataString.value = mdString
-					O2Model.textRepository = tr
-					CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepository.catalog.size } works. ",0)
-					loadMessage += s"Updated text repository: ${ O2Model.textRepository.catalog.size } works. "
+					O2Model.textRepo.value = Some(tr)
+					CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepo.value.get.catalog.size } works. ",0)
+					loadMessage += s"Updated text repository: ${ O2Model.textRepo.value.get.catalog.size } works. "
 					O2Model.updateCitedWorks
 					NGModel.updateCitedWorks
 					NGController.clearResults
@@ -137,6 +137,18 @@ object CiteMainController {
 				}
 				case None => {
 					loadMessage += "No texts. "
+				}
+			}
+
+			repo.collectionRepository match {
+				case Some(cr) => {
+					val numCollections:Int = cr.collections.size
+					val numObjects:Int = cr.citableObjects.size
+					loadMessage += s" ${numCollections} collections. ${numObjects} objects. "
+					ObjectModel.collRep.value	= Some(cr)			
+				}
+				case None => {
+					loadMessage += "No Collections. "	
 				}
 			}
 

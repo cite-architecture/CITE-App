@@ -128,15 +128,15 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 		var tempCorpus:Corpus = null
 		var foundCorpus:Corpus = null
 
-		if (O2Model.textRepository == null){
+		if (O2Model.textRepo.value == None){
 			NGController.updateUserMessage("No library loaded.",2)
 		} else {
 		q.urn match {
 			case Some(urn) => {
-					tempCorpus = O2Model.textRepository.corpus ~~ NGModel.urn.value
+					tempCorpus = O2Model.textRepo.value.get.corpus ~~ NGModel.urn.value
 				}
 				case _ => {
-					tempCorpus = O2Model.textRepository.corpus
+					tempCorpus = O2Model.textRepo.value.get.corpus
 			}
 		}
 	}
@@ -225,7 +225,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 
 	def nGramQuery:Unit = {
 		val newQuery = NGController.constructNGramQueryObject
-		if (O2Model.textRepository == null){
+		if (O2Model.textRepo.value == None){
 			NGController.updateUserMessage("No library loaded.",2)
 		} else {
 			NGModel.pastQueries.value += newQuery
@@ -235,7 +235,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 
 	def tokenSearchQuery:Unit = {
 		val newQuery = NGController.constructTokenSearchObject
-		if (O2Model.textRepository == null){
+		if (O2Model.textRepo.value == None){
 			NGController.updateUserMessage("No library loaded.",2)
 		} else {
 			NGModel.pastQueries.value += newQuery
@@ -248,7 +248,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 	def stringSearchQuery:Unit = {
 		val newQuery = NGController.constructStringSearchObject
 
-		if (O2Model.textRepository == null){
+		if (O2Model.textRepo.value == None){
 			NGController.updateUserMessage("No library loaded.",2)
 		} else {
 			NGModel.pastQueries.value += newQuery
@@ -284,7 +284,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 		var corpusOrUrn:String = ""
 		NGController.updateUserMessage("Getting N-Grams. Please be patient…",0)
 
-		if (O2Model.textRepository == null){
+		if (O2Model.textRepo.value == None){
 			NGController.updateUserMessage("No library loaded.",2)
 		} else {
 			NGModel.citationResults.value.clear
@@ -296,7 +296,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 
 						//val tempCorpus:Corpus = O2Model.textRepository.corpus ~~ tempVector
 						val corpora = for (tv <- tempVector) yield {
-							val thisNode:Vector[CitableNode] = O2Model.textRepository.corpus.nodes.filter(_.urn == tv).toVector
+							val thisNode:Vector[CitableNode] = O2Model.textRepo.value.get.corpus.nodes.filter(_.urn == tv).toVector
 							thisNode	
 						}
 						val tempCorpus:Corpus = Corpus(corpora.flatten)
@@ -308,7 +308,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 					}
 					case None => {
 						val tempVector = NGModel.getUrnsForNGram(s,ignorePunc)
-						val tempCorpus = O2Model.textRepository.corpus ~~ tempVector
+						val tempCorpus = O2Model.textRepo.value.get.corpus ~~ tempVector
 						for ( n <- tempCorpus.nodes) {
 								NGModel.citationResults.value += NGModel.SearchResult(Var(n.urn), Var(n.kwic(s,30)))
 						}
@@ -339,7 +339,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 
 	@dom
 	def preloadUrn = {
-		NGModel.urn.value = O2Model.textRepository.corpus.firstNode(O2Model.textRepository.corpus.citedWorks(0)).urn
+		NGModel.urn.value = O2Model.textRepo.value.get.corpus.firstNode(O2Model.textRepo.value.get.corpus.citedWorks(0)).urn
 		NGModel.updateShortWorkLabel
 	}
 

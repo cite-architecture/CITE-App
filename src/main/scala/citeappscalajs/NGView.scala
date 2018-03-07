@@ -95,7 +95,7 @@ def citedWorksContainer = {
 	{
 		for (urn <- NGModel.citedWorks) yield {
 			<li>
-			{ workUrnSpan( urn, O2Model.textRepository.catalog.label(urn) ).bind }
+			{ workUrnSpan( urn, O2Model.textRepo.value.get.catalog.label(urn) ).bind }
 			</li>
 		}
 	}
@@ -351,7 +351,7 @@ def citationResultsList = {
 			for (ng <- NGModel.citationResults) yield {
 				<li>
 				{
-					val s:String = s"${O2Model.textRepository.catalog.label(ng.urn.value.dropPassage)}, ${ng.urn.value.passageComponent}"
+					val s:String = s"${O2Model.textRepo.value.get.catalog.label(ng.urn.value.dropPassage)}, ${ng.urn.value.passageComponent}"
 
 					passageUrnSpan( ng.urn.value, s ).bind
 				}

@@ -22,6 +22,7 @@ object CiteMainView {
 
 	val textView = O2View.o2div
 	val ngramView = NGView.nGdiv
+	val objectView = ObjectView.objectDiv
 
 
 
@@ -90,7 +91,19 @@ object CiteMainView {
 						</div>
 				</div>
 
-
+				<div id="app_tab_collections"
+					class={
+							CiteMainModel.showCollections.bind match {
+								case true => "app_visible app_tab"
+								case _ => "app_hidden app_tab"
+							}
+					}>
+					<input type="radio" id="tab-3" name="tab-group-1" checked={ false }/>
+					<label class="tab_label" for="tab-3">Collections</label>
+						<div class="content">
+						 { objectView.bind }
+						</div>
+				</div>
 
 			</div>
 		</article>

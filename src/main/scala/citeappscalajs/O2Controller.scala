@@ -118,7 +118,7 @@ object O2Controller {
 
 
 	def insertFirstNodeUrn(urn: CtsUrn): Unit = {
-		val firstUrn = O2Model.textRepository.corpus.firstNode(urn).urn
+		val firstUrn = O2Model.textRepo.value.get.corpus.firstNode(urn).urn
 		js.Dynamic.global.document.getElementById("o2_urnInput").value = firstUrn.toString
 		validUrnInField.value = true
 	}
@@ -126,7 +126,7 @@ object O2Controller {
 
 	@dom
 	def preloadUrn = {
-		O2Model.urn.value = O2Model.textRepository.corpus.firstNode(O2Model.textRepository.corpus.citedWorks(0)).urn
+		O2Model.urn.value = O2Model.textRepo.value.get.corpus.firstNode(O2Model.textRepo.value.get.corpus.citedWorks(0)).urn
 		O2Controller.validUrnInField.value = true
 	}
 
