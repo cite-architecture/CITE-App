@@ -1,5 +1,7 @@
 # Release notes
 
+**1.4.0**: Added Objects Tab for viewing and querying CITE Collections.
+
 **1.3.10**: Updated dependencies.
 
 **1.3.9**: Fixed bug that prevented previous-search menu from activating on the "Explore Texts" tab.
