@@ -1,5 +1,7 @@
 # Release notes
 
+**1.3.10**: Updated dependencies.
+
 **1.3.9**: Fixed bug that prevented previous-search menu from activating on the "Explore Texts" tab.
 
 **1.3.8**: Improved UI for NGram threshold. Fixed bug where NGram URNs would get returned for every exemplar of an edition, and they should not have been.

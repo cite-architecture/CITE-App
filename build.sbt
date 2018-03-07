@@ -2,7 +2,7 @@ enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
 name := "citeapp"
 
-version := "1.3.9"
+version := "1.3.10"
 
 scalaVersion := "2.12.3"
 
@@ -14,12 +14,12 @@ libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
   "org.scala-js" %%% "scalajs-dom" % "0.9.2",
   "io.monix" %%% "monix" % "2.3.0",
-  "edu.holycross.shot.cite" %%% "xcite" % "3.2.2" from "file:///cite/scala/unmanaged_jars/xcite_sjs0.6_2.12-3.2.2.jar",
-  "edu.holycross.shot" %%% "ohco2" % "10.4.3" from "file:///cite/scala/unmanaged_jars/ohco2_sjs0.6_2.12-10.4.3.jar",
-  "edu.holycross.shot" %%% "scm" % "5.1.10" from "file:///cite/scala/unmanaged_jars/scm_sjs0.6_2.12-5.1.10.jar",
-  "edu.holycross.shot" %%% "citeobj" % "5.0.1" from "file:///cite/scala/unmanaged_jars/citeobj_sjs0.6_2.12-5.2.0.jar",
-  "edu.holycross.shot" %%% "citerelations" % "2.0.1" from "file:///cite/scala/unmanaged_jars/citerelations_sjs0.6_2.12-2.0.1.jar",
-  "edu.holycross.shot" %%% "citebinaryimage" % "1.0.0" from "file:///cite/scala/unmanaged_jars/citebinaryimage_sjs0.6_2.12-1.0.0.jar",
+  "edu.holycross.shot.cite" %%% "xcite" % "3.2.2",
+  "edu.holycross.shot" %%% "ohco2" % "10.4.3",
+  "edu.holycross.shot" %%% "scm" % "5.3.0",
+  "edu.holycross.shot" %%% "citeobj" % "5.2.3",
+  "edu.holycross.shot" %%% "citerelations" % "2.0.1",
+  "edu.holycross.shot" %%% "citebinaryimage" % "1.0.1",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
 )
 
