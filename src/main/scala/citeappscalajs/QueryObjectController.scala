@@ -59,7 +59,8 @@ object QueryObjectController {
 
 
 	def initQuery:Unit = {
-
+		// Clear URN field
+		js.Dynamic.global.document.getElementById("object_urnInput").value = ""
 		try {
 			QueryObjectModel.selectedPropertyType.value match {
 				case Some(StringType) => initStringSearch

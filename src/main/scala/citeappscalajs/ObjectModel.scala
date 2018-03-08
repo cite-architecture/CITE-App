@@ -136,16 +136,20 @@ object ObjectModel {
 		ObjectModel.objectOrCollection.value match {
 			case "object" => {
 				if (isOrdered.value) {
+					g.console.log(s"working with object.")
 					val currentColl:Cite2Urn = urn.value.get.dropSelector
+					g.console.log(s"currentColll: ${currentColl}")
 					val thisIndex = collRep.value.get.indexOf(boundObjects.value(0))
+					g.console.log(s"thisIndex: ${thisIndex}")
 					val numInCollection:Int = collRep.value.get.objectsForCollection(currentColl).size
+					g.console.log(s"numInCollection: ${numInCollection}")
 					if (thisIndex + 1 < numInCollection){
-							currentNext.value = Option(Some(collRep.value.get.citableObjects(thisIndex + 1).urn),offset.value,limit.value)
+							currentNext.value = Option(Some(collRep.value.get.objectsForCollection(currentColl)(thisIndex + 1).urn),offset.value,limit.value)
 					} else {
 						currentNext.value = None
 					}
 					if (thisIndex > 0){
-							currentPrev.value = Option(Some(collRep.value.get.citableObjects(thisIndex - 1).urn),offset.value,limit.value)
+							currentPrev.value = Option(Some(collRep.value.get.objectsForCollection(currentColl)(thisIndex - 1).urn),offset.value,limit.value)
 					} else {
 						currentPrev.value = None
 					}

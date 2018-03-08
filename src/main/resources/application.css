@@ -577,6 +577,7 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 }
 
 .app_reportingCurrentUrn {
+	height: 1em;
 	font-size: 80%;
 	color: #777;
 	padding-top: 0;

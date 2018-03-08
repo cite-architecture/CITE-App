@@ -89,13 +89,14 @@ object CiteMainController {
 
 	def hideTabs:Unit = {
 
-	  CiteMainModel.showTexts.value = true
-	  CiteMainModel.showNg.value = true
+	  CiteMainModel.showTexts.value = false 
+	  CiteMainModel.showNg.value = false
+	  CiteMainModel.showCollections.value = false
 	}
 
 	def checkDefaultTab:Unit = {
 		if (CiteMainModel.showTexts.value) {
-			js.Dynamic.global.document.getElementById("tab-1").checked = true
+			js.Dynamic.global.document.getElementById("tab-3").checked = true
 		} 
 	}
 
@@ -142,10 +143,12 @@ object CiteMainController {
 
 			repo.collectionRepository match {
 				case Some(cr) => {
+					CiteMainModel.showCollections.value = true
 					val numCollections:Int = cr.collections.size
 					val numObjects:Int = cr.citableObjects.size
 					loadMessage += s" ${numCollections} collections. ${numObjects} objects. "
 					ObjectModel.collRep.value	= Some(cr)			
+					ObjectModel.updateCollections
 				}
 				case None => {
 					loadMessage += "No Collections. "	
