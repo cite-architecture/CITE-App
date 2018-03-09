@@ -237,7 +237,7 @@ def renderObjects = {
 @dom def renderCiteUrnProperty(propUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 <p>
 	{ s"${propVal.toString}" }
-	{ "CiteLinks.objectLinks(propUrn, propVal).bind" }
+	{ DataModelView.objectLinks(propUrn, propVal).bind }
 </p>
 }
 
@@ -248,7 +248,7 @@ def renderObjects = {
 	<td>{
 		p.propertyType.value match {
 			case Cite2UrnType =>{ <p>{ ObjectView.renderCiteUrnProperty(Some(p.urn.value),Cite2Urn(p.propertyValue.value)).bind }</p>}
-			case CtsUrnType =>{ <p>{ "CiteLinks.textLinks(CtsUrn(p.propertyValue.value)).bind" }</p>}
+			case CtsUrnType =>{ <p>{ DataModelView.textLinks(CtsUrn(p.propertyValue.value)).bind }</p>}
 			case _ =>{ <p>{ s"${p.propertyValue.bind.toString}"}</p>}
 		}
 

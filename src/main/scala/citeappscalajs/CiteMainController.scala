@@ -82,10 +82,12 @@ object CiteMainController {
 		}
 	}
 
+	/*
 	def retrieveTextPassage(urn:CtsUrn):Unit = {
 			O2Controller.changeUrn(urn)
 			js.Dynamic.global.document.getElementById("tab-1").checked = true
 	}
+	*/
 
 	def hideTabs:Unit = {
 
@@ -153,6 +155,13 @@ object CiteMainController {
 				case None => {
 					loadMessage += "No Collections. "	
 				}
+			}
+
+			repo.dataModels match {
+				case Some(dm) => {
+					DataModelModel.dataModels.value = Some(dm)
+				}
+				case None => { DataModelModel.dataModels.value = None }
 			}
 
 			checkDefaultTab
