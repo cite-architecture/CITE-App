@@ -137,7 +137,7 @@ object ObjectController {
 						ObjectModel.getObjects(tempUrn)
 					}
 					case _ => {
-						g.console.log("Nothing to change.")
+						//g.console.log("Nothing to change.")
 					}
 			}
 		ObjectController.setDisplay
@@ -236,7 +236,7 @@ object ObjectController {
 
 	@dom
 	def getNext:Unit = {
-		g.console.log(s"currentNext: ${ObjectModel.currentNext.value.toString}")
+		//g.console.log(s"currentNext: ${ObjectModel.currentNext.value.toString}")
 		ObjectModel.currentNext.value match {
 			case Some(u) => {
 				val no:Int = u._2
@@ -267,7 +267,7 @@ object ObjectController {
 
 	@dom
 	def getPrev:Unit = {
-		g.console.log(s"currentPrev: ${ObjectModel.currentPrev.value.toString}")
+		//g.console.log(s"currentPrev: ${ObjectModel.currentPrev.value.toString}")
 		ObjectModel.currentPrev.value match {
 			case Some(u) => {
 				val no:Int = u._2

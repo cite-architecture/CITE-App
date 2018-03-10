@@ -26,16 +26,21 @@ import scala.scalajs.js.annotation.JSExport
 @JSExportTopLevel("citeapp.DataModelModel")
 object DataModelModel {
 
-	val implementedDataModels:Vector[Cite2Urn] = Vector()
-
-	/* 
-	urn:cite2:cite:datamodels.v1:imagemodel
-	urn:cite2:cite:datamodels.v1:binaryimg
-	urn:cite2:cite:datamodels.v1:tbsmodel
-	urn:cite2:cite:datamodels.v1:dse
-	*/
-
+	var implementedDataModels:Vector[Cite2Urn] = Vector(
+		// Defines a basic citable image model
+		Cite2Urn("urn:cite2:cite:datamodels.v1:imagemodel"),
+		// Defines an image that can be delivered as binary image data
+		Cite2Urn("urn:cite2:cite:datamodels.v1:binaryimg"),
+		// Defines a "codex model" of ordered text-bearing surfaces
+		Cite2Urn("urn:cite2:cite:datamodels.v1:tbsmodel"),
+		// Defines a "documented scholarly editions" model of surface + image + text
+		Cite2Urn("urn:cite2:cite:datamodels.v1:dse"),
+	)
 
 	val dataModels = Var[Option[Vector[DataModel]]](None)
+
+	def clearDataModels:Unit = {
+		DataModelModel.dataModels.value = None
+	}
 
 }

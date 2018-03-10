@@ -37,7 +37,25 @@ object CiteMainView {
 				type="file"
 				onchange={ event: Event => CiteMainController.loadLocalLibrary( event )}
 				></input>
+				{ imageLocalRemoteSwitch.bind }
 		</span>
+	}
+
+	// *** Apropos Microservice ***
+	@dom
+	def imageLocalRemoteSwitch = {
+			<div id="imageSourceSwitchContainer">
+				Image Source:
+				<div class="onoffswitch">
+				    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="citeMain_localImageSwitch" checked={CiteBinaryImageModel.imgUseLocal.bind}
+						onchange={ event: Event => CiteBinaryImageController.setPreferredImageSource}
+						/>
+				    <label class="onoffswitch-label" for="citeMain_localImageSwitch">
+				        <span class="image_onoffswitch-inner onoffswitch-inner"></span>
+				        <span class="image_onoffswitch-switch onoffswitch-switch"></span>
+				    </label>
+				</div>
+			</div>
 	}
 
 

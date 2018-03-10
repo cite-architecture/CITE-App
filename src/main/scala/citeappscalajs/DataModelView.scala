@@ -30,6 +30,7 @@ object DataModelView {
 def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 	<ul class="citeLinks_linksList">
 		{ DataModelView.objectLinkItem(contextUrn, propVal).bind }
+		{ DataModelView.imageLinkItem(contextUrn, propVal).bind }
 	</ul>
 }
 
@@ -64,7 +65,7 @@ def textLinkItem(u:CtsUrn) = {
 
 @dom
 	def objectLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn) = {
-		g.console.log("CiteLinks objectLinkItem")
+		//g.console.log("CiteLinks objectLinkItem")
 		DataModelController.hasObject(propVal) match {
 			case true => {
 				<li class="citeLinks_linkItem">
@@ -77,6 +78,27 @@ def textLinkItem(u:CtsUrn) = {
 				<li class="citeLinks_linkItem">Object not in Library</li>
 			}
 		}
+	
 	}	
+
+	@dom
+	def imageLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn) = {
+		//g.console.log("CiteLinks objectLinkItem")
+		DataModelController.isBinaryImage(propVal) match {
+			case true => {
+				<li class="citeLinks_linkItem"><a onclick={ event: Event => {
+							DataModelController.viewImage(contextUrn,propVal)
+						}
+				} >View Image</a>
+				</li>
+			}
+			case _ => {
+				 <!-- empty content -->	
+			}
+		}
+	}	
+	
+
+
 
 }

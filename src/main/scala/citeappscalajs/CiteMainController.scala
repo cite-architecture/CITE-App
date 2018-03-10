@@ -25,6 +25,10 @@ import scala.scalajs.js.annotation.JSExport
 @JSExportTopLevel("citeapp.CiteMainController")
 object CiteMainController {
 
+
+	/* 
+		Initiate app with a URL to an online CEX file	
+	*/
 	@JSExport
 	def main(libUrl: String): Unit = {
 
@@ -37,6 +41,9 @@ object CiteMainController {
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
 
+	/*
+		Use AJAX request to get remote CEX file; update repository with CEX data
+	*/
 	def loadRemoteLibrary(url: String):Unit = {
 
 		val xhr = new XMLHttpRequest()
@@ -50,15 +57,11 @@ object CiteMainController {
 			}
 		}
 		xhr.send()
-
-		/* Ajax.get(url).onSuccess { case xhr =>
-		CiteMainController.updateUserMessage("Got remote library.",0)
-		val contents:String = xhr.responseText
-		CiteMainController.updateRepository(contents, libDelim, fieldDelim)
-	}
-	*/
 }
-
+	/*
+	 	Handles displaying messages to the user, color-coded according to type.
+	 	Fades after 10 seconds.		
+	*/
 	def updateUserMessage(msg: String, alert: Int): Unit = {
 		CiteMainModel.userMessageVisibility.value = "app_visible"
 		CiteMainModel.userMessage.value = msg
@@ -71,7 +74,9 @@ object CiteMainController {
 		CiteMainModel.msgTimer = js.timers.setTimeout(10000){ CiteMainModel.userMessageVisibility.value = "app_hidden" }
 	}
 
-
+	/*
+		Loads library from local CEX file; updates repository
+	*/
 	def loadLocalLibrary(e: Event):Unit = {
 		val reader = new org.scalajs.dom.raw.FileReader()
 		CiteMainController.updateUserMessage("Loading local library.",0)
@@ -83,12 +88,9 @@ object CiteMainController {
 	}
 
 	/*
-	def retrieveTextPassage(urn:CtsUrn):Unit = {
-			O2Controller.changeUrn(urn)
-			js.Dynamic.global.document.getElementById("tab-1").checked = true
-	}
+		Hide all tabs. Done initially. Tabs are shown based on the contexts
+		of the CEX library.
 	*/
-
 	def hideTabs:Unit = {
 
 	  CiteMainModel.showTexts.value = false 
@@ -96,14 +98,21 @@ object CiteMainController {
 	  CiteMainModel.showCollections.value = false
 	}
 
+	/*
+		Which tabe should be shown by default upon library load.
+	*/
 	def checkDefaultTab:Unit = {
 		if (CiteMainModel.showTexts.value) {
 			js.Dynamic.global.document.getElementById("tab-3").checked = true
 		} 
 	}
 
+	/*
+			Clear all data.
+	*/
 	def clearRepositories:Unit = {
 		O2Model.textRepo.value = None
+		ObjectModel.collRep.value = None
 	}
 
 
