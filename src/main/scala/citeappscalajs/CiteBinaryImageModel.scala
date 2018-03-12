@@ -26,7 +26,18 @@ import js.annotation._
 @JSExportTopLevel("citeapp.CiteBinaryImageModel")
 object CiteBinaryImageModel {
 
+	// URNs for implemented Image models
+	val binaryImgModelUrn:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:binaryimg")
+
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
+
+	// any binary image implemented?
+	val hasBinaryImages = Var[Boolean](false)	
+	val binaryImageCollections = Var[Option[Vector[Cite2Urn]]](None)
+
+	// which protocols are implemented in this CEX?
+	val hasIiifApi = Var[Boolean](false)
+	val hasLocalDeepZoom = Var[Boolean](false)
 
 	// urn is what the user requested
 	val urn = Var[Option[Cite2Urn]](None)

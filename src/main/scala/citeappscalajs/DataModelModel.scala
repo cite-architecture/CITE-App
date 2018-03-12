@@ -32,9 +32,9 @@ object DataModelModel {
 		// Defines an image that can be delivered as binary image data
 		Cite2Urn("urn:cite2:cite:datamodels.v1:binaryimg"),
 		// Defines a "codex model" of ordered text-bearing surfaces
-		Cite2Urn("urn:cite2:cite:datamodels.v1:tbsmodel"),
+		//Cite2Urn("urn:cite2:cite:datamodels.v1:tbsmodel"),
 		// Defines a "documented scholarly editions" model of surface + image + text
-		Cite2Urn("urn:cite2:cite:datamodels.v1:dse"),
+		//Cite2Urn("urn:cite2:cite:datamodels.v1:dse"),
 	)
 
 	val dataModels = Var[Option[Vector[DataModel]]](None)
@@ -42,5 +42,6 @@ object DataModelModel {
 	def clearDataModels:Unit = {
 		DataModelModel.dataModels.value = None
 	}
+
 
 }

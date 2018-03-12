@@ -113,6 +113,7 @@ object CiteMainController {
 	def clearRepositories:Unit = {
 		O2Model.textRepo.value = None
 		ObjectModel.collRep.value = None
+		CiteMainModel.mainLibrary.value = None
 	}
 
 
@@ -129,6 +130,8 @@ object CiteMainController {
 			val repo:CiteLibrary = CiteLibrary(cexString, CiteMainModel.cexMainDelimiter, CiteMainModel.cexSecondaryDelimiter)
 			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
 			var loadMessage:String = ""
+
+			CiteMainModel.mainLibrary.value = Some(repo)
 
 			repo.textRepository match {
 				case Some(tr) => {

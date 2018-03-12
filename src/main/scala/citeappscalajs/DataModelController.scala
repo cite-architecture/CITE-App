@@ -26,6 +26,7 @@ import scala.scalajs.js.annotation.JSExport
 @JSExportTopLevel("citeapp.DataModelController")
 object DataModelController {
 
+
 	// Checks to see if a text is present in the currently loaded library
 	// Will match with ~~ similarity
 	// *** ALERT *** for testing, I'm turning all of these into work-level URNs.

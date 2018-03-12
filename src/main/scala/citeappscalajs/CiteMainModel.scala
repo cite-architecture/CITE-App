@@ -14,6 +14,8 @@ import scala.concurrent
 import scala.scalajs.js
 import scala.scalajs.js._
 import js.annotation._
+import edu.holycross.shot.scm._
+
 
 @JSExportTopLevel("citeapp.CiteMainModel")
 object CiteMainModel {
@@ -37,5 +39,6 @@ object CiteMainModel {
 		val showTexts = Var(true)
 		val showNg = Var(true)
 		val showCollections = Var(true)
+		val mainLibrary = Var[Option[CiteLibrary]](None)
 
 }
