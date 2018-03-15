@@ -26,6 +26,36 @@ import scala.scalajs.js.annotation.JSExport
 @JSExportTopLevel("citeapp.DataModelController")
 object DataModelController {
 
+	// Clear Data Models
+	def clearDataModels:Unit = {
+		DataModelModel.dataModels.value = None
+		CiteBinaryImageModel.hasBinaryImages.value = false
+		CiteBinaryImageModel.hasIiifApi.value = false
+		CiteBinaryImageModel.hasLocalDeepZoom.value = false
+	}
+
+	// Probably should be in CiteObj library?
+	// Given a collection URN and a property name, construct a property URN
+	def propertyUrnFromPropertyName(urn:Cite2Urn, propName:String):Cite2Urn = {
+		val returnUrn:Cite2Urn = {
+			urn.propertyOption match {
+				case Some(po) => urn // just return it!
+				case None => {
+					val collUrn:Cite2Urn = urn.dropSelector
+					val collUrnString:String = collUrn.toString.dropRight(1) // remove colon
+					urn.objectComponentOption match {
+						case Some(oc) => {
+							Cite2Urn(s"${collUrnString}.${propName}:${oc}")
+						}
+						case None => {
+							Cite2Urn(s"${collUrnString}.${propName}:")
+						}
+					}
+				}
+			}
+		}
+		returnUrn
+	}	
 
 	// Checks to see if a text is present in the currently loaded library
 	// Will match with ~~ similarity
@@ -86,32 +116,12 @@ object DataModelController {
 		}
 	}	
 
-		/* Check to see if the Binary Image datamodel is:
-			1. supported by this app
-			2. present in this library
-			3. implemented by the collection represented by `u`
-	*/
-	def isBinaryImage(u:Cite2Urn):Boolean ={
-		val collUrn:Cite2Urn = u.dropSelector
-		val binaryImageModelUrn:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:binaryimg")
-
-		DataModelModel.dataModels.value match {
-			case None => false
-			case Some(dms) => {
-				val implementations:Vector[DataModel] = dms.filter(_.model == binaryImageModelUrn).filter(_.collection == collUrn)	
-				implementations.size match {
-					case 0 => false
-					case _ => true
-				}	
-			}
-		}
-	}	
 
  	/*
 	Methods for switching tabs and loading text and objects
  	*/
 
-	def retrieveTextPassage(urn:CtsUrn):Unit = {
+	def retrieveTextPassage(contextUrn:Option[Cite2Urn] = None, urn:CtsUrn):Unit = {
 			O2Controller.changeUrn(urn)
 			js.Dynamic.global.document.getElementById("tab-1").checked = true
 	}

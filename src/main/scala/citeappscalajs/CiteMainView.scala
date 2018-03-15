@@ -44,10 +44,45 @@ object CiteMainView {
 	// *** Apropos Microservice ***
 	@dom
 	def imageLocalRemoteSwitch = {
-			<div id="imageSourceSwitchContainer">
+			<div id="imageSourceSwitchContainer" class={
+				CiteBinaryImageModel.hasBinaryImages.bind match {
+					case true => "app_visible"
+					case _ => "app_hidden"
+				}
+			}>
 				Image Source:
-				<div class="onoffswitch">
-				    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="citeMain_localImageSwitch" checked={CiteBinaryImageModel.imgUseLocal.bind}
+				<span class={
+					(CiteBinaryImageModel.hasIiifApi.bind && CiteBinaryImageModel.hasLocalDeepZoom.bind) match {
+				    		case true => "app_hidden"	
+				    		case false => "app_visible"	
+			    	}	
+				}>
+					<span class={ 
+						CiteBinaryImageModel.hasLocalDeepZoom.bind match {
+							case true => "app_visible"
+							case _ => "app_hidden"
+						}
+					}>Using Local Images</span>
+					<span class={ 
+						CiteBinaryImageModel.hasIiifApi.bind match {
+							case true => "app_visible"
+							case _ => "app_hidden"
+						}
+			  	   }>Using Remote Images</span>
+			  	</span>
+				<div class={
+						(CiteBinaryImageModel.hasIiifApi.bind && CiteBinaryImageModel.hasLocalDeepZoom.bind) match {
+					    		case true => "onoffswitch app_visible"	
+					    		case false => "onoffswitch app_hidden"	
+				    	}	
+					}>
+				    <input type="checkbox" name="onoffswitch" class={
+				    	
+				    	(CiteBinaryImageModel.hasIiifApi.bind && CiteBinaryImageModel.hasLocalDeepZoom.bind) match {
+				    		case true => "onoffswitch-checkbox app_visible"	
+				    		case false => "onoffswitch-checkbox app_hidden"	
+				    	}
+				    	} id="citeMain_localImageSwitch" checked={CiteBinaryImageModel.imgUseLocal.bind}
 						onchange={ event: Event => CiteBinaryImageController.setPreferredImageSource}
 						/>
 				    <label class="onoffswitch-label" for="citeMain_localImageSwitch">
@@ -120,6 +155,20 @@ object CiteMainView {
 					<label class="tab_label" for="tab-3">Collections</label>
 						<div class="content">
 						 { objectView.bind }
+						</div>
+				</div>
+
+				<div id="app_tab_images"
+					class={
+							CiteMainModel.showImages.bind match {
+								case true => "app_visible app_tab"
+								case _ => "app_hidden app_tab"
+							}
+					}>
+					<input type="radio" id="tab-4" name="tab-group-1" checked={ false }/>
+					<label class="tab_label" for="tab-4">Images</label>
+						<div class="content">
+						 <!-- { imageView.bind } -->
 						</div>
 				</div>
 

@@ -492,7 +492,7 @@ def previousQueryMenu = {
 	class={
 		{ if (QueryObjectModel.pastQueries.value.size == 0) { "dropdown empty" } else {"dropdown"} }
 	} >
-	<span>Previous Queries</span>
+	<span>History</span>
 	{ QueryObjectView.previousQueries.bind }
 	</div>
 }

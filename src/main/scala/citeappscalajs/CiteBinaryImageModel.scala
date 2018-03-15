@@ -14,6 +14,8 @@ import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
+import edu.holycross.shot.scm._
+import edu.holycross.shot.citebinaryimage._
 
 import scala.scalajs.js.annotation.JSExport
 import js.annotation._
@@ -27,7 +29,10 @@ import js.annotation._
 object CiteBinaryImageModel {
 
 	// URNs for implemented Image models
-	val binaryImgModelUrn:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:binaryimg")
+	val binaryImageModelUrn:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:binaryimg")
+	val protocolPropertyName:String = "protocol"
+	val iiifProtocolString:String = "iiifApi"
+	val dzProtocolString:String = "localDeepZoom"
 
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 
@@ -52,6 +57,8 @@ object CiteBinaryImageModel {
 	val userMessageVisibility = Var("app_hidden")
 
 	val imgUseLocal = Var[Boolean](true)
+
+	val imgArchivePath = Var[String]("")
 
 	/* 
 	An ImageROI object must have an Image URN. It may have a defined ROI, a mapped URN, and a group.

@@ -39,9 +39,6 @@ object DataModelModel {
 
 	val dataModels = Var[Option[Vector[DataModel]]](None)
 
-	def clearDataModels:Unit = {
-		DataModelModel.dataModels.value = None
-	}
 
 
 }

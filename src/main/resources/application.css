@@ -1,18 +1,22 @@
 /* CiteLinks */
 div#object_objectContainer ul.citeLinks_linksList, ul.citeLinks_linksList {
-	dislay: block;
+	display: block;
 	margin-top: 4px;
 	margin-bottom: 4px;
 }
 
-li.citeLinks_linkItem {
+li#image_imagePreviewDiv {
+	list-style: none;
+}
+
+li.citeLinks_linkItem, span.citeLinks_linkSpan {
 	display: inline;
 	list-style: none;
 	border-right: 1px solid silver;
 	padding:4px;
 }
 
-li.citeLinks_linkItem:nth-last-child(-n+1){
+li.citeLinks_linkItem:last-child, span.citeLinks_linkSpan:last-child{
 	border-right: none;
 }
 
@@ -22,6 +26,27 @@ li.citeLinks_linkItem:nth-child(1){
 
 
 /* Object Formatting */
+
+p#object_breadcrumbs {
+	padding: 0;	
+	font-size: 60%;
+	line-height: 1.3em;
+}
+
+span.object_breadcrumb {
+	display: inline;
+	list-style: none;
+}
+
+span.object_breadcrumb:after {
+	content: "…";
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+span.object_breadcrumb:nth-last-child(-n+1):after{
+	content: "";
+}
 
 div#object_objectContainer table {
 	max-width: 700px;
@@ -469,6 +494,7 @@ div.app_sidebarDiv h2 {
 
 #app_filePicker {
 	width: 175px;
+	margin-right: 1em;
 }
 
 /* appwide forms */

@@ -62,6 +62,13 @@ object ObjectView {
 
 	{ QueryObjectView.searchReportContainer.bind }
 
+<!--
+		<p id="object_breadcrumbs">
+			<span id="object_clearCrumbs" class="object_breadcrumb"><a>[ Clear Breadcrumbs ]</a></span>	
+			<span class="object_breadcrumb"><a>urn:cite2:hmt:vaimg.2017a:1234</a></span>	
+		</p>
+	-->
+
 		<p id="object_urnInputP">
 		<input
 		class={ s"object_inputFor_${ObjectModel.objectOrCollection.bind}" }
@@ -216,7 +223,7 @@ def renderObjects = {
 						</tr>
 						{
 							for (p <- obj.props) yield {
-									 	{ ObjectView .renderProperty(p).bind }
+									 	{ ObjectView .renderProperty(Some(obj.urn.value), p).bind }
 							}
 						}
 					</table>
@@ -241,14 +248,14 @@ def renderObjects = {
 </p>
 }
 
-@dom def renderProperty(p:ObjectModel.BoundCiteProperty) = {
+@dom def renderProperty(contextUrn:Option[Cite2Urn], p:ObjectModel.BoundCiteProperty) = {
 	<tr>
 	<td>{ p.urn.bind.toString }</td>
 	<td>{ p.propertyType.bind.toString }</td>
 	<td>{
 		p.propertyType.value match {
 			case Cite2UrnType =>{ <p>{ ObjectView.renderCiteUrnProperty(Some(p.urn.value),Cite2Urn(p.propertyValue.value)).bind }</p>}
-			case CtsUrnType =>{ <p>{ DataModelView.textLinks(CtsUrn(p.propertyValue.value)).bind }</p>}
+			case CtsUrnType =>{ <p>{ DataModelView.textLinks(contextUrn, CtsUrn(p.propertyValue.value)).bind }</p>}
 			case _ =>{ <p>{ s"${p.propertyValue.bind.toString}"}</p>}
 		}
 

@@ -30,9 +30,9 @@ object CiteMainController {
 		Initiate app with a URL to an online CEX file	
 	*/
 	@JSExport
-	def main(libUrl: String): Unit = {
+	def main(libUrl: String, localImagePath:String): Unit = {
 
-//		ImageModel.imgArchivePath = localImagePath
+		CiteBinaryImageModel.imgArchivePath.value = localImagePath
 
 		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
 		val task = Task{ CiteMainController.loadRemoteLibrary(libUrl) }
@@ -96,6 +96,7 @@ object CiteMainController {
 	  CiteMainModel.showTexts.value = false 
 	  CiteMainModel.showNg.value = false
 	  CiteMainModel.showCollections.value = false
+	  CiteMainModel.showImages.value = false
 	}
 
 	/*
@@ -126,13 +127,18 @@ object CiteMainController {
 		clearRepositories
 
 		try {
-
+			// Set up repo 
+			var timeStart = new js.Date().getTime()
 			val repo:CiteLibrary = CiteLibrary(cexString, CiteMainModel.cexMainDelimiter, CiteMainModel.cexSecondaryDelimiter)
+			var timeEnd = new js.Date().getTime()
+			g.console.log(s"Created CiteLibrary in ${(timeEnd - timeStart)/1000} seconds.")
 			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
 			var loadMessage:String = ""
 
 			CiteMainModel.mainLibrary.value = Some(repo)
 
+			// Text Repository Stuff
+			timeStart = new js.Date().getTime()
 			repo.textRepository match {
 				case Some(tr) => {
 					CiteMainModel.showTexts.value = true
@@ -154,7 +160,11 @@ object CiteMainController {
 					loadMessage += "No texts. "
 				}
 			}
+			timeEnd = new js.Date().getTime()
+			g.console.log(s"Initialized TextRepository in ${(timeEnd - timeStart)/1000} seconds.")
 
+			// Collection Repository Stuff
+			timeStart = new js.Date().getTime()
 			repo.collectionRepository match {
 				case Some(cr) => {
 					CiteMainModel.showCollections.value = true
@@ -168,13 +178,28 @@ object CiteMainController {
 					loadMessage += "No Collections. "	
 				}
 			}
+			timeEnd = new js.Date().getTime()
+			g.console.log(s"Initialized collectionRepository in ${(timeEnd - timeStart)/1000} seconds.")
 
+			// Data Model Stuff
+			timeStart = new js.Date().getTime()
 			repo.dataModels match {
 				case Some(dm) => {
 					DataModelModel.dataModels.value = Some(dm)
+					CiteBinaryImageController.discoverProtocols
+					CiteBinaryImageController.setImageSwitch
+					CiteBinaryImageModel.hasBinaryImages.value match {
+						case true => CiteMainModel.showImages.value = true 
+						case _ => CiteMainModel.showImages.value = false
+					}
 				}
-				case None => { DataModelModel.dataModels.value = None }
+				case None => { 
+					DataModelController.clearDataModels
+				}
 			}
+			//g.console.log(s"hasBinaryImages = ${CiteBinaryImageModel.hasBinaryImages.value}")
+			timeEnd = new js.Date().getTime()
+			g.console.log(s"Initialized DataModels in ${(timeEnd - timeStart)/1000} seconds.")
 
 			checkDefaultTab
 

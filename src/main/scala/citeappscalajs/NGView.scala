@@ -124,7 +124,7 @@ def passageUrnSpan(urn:CtsUrn, s:String) = {
 	<span
 	class="app_clickable app_urn"
 	onclick={ event: Event => {
-			DataModelController.retrieveTextPassage(urn)
+			DataModelController.retrieveTextPassage(None, urn)
 		}
 	}>
 	{ s }

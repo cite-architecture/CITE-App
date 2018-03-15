@@ -19,7 +19,7 @@ libraryDependencies ++= Seq(
   "edu.holycross.shot" %%% "scm" % "5.3.0",
   "edu.holycross.shot" %%% "citeobj" % "5.2.3",
   "edu.holycross.shot" %%% "citerelations" % "2.0.1",
-  "edu.holycross.shot" %%% "citebinaryimage" % "1.0.1",
+  "edu.holycross.shot" %%% "citebinaryimage" % "1.1.0",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
 )
 
@@ -40,6 +40,7 @@ spa := {
   val defaultLibraryUrl = "https://raw.githubusercontent.com/Eumaeus/fuCiteDX/master/objectTest.cex"
   //val defaultLibraryUrl = "https://raw.githubusercontent.com/Eumaeus/fuCiteDX/master/fu-spring2018.cex"
 	val defaultLibraryDelimiter = "#"
+  val defaultImagePath = "image_archive"
 
   val compileFirst = (fullOptJS in Compile).value
 
@@ -54,7 +55,9 @@ spa := {
 
 	val urlPlaceholder = "DEFAULTLIBRARYURL"
 	val delimiterPlaceholder = "DEFAULTLIBRARYDELIMITER"
-  val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n").replaceAll(urlPlaceholder,defaultLibraryUrl).replaceAll(delimiterPlaceholder,defaultLibraryDelimiter)
+  val imagePathPlaceholder = "DEFAULTIMAGEPATH"
+
+  val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n").replaceAll(urlPlaceholder,defaultLibraryUrl).replaceAll(delimiterPlaceholder,defaultLibraryDelimiter).replaceAll(imagePathPlaceholder,defaultImagePath)
   val newFile = "downloads/cite-" + version.value + ".html"
   new PrintWriter(newFile) { write(template1Text + js + template2Text); close }
   println("Runnable single-page app is in " + newFile)
