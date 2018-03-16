@@ -40,7 +40,7 @@ spa := {
   val defaultLibraryUrl = "https://raw.githubusercontent.com/Eumaeus/fuCiteDX/master/objectTest.cex"
   //val defaultLibraryUrl = "https://raw.githubusercontent.com/Eumaeus/fuCiteDX/master/fu-spring2018.cex"
 	val defaultLibraryDelimiter = "#"
-  val defaultImagePath = "image_archive"
+  val defaultImagePath = "" // Path prefixed to the named directories for local images
 
   val compileFirst = (fullOptJS in Compile).value
 

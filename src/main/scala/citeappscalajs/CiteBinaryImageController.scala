@@ -201,13 +201,39 @@ object CiteBinaryImageController {
 	}
 
 	/* return a string, the source of a remotely served image thumbnail */
-	def thumbSourceRemote(urn:Cite2Urn):String = {
-		"not implemented: remote"
+	def thumbSourceRemote(urn:Cite2Urn, obj:CiteObject):String = {
+		// We will use CiteBinaryImage for this. We need:
+		// 1. the URN, which we have
+		// 2. the base URL
+		// 3. the local ImagePath. We can get these from the implementing object Obj
+		val pathUrn:Cite2Urn = DataModelController.propertyUrnFromPropertyName(obj.urn, "path")
+		g.console.log(s"pathUrn: ${pathUrn}")
+		val path:String = obj.propertyValue(pathUrn).toString
+		g.console.log(s"path: ${path}")
+		val urlUrn:Cite2Urn = DataModelController.propertyUrnFromPropertyName(obj.urn, "url")
+		g.console.log(s"urlUrn: ${urlUrn}")
+		val url:String = obj.propertyValue(urlUrn).toString
+		g.console.log(s"url: ${url}")
+
+      val bis:IIIFApi = IIIFApi(baseUrl = url, imagePath = path, maxWidth = Some(CiteBinaryImageModel.thumbnailMaxWidth))
+      val imageUrlString:String = bis.serviceRequest(urn)
+
+      imageUrlString
 	}
 
 	/* return a string, the source of a locally served image thumbnail */
-	def thumbSourceLocal(urn:Cite2Urn):String = {
-		"not implemented: local"
+	def thumbSourceLocal(urn:Cite2Urn, obj:CiteObject):String = {
+		"https://dummyimage.com/100x100/aaa/000&amp;text=localImage"
+	}
+
+	def getLocalThumbPath(urn:Cite2Urn):String = {
+		val path:String = s"${CiteBinaryImageController.urnToLocalPath(urn)}${urn.objectComponent}.jpg"
+ 	   path
+	}
+
+	def urnToLocalPath(urn:Cite2Urn):String = {
+		val s:String = s"/${urn.namespace}/${urn.collection}/${urn.version}/"	
+		s
 	}
 
 

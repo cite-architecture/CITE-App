@@ -60,6 +60,8 @@ object CiteBinaryImageModel {
 
 	val imgArchivePath = Var[String]("")
 
+	val thumbnailMaxWidth:Int = 400
+
 	/* 
 	An ImageROI object must have an Image URN. It may have a defined ROI, a mapped URN, and a group.
 	If it `roi` = None, then any mapping applies to the whole image.
