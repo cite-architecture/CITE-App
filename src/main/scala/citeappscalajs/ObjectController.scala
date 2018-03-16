@@ -108,6 +108,7 @@ object ObjectController {
 	//    - changeObject
 	def changeObject:Unit = {
 		val tempUrn:Cite2Urn = ObjectModel.urn.value.get
+		//g.console.log(s"changeObject got: ${tempUrn}")
 		ObjectModel.clearObject
 		QueryObjectModel.clearAll
 		ObjectModel.urn.value = Some(tempUrn)
@@ -127,13 +128,15 @@ object ObjectController {
 
 			ObjectModel.objectOrCollection.value match {
 					case "object" => {
-						//g.console.log(s"Doing get objects… ${ObjectModel.urn.get}")
+						//g.console.log(s"Doing get [object]… ${ObjectModel.urn.value} =? ${tempUrn}")
 						ObjectModel.getObjects(tempUrn)
 					}
 					case "collection" =>{
+						//g.console.log(s"Doing get [collection]… ${ObjectModel.urn.value} =? ${tempUrn}")
 						ObjectModel.getObjects(tempUrn)
 					}
 					case "range" =>{
+						//g.console.log(s"Doing get [range]… ${ObjectModel.urn.value} =? ${tempUrn}")
 						ObjectModel.getObjects(tempUrn)
 					}
 					case _ => {

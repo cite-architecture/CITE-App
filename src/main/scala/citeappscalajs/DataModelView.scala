@@ -71,6 +71,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 			case true => {
 				<li class="citeLinks_linkItem">
 					<a onclick={ event: Event => {
+							//g.console.log(s"clicked: ${propVal}")
 							DataModelController.retrieveObject(contextUrn,propVal)
 						}
 				} >View Object </a></li>

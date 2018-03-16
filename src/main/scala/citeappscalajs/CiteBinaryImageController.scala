@@ -38,6 +38,39 @@ object CiteBinaryImageController {
 		CiteBinaryImageModel.msgTimer = js.timers.setTimeout(16000){ CiteBinaryImageModel.userMessageVisibility.value = "app_hidden" }
 	}
 
+	// Set the map of image-collections and their labels
+	def setBinaryImageCollections:Unit = {
+		val vColls:Option[Vector[Cite2Urn]] = getBinaryImageCollections
+		vColls match {
+			case Some(vc) => {
+				CiteBinaryImageModel.binaryImageCollections.value.clear
+				vc foreach ( c => CiteBinaryImageModel.binaryImageCollections.value += c)
+			}
+			case None => CiteBinaryImageModel.binaryImageCollections.value.clear
+		}
+	}
+
+	/* returns a binary image collections with their labels */
+	def getBinaryImageCollections:Option[Vector[Cite2Urn]] = {
+		ObjectModel.collRep.value match {
+			case Some(cr) => {
+				val vColl:Vector[Cite2Urn] = {
+					cr.collections.filter( coll => {
+						val isBinaryImage:Boolean = (implementedByImageCollObjects(coll) != None)
+						isBinaryImage
+					}).toVector	
+				}
+				g.console.log(vColl.toString)
+				vColl.size match {
+					case s if (s > 0) => {
+						Some(vColl)
+					}
+					case _ => None
+				}
+			}
+			case None => None
+		}	
+	}
 
 
 	def setPreferredImageSource:Unit = {
@@ -234,6 +267,52 @@ object CiteBinaryImageController {
 	def urnToLocalPath(urn:Cite2Urn):String = {
 		val s:String = s"/${urn.namespace}/${urn.collection}/${urn.version}/"	
 		s
+	}
+
+	// *** Apropos Microservice ***
+	def changeUrn(urnString: String): Unit = {
+		changeUrn(Cite2Urn(urnString),Vector((None, None)))
+	}
+
+	// *** Apropos Microservice ***
+	def changeUrn(urn: Cite2Urn): Unit = {
+		try {
+			val oe = urn.objectExtensionOption
+			changeUrn(urn,Vector((oe,None)))
+		} catch {
+			case e: Exception => {
+				validUrnInField.value = false
+				updateUserMessage(s"Invalid URN. Current URN not changed. ${e}",2)
+			}
+		}
+	}
+		// *** Apropos Microservice ***
+	def changeUrn(urn:Cite2Urn,roiVec:Vector[(Option[String],Option[Urn])]):Unit = {
+		try {
+			CiteBinaryImageModel.displayUrn.value = Some(urn)
+			validUrnInField.value = true
+			CiteBinaryImageModel.urn.value = Some(urn.dropExtensions)
+			val plainUrn:Cite2Urn = urn.dropExtensions
+			//CiteBinaryImageModel.updateRois(plainUrn,roiVec)
+			//CiteBinaryImageModel.changeImage
+		} catch {
+			case e: Exception => {
+				validUrnInField.value = false
+				updateUserMessage(s"Invalid URN [2]. Current URN not changed. ${e}",2)
+			}
+		}
+	}
+
+
+	def validateUrn(urnString: String): Unit = {
+		try{
+			val newUrn: Cite2Urn = Cite2Urn(urnString)
+			validUrnInField.value = true
+		} catch {
+			case e: Exception => {
+				validUrnInField.value = false
+			}
+		}
 	}
 
 

@@ -172,6 +172,7 @@ object CiteMainController {
 					val numObjects:Int = cr.citableObjects.size
 					loadMessage += s" ${numCollections} collections. ${numObjects} objects. "
 					ObjectModel.collRep.value	= Some(cr)			
+					ObjectModel.clearObject
 					ObjectModel.updateCollections
 				}
 				case None => {
@@ -192,6 +193,7 @@ object CiteMainController {
 						case true => CiteMainModel.showImages.value = true 
 						case _ => CiteMainModel.showImages.value = false
 					}
+					CiteBinaryImageController.setBinaryImageCollections
 				}
 				case None => { 
 					DataModelController.clearDataModels

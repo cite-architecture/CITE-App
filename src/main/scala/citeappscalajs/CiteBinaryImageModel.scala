@@ -38,7 +38,7 @@ object CiteBinaryImageModel {
 
 	// any binary image implemented?
 	val hasBinaryImages = Var[Boolean](false)	
-	val binaryImageCollections = Var[Option[Vector[Cite2Urn]]](None)
+	val binaryImageCollections = Vars.empty[Cite2Urn]
 
 	// which protocols are implemented in this CEX?
 	val hasIiifApi = Var[Boolean](false)
@@ -49,7 +49,7 @@ object CiteBinaryImageModel {
 
 	// An ImageROI object associates an roi with a urn; 
 	// our image may have none, one, or many
-	val imageROIs = Var[Option[Vector[ImageROI]]](None)
+	val imageROIs = Vars.empty[ImageROI]
 
 	// User Interface stuff
 	val userMessage = Var("")
@@ -61,6 +61,11 @@ object CiteBinaryImageModel {
 	val imgArchivePath = Var[String]("")
 
 	val thumbnailMaxWidth:Int = 400
+
+	// Current info on image displayed	
+	val displayUrn = Var[Option[Cite2Urn]](None)
+	val versionsForCurrentUrn = Var(1)
+
 
 	/* 
 	An ImageROI object must have an Image URN. It may have a defined ROI, a mapped URN, and a group.

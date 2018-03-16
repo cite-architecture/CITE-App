@@ -23,6 +23,7 @@ object CiteMainView {
 	val textView = O2View.o2div
 	val ngramView = NGView.nGdiv
 	val objectView = ObjectView.objectDiv
+	val imageView = CiteBinaryImageView.imageDiv
 
 
 
@@ -168,7 +169,7 @@ object CiteMainView {
 					<input type="radio" id="tab-4" name="tab-group-1" checked={ false }/>
 					<label class="tab_label" for="tab-4">Images</label>
 						<div class="content">
-						 <!-- { imageView.bind } -->
+						 { imageView.bind }
 						</div>
 				</div>
 

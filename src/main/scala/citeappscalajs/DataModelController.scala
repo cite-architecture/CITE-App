@@ -117,6 +117,7 @@ object DataModelController {
 	}	
 
 
+
  	/*
 	Methods for switching tabs and loading text and objects
  	*/
@@ -127,15 +128,18 @@ object DataModelController {
 	}
 
 	def retrieveObject(contextUrn:Option[Cite2Urn] = None, urn:Cite2Urn):Unit = {
+			//g.console.log(s"retrieving: ${urn}")
 			val tempUrn:Cite2Urn = urn.dropExtensions
-			ObjectModel.urn.value = Some(tempUrn)
-			ObjectModel.displayUrn.value = Some(urn)
+			//g.console.log(s"retrieving temp: ${tempUrn}")
+			ObjectController.changeUrn(tempUrn)
+			//ObjectModel.urn.value = Some(tempUrn)
+			//ObjectModel.displayUrn.value = Some(urn)
 			ObjectController.changeObject
 			js.Dynamic.global.document.getElementById("tab-3").checked = true
 	}
 
 	def viewImage(contextUrn:Option[Cite2Urn] = None, urn:Cite2Urn):Unit = {
-			g.console.log(s"will view image ${urn}.")
+			//g.console.log(s"will view image ${urn}.")
 	}
 
 

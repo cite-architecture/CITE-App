@@ -32,10 +32,111 @@ object CiteBinaryImageView {
 			</div>
 	}
 
-	/* Passage Container */
+	// HTML Div: main div for image display
 	@dom
-	def imageContainer = {
-		<div id="image_imageContainer"> </div>
+	def imageDiv = {
+
+		val urnValidatingKeyUpHandler = { event: KeyboardEvent =>
+			(event.currentTarget, event.keyCode) match {
+				case (input: html.Input, KeyCode.Enter) => {
+					event.preventDefault()
+					CiteBinaryImageController.changeUrn(s"${input.value.toString}")
+					//input.value = ""
+				}
+				case(input: html.Input, _) =>  CiteBinaryImageController.validateUrn(s"${input.value.toString}")
+				case _ =>
+			}
+		}
+	
+		<div id="image_imageContainer">
+
+
+		<div id="image_sidebar" class="app_sidebarDiv">
+			{ imageCollectionsContainer.bind }
+			{ imagePreviewDiv.bind }
+			{ imageMappedDataDiv.bind }
+		</div>
+
+		{ imageMessageDiv.bind }
+
+		<p id="image_reportingCurrentUrn" class="app_reportingCurrentUrn"> { 
+			CiteBinaryImageModel.displayUrn.bind match {
+				case Some(u) => {
+					u.toString
+				}
+				case _ => {
+					""	
+					}
+				}
+			} 
+		</p>
+
+		<p id="image_urnInputP">
+			<input
+				class={ s"${CiteBinaryImageController.validUrnInField.bind}" }
+				id="image_urnInput"
+				size={ 70 }
+				type="text"
+				value={ 
+						CiteBinaryImageModel.urn.bind match {
+							case Some(u) => {
+							u.toString
+						}
+						case _ => {
+							""	
+						}
+					} 
+				}
+				onkeyup={ urnValidatingKeyUpHandler }>
+			</input>
+
+			{ CiteBinaryImageView.retrieveImageButton.bind }
+
+			<br/>
+		</p>
+
+		{ CiteBinaryImageView.imageContainer.bind }
+		</div>
+	}
+
+	/* Cited Works List */
+	@dom
+	def imageCollectionsContainer = {
+		<div id="image_imageCollectionsContainer">
+			<h2>Image Collections</h2>
+			{
+				<ul>
+					{ for ( ic <- CiteBinaryImageModel.binaryImageCollections) yield {
+						<li>
+							<a
+								onclick={ event: Event => {
+								DataModelController.retrieveObject(None,ic) }
+								}> { s"${ic}" } </a>
+							<br/>
+								{ ObjectController.labelForCollection(ic) }
+							</li>
+						} 
+					}
+				</ul>
+			}
+		</div>
+	}
+
+
+	// For holding a preview of an image or region thereof
+	@dom
+	def imagePreviewDiv = {
+		<div id="image_imagePreviewDiv">
+			<img id="image_previewImg" src=""/>
+		</div>
+	}
+
+	/* Search Image Properties Forms */
+	@dom
+	def imageMappedDataDiv = {
+		<h2>Mapped Data</h2>
+		<div id="image_mappedData">
+		</div>
 	}
 
 
@@ -140,6 +241,33 @@ object CiteBinaryImageView {
 		}
 		onScreenImg
 
+	}
+
+	@dom
+	def retrieveImageButton = {
+		<button
+			onclick={ event: Event => {
+				val s:String = js.Dynamic.global.document.getElementById("image_urnInput").value.toString
+				//ImageModel.urn := Cite2Urn(s)
+				CiteBinaryImageController.updateUserMessage("Retrieving image…",1)
+				val task = Task{ CiteBinaryImageController.changeUrn(s)}
+				val future = task.runAsync
+			} }
+			disabled={ (CiteBinaryImageController.validUrnInField.bind == false) 
+		} > {
+				if ( CiteBinaryImageController.validUrnInField.bind == true ){
+					"Retrieve Image"
+				} else {
+					"Invalid URN"
+				}
+			}
+		</button>
+	}
+
+	/* Image Container: Where openSeaDragon does its thing */
+	@dom
+	def imageContainer = {
+		<div id="image_imageContainer"> </div>
 	}
 
 
