@@ -49,7 +49,7 @@ object CiteBinaryImageModel {
 
 	// An ImageROI object associates an roi with a urn; 
 	// our image may have none, one, or many
-	val imageROIs = Vars.empty[ImageROI]
+	val imageROIs = Var[Option[ImageRoiModel.ImageRoi]](None)
 
 	// User Interface stuff
 	val userMessage = Var("")
@@ -66,14 +66,10 @@ object CiteBinaryImageModel {
 	val displayUrn = Var[Option[Cite2Urn]](None)
 	val versionsForCurrentUrn = Var(1)
 
-
-	/* 
-	An ImageROI object must have an Image URN. It may have a defined ROI, a mapped URN, and a group.
-	If it `roi` = None, then any mapping applies to the whole image.
-	*/
-	case class ImageROI(val urn:Cite2Urn, val roi:Option[String], val roiData:Option[Urn] = None, val roiGroup:Integer = 1){
-			override def toString = s"${urn}@${roi}. ${roiData} [Group ${roiGroup}]"
+	def updateRois(u:Cite2Urn, roiObject:Option[ImageRoiModel.ImageRoi] = None):Unit = {
+			imageROIs.value = roiObject
 	}
+
 
 	/* This is how to pass data to the global JS scope */
 	/*

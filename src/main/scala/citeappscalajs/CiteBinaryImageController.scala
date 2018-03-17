@@ -271,14 +271,14 @@ object CiteBinaryImageController {
 
 	// *** Apropos Microservice ***
 	def changeUrn(urnString: String): Unit = {
-		changeUrn(Cite2Urn(urnString),Vector((None, None)))
+		changeUrn(Cite2Urn(urnString),None)
 	}
 
 	// *** Apropos Microservice ***
 	def changeUrn(urn: Cite2Urn): Unit = {
 		try {
 			val oe = urn.objectExtensionOption
-			changeUrn(urn,Vector((oe,None)))
+			changeUrn(urn,None)
 		} catch {
 			case e: Exception => {
 				validUrnInField.value = false
@@ -287,13 +287,13 @@ object CiteBinaryImageController {
 		}
 	}
 		// *** Apropos Microservice ***
-	def changeUrn(urn:Cite2Urn,roiVec:Vector[(Option[String],Option[Urn])]):Unit = {
+	def changeUrn(urn:Cite2Urn,roiVec:Option[ImageRoiModel.ImageRoi] = None):Unit = {
 		try {
 			CiteBinaryImageModel.displayUrn.value = Some(urn)
 			validUrnInField.value = true
 			CiteBinaryImageModel.urn.value = Some(urn.dropExtensions)
 			val plainUrn:Cite2Urn = urn.dropExtensions
-			//CiteBinaryImageModel.updateRois(plainUrn,roiVec)
+			CiteBinaryImageModel.updateRois(plainUrn,roiVec)
 			//CiteBinaryImageModel.changeImage
 		} catch {
 			case e: Exception => {
