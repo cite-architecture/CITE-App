@@ -228,9 +228,42 @@ object CiteBinaryImageController {
 		}
 	}
 
-	/* Display an Image */
-	def displayImage(u:Cite2Urn, implementingObject:CiteObject, contextUrn:Option[Cite2Urn], protocol:String, rois:Option[ImageRoiModel.ImageRoi] = None):Unit = {
-		g.console.log(s"Will display: ${u}")	
+	/* Given a URN and the value of CiteBinaryImageModel.useLocal, return an 
+		implementing object for that image.
+	*/
+	def getImplmentingObject(u:Cite2Urn, useLocal:Boolean):Option[CiteObject] = {
+		CiteBinaryImageController.implementedByImageCollObjects(u) match {
+			case Some(uv) => {
+				useLocal match {
+					case true => {
+						CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.localDZProtocolString) match {
+							case Some(obj) => {
+								Some(obj)
+							}
+							case _ => None
+						}
+					}
+					case _ => {
+						CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.iiifApiProtocolString) match {
+							case Some(obj) => {
+								Some(obj)
+							}
+							case _ => None
+						}
+					}
+				}			}
+			case None => None 
+		}
+	}
+
+	def pathAndUrl(urn:Cite2Urn, obj:CiteObject):Map[String,String] = {
+
+		val pathUrn:Cite2Urn = DataModelController.propertyUrnFromPropertyName(obj.urn, "path")
+		val path:String = obj.propertyValue(pathUrn).toString
+		val urlUrn:Cite2Urn = DataModelController.propertyUrnFromPropertyName(obj.urn, "url")
+		val url:String = obj.propertyValue(urlUrn).toString
+		val pathMap:Map[String,String] = Map("path" -> path, "url" -> url)
+		pathMap
 	}
 
 	/* return a string, the source of a remotely served image thumbnail */
@@ -239,14 +272,9 @@ object CiteBinaryImageController {
 		// 1. the URN, which we have
 		// 2. the base URL
 		// 3. the local ImagePath. We can get these from the implementing object Obj
-		val pathUrn:Cite2Urn = DataModelController.propertyUrnFromPropertyName(obj.urn, "path")
-		g.console.log(s"pathUrn: ${pathUrn}")
-		val path:String = obj.propertyValue(pathUrn).toString
-		g.console.log(s"path: ${path}")
-		val urlUrn:Cite2Urn = DataModelController.propertyUrnFromPropertyName(obj.urn, "url")
-		g.console.log(s"urlUrn: ${urlUrn}")
-		val url:String = obj.propertyValue(urlUrn).toString
-		g.console.log(s"url: ${url}")
+		val pathMap:Map[String,String] = pathAndUrl(urn, obj)
+		val path:String = pathMap("path")
+		val url:String = pathMap("url")
 
       val bis:IIIFApi = IIIFApi(baseUrl = url, imagePath = path, maxWidth = Some(CiteBinaryImageModel.thumbnailMaxWidth))
       val imageUrlString:String = bis.serviceRequest(urn)
@@ -255,30 +283,50 @@ object CiteBinaryImageController {
 	}
 
 	/* return a string, the source of a locally served image thumbnail */
+	/*
 	def thumbSourceLocal(urn:Cite2Urn, obj:CiteObject):String = {
 		"https://dummyimage.com/100x100/aaa/000&amp;text=localImage"
 	}
+	*/
 
-	def getLocalThumbPath(urn:Cite2Urn):String = {
-		val path:String = s"${CiteBinaryImageController.urnToLocalPath(urn)}${urn.objectComponent}.jpg"
+	def getLocalThumbPath(urn:Cite2Urn, obj:CiteObject):String = {
+		val path:String = s"${CiteBinaryImageController.urnToLocalPath(urn,obj)}${urn.objectComponent}.jpg"
  	   path
 	}
 
-	def urnToLocalPath(urn:Cite2Urn):String = {
-		val s:String = s"/${urn.namespace}/${urn.collection}/${urn.version}/"	
-		s
+	// USE DataModel Stuff!!
+	def urnToLocalPath(urn:Cite2Urn, obj:CiteObject):String = {
+		val pathMap:Map[String,String] = pathAndUrl(urn, obj)
+		// It is impossible to predict or remember whether to precede or follow
+		// these paths with "/", so let's double-up, and clean…
+		val s:String = "/" + pathMap("url") + pathMap("path") + "/"
+		g.console.log(s"path for JPG: ${s}")
+		g.console.log(s"cleaned: ${s.replaceAll("//","/")}")
+		//val s:String = s"/${urn.namespace}/${urn.collection}/${urn.version}/"	
+		s.replaceAll("//","/")
+	}
+
+	// *** Apropos Microservice ***
+	def changeUrn(urn:Cite2Urn): Unit = 	{
+		try {
+			val useLocal:Boolean = CiteBinaryImageModel.imgUseLocal.value
+			val implObj:Option[CiteObject] = getImplmentingObject(urn, useLocal)
+			implObj match {
+				case Some(io) => changeUrn(None, urn, io, None)
+				case None => throw new Exception("Image not implemented by any appropriate datamodel.")
+			}
+		} catch {
+			case e:Exception => {
+					updateUserMessage(s"Unable to display image for ${urn}. ${e}",2)
+			}
+		}
 	}
 
 	// *** Apropos Microservice ***
 	def changeUrn(urnString: String): Unit = {
-		changeUrn(Cite2Urn(urnString),None)
-	}
-
-	// *** Apropos Microservice ***
-	def changeUrn(urn: Cite2Urn): Unit = {
 		try {
-			val oe = urn.objectExtensionOption
-			changeUrn(urn,None)
+			val urn:Cite2Urn = Cite2Urn(urnString)
+			changeUrn(urn)
 		} catch {
 			case e: Exception => {
 				validUrnInField.value = false
@@ -287,14 +335,26 @@ object CiteBinaryImageController {
 		}
 	}
 		// *** Apropos Microservice ***
-	def changeUrn(urn:Cite2Urn,roiVec:Option[ImageRoiModel.ImageRoi] = None):Unit = {
+	def changeUrn(
+		contextUrn:Option[Cite2Urn] = None, 
+		urn:Cite2Urn, 
+		implementingObject:CiteObject, 
+		roiObj:Option[ImageRoiModel.ImageRoi] = None
+	):Unit = {
 		try {
 			CiteBinaryImageModel.displayUrn.value = Some(urn)
 			validUrnInField.value = true
 			CiteBinaryImageModel.urn.value = Some(urn.dropExtensions)
 			val plainUrn:Cite2Urn = urn.dropExtensions
-			CiteBinaryImageModel.updateRois(plainUrn,roiVec)
-			//CiteBinaryImageModel.changeImage
+			CiteBinaryImageController.updateRois(plainUrn,roiObj)
+			CiteBinaryImageModel.previewUrn.value = {
+				roiObj match {
+					case None => Some(urn)
+					case Some(r) if (r.rois.size > 1) => Some(plainUrn)
+					case _ => Some(urn)
+				}
+			}
+			CiteBinaryImageController.changeImage(urn,implementingObject,roiObj)
 		} catch {
 			case e: Exception => {
 				validUrnInField.value = false
@@ -314,6 +374,83 @@ object CiteBinaryImageController {
 			}
 		}
 	}
+
+	def updateRois(u:Cite2Urn, roiObject:Option[ImageRoiModel.ImageRoi] = None):Unit = {
+			CiteBinaryImageModel.imageROIs.value = roiObject
+	}
+
+	def getZoomSource(urn:Cite2Urn, obj:CiteObject):String = {
+		"zoomSource"
+	}
+
+
+	def changeImage(urn:Cite2Urn, implementingObject:CiteObject, roiObj:Option[ImageRoiModel.ImageRoi]):Unit = {
+		CiteBinaryImageModel.urn.value match {
+			case Some(u) => {
+				val tempUrn:Cite2Urn = u
+				val collection:Cite2Urn = tempUrn.dropSelector
+				val ioo:Option[String] = tempUrn.objectComponentOption
+				ioo match {
+					case Some(s) => {
+						CiteBinaryImageController.loadJsArray
+						val zoomPath:String = CiteBinaryImageController.getZoomSource(urn, implementingObject)
+						CiteBinaryImageController.updateImageJS(collection.toString, s, zoomPath )
+					}
+					case _ => {
+						CiteBinaryImageController.updateUserMessage(s"No image-object specified in ${tempUrn}",2)
+					}
+				}
+			}
+			case _ => {
+				CiteBinaryImageController.updateUserMessage(s"No image-object specified.",2)
+			}
+
+		}
+	}
+
+	def loadJsArray:Unit = {
+		CiteBinaryImageController.clearJsRoiArray(true)
+		/*
+		for (iroi <- ImageModel.imageROIs.value){
+			val tempRoi:String = {
+				iroi.roi match {
+					case Some(r) => r
+					case _ => ""
+				}
+			}
+			val tempMappedData:String = {
+				iroi.roiData match {
+					case Some(u) => u.toString
+					case _ => ""
+				}
+			}
+			// We will have to do something clever here to make groups
+			val tempGroup:String = iroi.roiGroup.toString
+			val tempIndex:Int = iroi.index
+			ImageController.addToJsRoiArray(tempIndex, tempRoi,tempMappedData,tempGroup)
+		}
+		*/
+	}
+
+	/* Methods for connecting out to Javascript */
+	@JSGlobal("clearJsRoiArray")
+	@js.native
+	object clearJsRoiArray extends js.Any {
+		def apply(really:Boolean): js.Dynamic = js.native
+	}
+
+	@JSGlobal("addToJsRoiArray")
+	@js.native
+	object addToJsRoiArray extends js.Any {
+		def apply(index:Int, roiString:String, urnString:String, groupString:String): js.Dynamic = js.native
+	}
+
+	@JSGlobal("updateImageJS")
+	@js.native
+	object updateImageJS extends js.Any {
+		def apply(collection: String, imageObject: String, path:String): js.Dynamic = js.native
+	}
+
 
 
 

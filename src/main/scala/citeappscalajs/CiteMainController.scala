@@ -103,9 +103,14 @@ object CiteMainController {
 		Which tabe should be shown by default upon library load.
 	*/
 	def checkDefaultTab:Unit = {
-		if (CiteMainModel.showTexts.value) {
-			js.Dynamic.global.document.getElementById("tab-3").checked = true
-		} 
+		CiteMainModel.showCollections.value match {
+			case true => js.Dynamic.global.document.getElementById("tab-3").checked = true
+			case _ => {
+				if (CiteMainModel.showTexts.value) {
+					js.Dynamic.global.document.getElementById("tab-1").checked = true
+				}
+			}
+		}
 	}
 
 	/*

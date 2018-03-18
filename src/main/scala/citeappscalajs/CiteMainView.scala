@@ -13,7 +13,7 @@ import org.scalajs.dom.ext.Ajax
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
-
+import scala.scalajs.js.annotation.JSExport
 import js.annotation._
 
 
@@ -26,6 +26,13 @@ object CiteMainView {
 	val imageView = CiteBinaryImageView.imageDiv
 
 
+	def changeTab(tab:String):Unit = {
+		tab match {
+			case "text" => js.Dynamic.global.document.getElementById("tab-1").checked = true
+			case "object" => js.Dynamic.global.document.getElementById("tab-3").checked = true
+			case "image" => js.Dynamic.global.document.getElementById("tab-4").checked = true
+		}
+	}
 
 	// *** Apropos Microservice ***
 	// We will want a switch here

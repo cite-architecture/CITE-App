@@ -31,8 +31,10 @@ object CiteBinaryImageModel {
 	// URNs for implemented Image models
 	val binaryImageModelUrn:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:binaryimg")
 	val protocolPropertyName:String = "protocol"
-	val iiifProtocolString:String = "iiifApi"
-	val dzProtocolString:String = "localDeepZoom"
+	val iiifApiProtocolString:String = "iiifApi"
+	val localDZProtocolString:String = "localDeepZoom"
+	val iipDZProtocolString:String = "iipDeepZoom"
+	val JpgProtocolString:String = "JPG"
 
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 
@@ -46,6 +48,7 @@ object CiteBinaryImageModel {
 
 	// urn is what the user requested
 	val urn = Var[Option[Cite2Urn]](None)
+	val previewUrn = Var[Option[Cite2Urn]](None)
 
 	// An ImageROI object associates an roi with a urn; 
 	// our image may have none, one, or many
@@ -66,9 +69,6 @@ object CiteBinaryImageModel {
 	val displayUrn = Var[Option[Cite2Urn]](None)
 	val versionsForCurrentUrn = Var(1)
 
-	def updateRois(u:Cite2Urn, roiObject:Option[ImageRoiModel.ImageRoi] = None):Unit = {
-			imageROIs.value = roiObject
-	}
 
 
 	/* This is how to pass data to the global JS scope */

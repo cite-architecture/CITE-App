@@ -127,7 +127,14 @@ object CiteBinaryImageView {
 	@dom
 	def imagePreviewDiv = {
 		<div id="image_imagePreviewDiv">
-			<img id="image_previewImg" src=""/>
+			{ 
+				CiteBinaryImageModel.previewUrn.bind match {
+					case Some(u) => {
+						CiteBinaryImageView.imageThumbItem(u, CiteBinaryImageModel.imgUseLocal.bind).bind 
+					}
+					case None => { <!-- empty content --> }
+				}
+			}
 		</div>
 	}
 
@@ -147,7 +154,7 @@ object CiteBinaryImageView {
 			case Some(uv) => {
 				useLocal match {
 					case true => {
-						CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.dzProtocolString) match {
+						CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.JpgProtocolString) match {
 							case Some(obj) => {
 								<li id="image_imagePreviewDiv" >
 									{ CiteBinaryImageView.localThumbnail(u, obj).bind }
@@ -159,7 +166,7 @@ object CiteBinaryImageView {
 						}
 					}
 					case _ => {
-						CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.iiifProtocolString) match {
+						CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.iiifApiProtocolString) match {
 							case Some(obj) => {
 								<li id="image_imagePreviewDiv" >
 									<img id="image_previewImg" src={
@@ -213,10 +220,9 @@ object CiteBinaryImageView {
 
 		// Set up path to images
 		var pathPrefix:String = CiteBinaryImageModel.imgArchivePath.value
-		val pathUrn:Cite2Urn = DataModelController.propertyUrnFromPropertyName(obj.urn, "path")
-		val pathFromCollection:String = obj.propertyValue(pathUrn).toString
-		var archivePath:String = pathPrefix + pathFromCollection
-		var path:String = archivePath + CiteBinaryImageController.getLocalThumbPath(justUrn) 
+		g.console.log(s"pathPrefix = ${pathPrefix}")
+		var path:String = pathPrefix + CiteBinaryImageController.getLocalThumbPath(justUrn, obj) 
+		g.console.log(s"path = ${path}")
 
 		// Create a canvas, drawing context, offscreen- and onscreen-image	
 		val canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]

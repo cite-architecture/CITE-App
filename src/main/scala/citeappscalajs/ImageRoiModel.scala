@@ -33,5 +33,32 @@ object ImageRoiModel {
  	case class Roi(val l:Float, t:Float, w:Float, h:Float, dataUrn:Option[Urn] = None ) {
 			override def toString = s"left:${l}, top:${t}, width:${w}, height:${h} => ${dataUrn}"
 	}
-	
+
+	def roiFromUrn(u:Cite2Urn, data:Option[Urn]):Option[ImageRoi] = {
+		// in this case, there will be only one Roi object in the ImageRoi
+		try {
+			u.objectExtensionOption match {
+				case Some(oe) => {
+					val parts = oe.split(",")
+					if (parts.size != 4) throw new Exception(s"${oe} did not contain four, comma-separated values.")
+					val l:Float = parts(0).toFloat
+					val t:Float = parts(1).toFloat
+					val w:Float = parts(2).toFloat
+					val h:Float = parts(3).toFloat
+					if ( (l <0) | ( l > 1) ) throw new Exception(s"${l} must be > 0 and < 1.")
+					if ( (t <0) | ( t > 1) ) throw new Exception(s"${t} must be > 0 and < 1.")
+					if ( (w <0) | ( w > 1) ) throw new Exception(s"${w} must be > 0 and < 1.")
+					if ( (h <0) | ( h > 1) ) throw new Exception(s"${h} must be > 0 and < 1.")
+					// Got here and we're good
+					val roi:Roi = Roi(l,t,w,h,data)
+					val roiVec = Vector(roi)
+					val roiObj = ImageRoi(u.dropExtensions,roiVec)
+					Some(roiObj)
+				}
+				case None => None
+			}
+		} catch {
+			case e:Exception => throw new Exception(s"Unable to make ROI from ${u}. ${e}")
+		}
+	}	
 }

@@ -101,13 +101,14 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 
 	@dom
 	def iiifApiLink(urn:Cite2Urn, uv:Vector[Cite2Urn], contextUrn:Option[Cite2Urn]) = {
-		CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.iiifProtocolString) match {
+		CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.iiifApiProtocolString) match {
 			case Some(co) => {
 				CiteBinaryImageModel.imgUseLocal.bind match {
 					case false => {
 						<span class="citeLinks_linkSpan">
 							<a onclick={ event: Event => {
-									CiteBinaryImageController.displayImage(urn, co, contextUrn,CiteBinaryImageModel.iiifProtocolString, None)
+									val roi:Option[ImageRoiModel.ImageRoi] = ImageRoiModel.roiFromUrn(urn, contextUrn)
+									DataModelController.viewImage(contextUrn, co, urn, roi)
 							}
 						} >Remote Image</a></span>
 					}
@@ -124,13 +125,13 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 
 	@dom
 	def dzLink(urn:Cite2Urn, uv:Vector[Cite2Urn], contextUrn:Option[Cite2Urn]) = {
-		CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.dzProtocolString) match {
+		CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.localDZProtocolString) match {
 			case Some(co) => {
 				CiteBinaryImageModel.imgUseLocal.bind match {
 					case true => {
 						<span class="citeLinks_linkSpan">
 							<a onclick={ event: Event => {
-									CiteBinaryImageController.displayImage(urn, co, contextUrn, CiteBinaryImageModel.dzProtocolString, None)
+									DataModelController.viewImage(contextUrn, co, urn, roiObj = None)
 								}
 						} >Local Image</a></span>
 					}

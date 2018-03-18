@@ -28,6 +28,7 @@ object CiteMainModel {
 
 		val currentLibraryMetadataString = Var("No library loaded.")
 
+		// These are terrible and need to be replaced with real data model stuff
 		val textProtocol:String = "TextProtocol"
 		val objectProtocol:String = "ObjectProtocol"
 		val localImageProtocol:String = "LocalImageProtocol"

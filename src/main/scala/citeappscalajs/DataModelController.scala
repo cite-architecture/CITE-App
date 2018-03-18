@@ -124,7 +124,8 @@ object DataModelController {
 
 	def retrieveTextPassage(contextUrn:Option[Cite2Urn] = None, urn:CtsUrn):Unit = {
 			O2Controller.changeUrn(urn)
-			js.Dynamic.global.document.getElementById("tab-1").checked = true
+			//js.Dynamic.global.document.getElementById("tab-1").checked = true
+			CiteMainView.changeTab("text")
 	}
 
 	def retrieveObject(contextUrn:Option[Cite2Urn] = None, urn:Cite2Urn):Unit = {
@@ -135,12 +136,15 @@ object DataModelController {
 			//ObjectModel.urn.value = Some(tempUrn)
 			//ObjectModel.displayUrn.value = Some(urn)
 			ObjectController.changeObject
-			js.Dynamic.global.document.getElementById("tab-3").checked = true
+			//js.Dynamic.global.document.getElementById("tab-3").checked = true
+			CiteMainView.changeTab("object")
 	}
 
-	def viewImage(contextUrn:Option[Cite2Urn] = None, urn:Cite2Urn):Unit = {
-			//g.console.log(s"will view image ${urn}.")
-	}
+	def viewImage(contextUrn:Option[Cite2Urn] = None, implementingObject:CiteObject, urn:Cite2Urn, roiObj:Option[ImageRoiModel.ImageRoi]):Unit = {
+			CiteBinaryImageController.changeUrn(contextUrn, urn, implementingObject, roiObj)
+			//js.Dynamic.global.document.getElementById("tab-4").checked = true
+			CiteMainView.changeTab("image")
+		}
 
 
 }
