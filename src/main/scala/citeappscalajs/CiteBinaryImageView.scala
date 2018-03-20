@@ -144,6 +144,12 @@ object CiteBinaryImageView {
 		<h2>Mapped Data</h2>
 		<div id="image_mappedData">
 		</div>
+
+	}
+
+	@dom
+	def mappedUrnP(iroi:ImageRoiModel.Roi) = {
+		<p>URN HERE!</p>
 	}
 
 
@@ -154,7 +160,7 @@ object CiteBinaryImageView {
 			case Some(uv) => {
 				useLocal match {
 					case true => {
-						CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.JpgProtocolString) match {
+						CiteBinaryImageController.implementedByProtocol(uv,CiteBinaryImageModel.jpgProtocolString) match {
 							case Some(obj) => {
 								<li id="image_imagePreviewDiv" >
 									{ CiteBinaryImageView.localThumbnail(u, obj).bind }
@@ -166,7 +172,7 @@ object CiteBinaryImageView {
 						}
 					}
 					case _ => {
-						CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.iiifApiProtocolString) match {
+						CiteBinaryImageController.implementedByProtocol(uv,CiteBinaryImageModel.iiifApiProtocolString) match {
 							case Some(obj) => {
 								<li id="image_imagePreviewDiv" >
 									<img id="image_previewImg" src={
@@ -220,9 +226,8 @@ object CiteBinaryImageView {
 
 		// Set up path to images
 		var pathPrefix:String = CiteBinaryImageModel.imgArchivePath.value
-		g.console.log(s"pathPrefix = ${pathPrefix}")
-		var path:String = pathPrefix + CiteBinaryImageController.getLocalThumbPath(justUrn, obj) 
-		g.console.log(s"path = ${path}")
+		//g.console.log(s"pathPrefix = ${pathPrefix}")
+		var path:String = (pathPrefix + CiteBinaryImageController.getLocalThumbPath(justUrn, obj)).replaceAll("//","/") 
 
 		// Create a canvas, drawing context, offscreen- and onscreen-image	
 		val canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
@@ -273,7 +278,7 @@ object CiteBinaryImageView {
 	/* Image Container: Where openSeaDragon does its thing */
 	@dom
 	def imageContainer = {
-		<div id="image_imageContainer"> </div>
+		<div id="image_zoomContainer"> </div>
 	}
 
 

@@ -101,13 +101,13 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 
 	@dom
 	def iiifApiLink(urn:Cite2Urn, uv:Vector[Cite2Urn], contextUrn:Option[Cite2Urn]) = {
-		CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.iiifApiProtocolString) match {
+		CiteBinaryImageController.implementedByProtocol(uv,CiteBinaryImageModel.iiifApiProtocolString) match {
 			case Some(co) => {
 				CiteBinaryImageModel.imgUseLocal.bind match {
 					case false => {
 						<span class="citeLinks_linkSpan">
 							<a onclick={ event: Event => {
-									val roi:Option[ImageRoiModel.ImageRoi] = ImageRoiModel.roiFromUrn(urn, contextUrn)
+									val roi:ImageRoiModel.Roi = ImageRoiModel.roiFromUrn(urn, contextUrn)
 									DataModelController.viewImage(contextUrn, co, urn, roi)
 							}
 						} >Remote Image</a></span>
@@ -125,7 +125,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 
 	@dom
 	def dzLink(urn:Cite2Urn, uv:Vector[Cite2Urn], contextUrn:Option[Cite2Urn]) = {
-		CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.localDZProtocolString) match {
+		CiteBinaryImageController.implementedByProtocol(uv,CiteBinaryImageModel.localDZProtocolString) match {
 			case Some(co) => {
 				CiteBinaryImageModel.imgUseLocal.bind match {
 					case true => {

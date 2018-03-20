@@ -30,8 +30,8 @@ object DataModelController {
 	def clearDataModels:Unit = {
 		DataModelModel.dataModels.value = None
 		CiteBinaryImageModel.hasBinaryImages.value = false
-		CiteBinaryImageModel.hasIiifApi.value = false
-		CiteBinaryImageModel.hasLocalDeepZoom.value = false
+		CiteBinaryImageModel.hasRemoteOption.value = false
+		CiteBinaryImageModel.hasLocalOption.value = false
 	}
 
 	// Probably should be in CiteObj library?
@@ -124,25 +124,26 @@ object DataModelController {
 
 	def retrieveTextPassage(contextUrn:Option[Cite2Urn] = None, urn:CtsUrn):Unit = {
 			O2Controller.changeUrn(urn)
-			//js.Dynamic.global.document.getElementById("tab-1").checked = true
 			CiteMainView.changeTab("text")
 	}
 
 	def retrieveObject(contextUrn:Option[Cite2Urn] = None, urn:Cite2Urn):Unit = {
-			//g.console.log(s"retrieving: ${urn}")
 			val tempUrn:Cite2Urn = urn.dropExtensions
-			//g.console.log(s"retrieving temp: ${tempUrn}")
 			ObjectController.changeUrn(tempUrn)
-			//ObjectModel.urn.value = Some(tempUrn)
-			//ObjectModel.displayUrn.value = Some(urn)
 			ObjectController.changeObject
-			//js.Dynamic.global.document.getElementById("tab-3").checked = true
 			CiteMainView.changeTab("object")
 	}
 
-	def viewImage(contextUrn:Option[Cite2Urn] = None, implementingObject:CiteObject, urn:Cite2Urn, roiObj:Option[ImageRoiModel.ImageRoi]):Unit = {
-			CiteBinaryImageController.changeUrn(contextUrn, urn, implementingObject, roiObj)
-			//js.Dynamic.global.document.getElementById("tab-4").checked = true
+	def viewImage(contextUrn:Option[Cite2Urn], implementingObject:CiteObject, urn:Cite2Urn, roiObj:Vector[ImageRoiModel.Roi]):Unit = {
+		viewImage(contextUrn, implementingObject, urn, Some(roiObj))
+	}
+
+	def viewImage(contextUrn:Option[Cite2Urn], implementingObject:CiteObject, urn:Cite2Urn, roiObj:ImageRoiModel.Roi):Unit = {
+		viewImage(contextUrn, implementingObject, urn, Some(Vector(roiObj)))
+	}
+
+	def viewImage(contextUrn:Option[Cite2Urn], implementingObject:CiteObject, urn:Cite2Urn, roiObj:Option[Vector[ImageRoiModel.Roi]]):Unit = {
+			CiteBinaryImageController.changeUrn(contextUrn, urn, roiObj)
 			CiteMainView.changeTab("image")
 		}
 

@@ -34,41 +34,84 @@ object CiteBinaryImageModel {
 	val iiifApiProtocolString:String = "iiifApi"
 	val localDZProtocolString:String = "localDeepZoom"
 	val iipDZProtocolString:String = "iipDeepZoom"
-	val JpgProtocolString:String = "JPG"
+	val jpgProtocolString:String = "JPG"
 
-	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
+
+	// this is changed by the user using the local/remote switch	
+	val imgUseLocal = Var[Boolean](false)
+
+	// this is set at app init
+	val imgArchivePath = Var[String]("")
+
+
+	// To save everyone time, is *any* collection in the current CEX
+	// supported for local viewing?
+	val hasLocalOption = Var[Boolean](false)
+	// To save everyone time, is *any* collection in the current CEX
+	// supported for remote viewing?
+	val hasRemoteOption = Var[Boolean](false)
+
 
 	// any binary image implemented?
 	val hasBinaryImages = Var[Boolean](false)	
 	val binaryImageCollections = Vars.empty[Cite2Urn]
 
 	// which protocols are implemented in this CEX?
+	/*
 	val hasIiifApi = Var[Boolean](false)
 	val hasLocalDeepZoom = Var[Boolean](false)
+	val hasJPG = Var[Boolean](false)
+	val hasIipDZ = Var[Boolean](false)
+	*/
 
 	// urn is what the user requested
 	val urn = Var[Option[Cite2Urn]](None)
+
+	/* If a user requests a single URN with an ROI, preview that. But if
+		we're doing some fancy data model stuff, we might want to show
+		the whole image in the preview. So we separate the current URN from
+		the current Preview Urn */
 	val previewUrn = Var[Option[Cite2Urn]](None)
 
 	// An ImageROI object associates an roi with a urn; 
 	// our image may have none, one, or many
-	val imageROIs = Var[Option[ImageRoiModel.ImageRoi]](None)
+	val imageROIs = Vars.empty[ImageRoiModel.Roi]
+
 
 	// User Interface stuff
 	val userMessage = Var("")
 	val userAlert = Var("default")
 	val userMessageVisibility = Var("app_hidden")
-
-	val imgUseLocal = Var[Boolean](true)
-
-	val imgArchivePath = Var[String]("")
-
+	// for displaying and hiding user messages
+	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 	val thumbnailMaxWidth:Int = 400
 
 	// Current info on image displayed	
 	val displayUrn = Var[Option[Cite2Urn]](None)
+	// Do we use this?
 	val versionsForCurrentUrn = Var(1)
 
+	def clearROIs:Unit = {
+		imageROIs.value.clear
+	}
+
+	def loadROIs(rois:Vector[ImageRoiModel.Roi]):Unit = {
+		clearROIs
+		for ( roi <- rois){
+			CiteBinaryImageModel.imageROIs.value += roi
+		}
+
+	}
+
+	def imageRoisToOptionVector:Option[Vector[ImageRoiModel.Roi]] = {
+		imageROIs.value.size match {
+			case s if (s == 1) => None 
+			case _ => {
+				val roiVec:Vector[ImageRoiModel.Roi] = imageROIs.value.map( r => r).toVector	
+				Some(roiVec)
+			}
+		}	
+	}
 
 
 	/* This is how to pass data to the global JS scope */

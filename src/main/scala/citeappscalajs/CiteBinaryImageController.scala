@@ -60,7 +60,7 @@ object CiteBinaryImageController {
 						isBinaryImage
 					}).toVector	
 				}
-				g.console.log(vColl.toString)
+				//g.console.log(vColl.toString)
 				vColl.size match {
 					case s if (s > 0) => {
 						Some(vColl)
@@ -75,15 +75,26 @@ object CiteBinaryImageController {
 
 	def setPreferredImageSource:Unit = {
 		val imgSourceStr:String = js.Dynamic.global.document.getElementById("citeMain_localImageSwitch").checked.toString
-		if (CiteBinaryImageModel.hasIiifApi.value && CiteBinaryImageModel.hasLocalDeepZoom.value){
+		if (CiteBinaryImageModel.hasLocalOption.value && CiteBinaryImageModel.hasRemoteOption.value){
 			CiteBinaryImageModel.imgUseLocal.value = { imgSourceStr == "true" }
-			g.console.log(s"hasIiif: ${CiteBinaryImageModel.hasIiifApi.value}; hasDZ: ${CiteBinaryImageModel.hasLocalDeepZoom.value}")
+			CiteBinaryImageController.changeImage(CiteBinaryImageModel.imageRoisToOptionVector)
 		}
-		//ImageController.changeImage
 	}
 
-	// See if there is any binary image model implemented, and
-	// 	if so, which protocols
+
+	/* See if there is any binary image model implemented, and
+	 	if so, which protocols
+
+	   CiteApp needs two protocols each for local and remote images:
+	   A. Local Images:
+	   	1. jpgProtocolString (static images)
+	   	2. localDZProtocolString (zooming images)
+	   B. Remote Images:
+	   	1. iiifApiProtocolString (static images)
+	   	2. iipDZProtocolString  (zoomking images)
+	   (Those values are defined in CiteBinaryImageModels.scala)
+	*/
+
 	def discoverProtocols:Unit = {
 		// Get urn in more concise form
 		val biurn:Cite2Urn = CiteBinaryImageModel.binaryImageModelUrn	
@@ -91,41 +102,88 @@ object CiteBinaryImageController {
 		CiteMainModel.mainLibrary.value match {
 			case Some(ml) => {
 				val bicolls:Vector[Cite2Urn] = ml.collectionsForModel(biurn)
-				//g.console.log(s"bicolls.size = ${bicolls.size}")
 				bicolls.size match {
 					case s if (s > 0) => {
 			  			CiteBinaryImageModel.hasBinaryImages.value = true
-			  			CiteBinaryImageModel.hasIiifApi.value = {
-			  				if (ObjectModel.collRep.value != None) {
-		  						val iiifObjects:Vector[CiteObject] = ObjectModel.collRep.value.get.citableObjects.filter(_.valueEquals("iiifApi"))
-		  						val hasIiif:Boolean = (iiifObjects.size > 0)
-								hasIiif
-			  				} else {
-			  					false
+			  			CiteBinaryImageModel.hasRemoteOption.value = {
+			  				val hasIiifApiColls:Boolean = {
+			  					ObjectModel.collRep.value match {
+			  						case Some(cr) => {
+					  					var colls:Vector[Cite2Urn] = bicolls.map( c => {
+					  						cr.collectionsMap(c)	
+					  					}).flatten
+					  					val protocolReport:Option[CiteObject] = implementedByProtocol(colls,CiteBinaryImageModel.iiifApiProtocolString)
+					  					protocolReport match {
+					  						case Some(co) => true
+					  						case _ => false
+					  					}
+			  						}
+				  					case None => false
+			  					}
 			  				}
+			  				val hasIipDZColls:Boolean = { 
+			  					ObjectModel.collRep.value match {
+			  						case Some(cr) => {
+					  					var colls:Vector[Cite2Urn] = bicolls.map( c => {
+					  						cr.collectionsMap(c)	
+					  					}).flatten
+					  					val protocolReport:Option[CiteObject] = implementedByProtocol(colls,CiteBinaryImageModel.iipDZProtocolString)
+					  					protocolReport match {
+					  						case Some(co) => true
+					  						case _ => false
+					  					}
+			  						}
+				  					case None => false
+			  					}
+				  			}
+			  				( hasIiifApiColls && hasIipDZColls )	
 			  			}
-			  			CiteBinaryImageModel.hasLocalDeepZoom.value = {
-			  				if (ObjectModel.collRep.value != None) {
-		  						val dzObjects:Vector[CiteObject] = ObjectModel.collRep.value.get.citableObjects.filter(_.valueEquals("localDeepZoom"))
-		  						val hasDz:Boolean = (dzObjects.size > 0)
-								hasDz
-			  				} else {
-			  					false
+			  			CiteBinaryImageModel.hasLocalOption.value = {
+			  				val hasJpgColls:Boolean = {
+			  					ObjectModel.collRep.value match {
+			  						case Some(cr) => {
+					  					var colls:Vector[Cite2Urn] = bicolls.map( c => {
+					  						cr.collectionsMap(c)	
+					  					}).flatten
+					  					val protocolReport:Option[CiteObject] = implementedByProtocol(colls,CiteBinaryImageModel.jpgProtocolString)
+					  					protocolReport match {
+					  						case Some(co) => true
+					  						case _ => false
+					  					}
+			  						}
+				  					case None => false
+			  					}
 			  				}
+			  				val hasLocalDZColls:Boolean = {
+			  					ObjectModel.collRep.value match {
+			  						case Some(cr) => {
+					  					var colls:Vector[Cite2Urn] = bicolls.map( c => {
+					  						cr.collectionsMap(c)	
+					  					}).flatten
+					  					val protocolReport:Option[CiteObject] = implementedByProtocol(colls,CiteBinaryImageModel.localDZProtocolString)
+					  					protocolReport match {
+					  						case Some(co) => true
+					  						case _ => false
+					  					}
+			  						}
+				  					case None => false
+			  					}
+			  				}
+			  				( hasJpgColls && hasLocalDZColls )	
 			  			}
 					}
 					case _ => {
 						// With no protocol represented, may as well say `false` to everything
 			  			CiteBinaryImageModel.hasBinaryImages.value = false
-			  			CiteBinaryImageModel.hasIiifApi.value = false
-			  			CiteBinaryImageModel.hasLocalDeepZoom.value = false
+			  			CiteBinaryImageModel.hasLocalOption.value = false
+			  			CiteBinaryImageModel.hasRemoteOption.value = false
 					}
 				}
 			}	
 			case None => {
 	  			CiteBinaryImageModel.hasBinaryImages.value = false
-	  			CiteBinaryImageModel.hasIiifApi.value = false
-	  			CiteBinaryImageModel.hasLocalDeepZoom.value = false
+	  			CiteBinaryImageModel.hasLocalOption.value = false
+	  			CiteBinaryImageModel.hasRemoteOption.value = false
 			}
 		}
 	}
@@ -134,13 +192,13 @@ object CiteBinaryImageController {
 	Based on current state of the protocol values, set the switch
 	*/
 	def setImageSwitch:Unit = {
-		if( CiteBinaryImageModel.hasIiifApi.value && !(CiteBinaryImageModel.hasLocalDeepZoom.value)) {
+		if( CiteBinaryImageModel.hasLocalOption.value && !(CiteBinaryImageModel.hasRemoteOption.value)) {
+			CiteBinaryImageModel.imgUseLocal.value = true
+		}
+		if( CiteBinaryImageModel.hasRemoteOption.value && !(CiteBinaryImageModel.hasLocalOption.value)) {
 			CiteBinaryImageModel.imgUseLocal.value = false
 		}
-		if( CiteBinaryImageModel.hasLocalDeepZoom.value && !(CiteBinaryImageModel.hasIiifApi.value)) {
-			CiteBinaryImageModel.imgUseLocal.value = true 
-		}
-		g.console.log(s"hasIiif: ${CiteBinaryImageModel.hasIiifApi.value}; hasDZ: ${CiteBinaryImageModel.hasLocalDeepZoom.value}")
+		//g.console.log(s"hasIiif: ${CiteBinaryImageModel.hasIiifApi.value}; hasDZ: ${CiteBinaryImageModel.hasLocalDeepZoom.value}")
 	}
 
 	/* Check to see if the Binary Image datamodel is:
@@ -204,14 +262,18 @@ object CiteBinaryImageController {
 	/*
 	Given a CITE URN to an object, and a protocol string, report whether that object is implemented by the given protocol
 	*/
-	def implmentedByProtocol(urnV:Vector[Cite2Urn], protocol:String):Option[CiteObject] = {
+	def implementedByProtocol(urnV:Vector[Cite2Urn], protocol:String):Option[CiteObject] = {
+	//	g.console.log(s"implementedByProtocol: ${protocol} :: ${urnV}")
 		try {
 			urnV.size match {
 				case s if (s > 0) => {
 					val implementedUrns:Vector[Cite2Urn] = urnV.filter(u => {
 						val cr = ObjectModel.collRep.value.get	
 						val oneObject:CiteObject = cr.citableObjects.filter(_.urn == u)(0)
+					//	g.console.log(s"oneObject: ${oneObject.urn}")
 						val propId:Cite2Urn = DataModelController.propertyUrnFromPropertyName(u, CiteBinaryImageModel.protocolPropertyName)
+					//	g.console.log(s"propId = ${propId}")
+						//g.console.log(s"equals: ${oneObject.valueEquals(propId,protocol)}")
 						oneObject.valueEquals(propId,protocol)
 					})
 					implementedUrns.size match {
@@ -231,27 +293,52 @@ object CiteBinaryImageController {
 	/* Given a URN and the value of CiteBinaryImageModel.useLocal, return an 
 		implementing object for that image.
 	*/
-	def getImplmentingObject(u:Cite2Urn, useLocal:Boolean):Option[CiteObject] = {
+	def getImplementingObject(u:Cite2Urn, useLocal:Boolean, zoom:Boolean):Option[CiteObject] = {
 		CiteBinaryImageController.implementedByImageCollObjects(u) match {
 			case Some(uv) => {
-				useLocal match {
-					case true => {
-						CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.localDZProtocolString) match {
-							case Some(obj) => {
-								Some(obj)
+				zoom match {
+					case false => {
+						useLocal match {
+							case true => {
+								CiteBinaryImageController.implementedByProtocol(uv,CiteBinaryImageModel.jpgProtocolString) match {
+									case Some(obj) => {
+										Some(obj)
+									}
+									case _ => None
+								}
 							}
-							case _ => None
-						}
+							case _ => {
+								CiteBinaryImageController.implementedByProtocol(uv,CiteBinaryImageModel.iiifApiProtocolString) match {
+									case Some(obj) => {
+										Some(obj)
+									}
+									case _ => None
+								}
+							}
+						}	
 					}
 					case _ => {
-						CiteBinaryImageController.implmentedByProtocol(uv,CiteBinaryImageModel.iiifApiProtocolString) match {
-							case Some(obj) => {
-								Some(obj)
+						useLocal match {
+							case true => {
+								CiteBinaryImageController.implementedByProtocol(uv,CiteBinaryImageModel.localDZProtocolString) match {
+									case Some(obj) => {
+										Some(obj)
+									}
+									case _ => None
+								}
 							}
-							case _ => None
-						}
+							case _ => {
+								CiteBinaryImageController.implementedByProtocol(uv,CiteBinaryImageModel.iipDZProtocolString) match {
+									case Some(obj) => {
+										Some(obj)
+									}
+									case _ => None
+								}
+							}
+						}	
 					}
-				}			}
+				}								
+			}
 			case None => None 
 		}
 	}
@@ -300,26 +387,12 @@ object CiteBinaryImageController {
 		// It is impossible to predict or remember whether to precede or follow
 		// these paths with "/", so let's double-up, and clean…
 		val s:String = "/" + pathMap("url") + pathMap("path") + "/"
-		g.console.log(s"path for JPG: ${s}")
-		g.console.log(s"cleaned: ${s.replaceAll("//","/")}")
-		//val s:String = s"/${urn.namespace}/${urn.collection}/${urn.version}/"	
 		s.replaceAll("//","/")
 	}
 
 	// *** Apropos Microservice ***
 	def changeUrn(urn:Cite2Urn): Unit = 	{
-		try {
-			val useLocal:Boolean = CiteBinaryImageModel.imgUseLocal.value
-			val implObj:Option[CiteObject] = getImplmentingObject(urn, useLocal)
-			implObj match {
-				case Some(io) => changeUrn(None, urn, io, None)
-				case None => throw new Exception("Image not implemented by any appropriate datamodel.")
-			}
-		} catch {
-			case e:Exception => {
-					updateUserMessage(s"Unable to display image for ${urn}. ${e}",2)
-			}
-		}
+		changeUrn(None, urn, None)
 	}
 
 	// *** Apropos Microservice ***
@@ -338,23 +411,22 @@ object CiteBinaryImageController {
 	def changeUrn(
 		contextUrn:Option[Cite2Urn] = None, 
 		urn:Cite2Urn, 
-		implementingObject:CiteObject, 
-		roiObj:Option[ImageRoiModel.ImageRoi] = None
+		roiObjs:Option[Vector[ImageRoiModel.Roi]] = None
 	):Unit = {
 		try {
 			CiteBinaryImageModel.displayUrn.value = Some(urn)
 			validUrnInField.value = true
 			CiteBinaryImageModel.urn.value = Some(urn.dropExtensions)
 			val plainUrn:Cite2Urn = urn.dropExtensions
-			CiteBinaryImageController.updateRois(plainUrn,roiObj)
+			CiteBinaryImageController.updateRois(plainUrn,roiObjs)
 			CiteBinaryImageModel.previewUrn.value = {
-				roiObj match {
+				roiObjs match {
 					case None => Some(urn)
-					case Some(r) if (r.rois.size > 1) => Some(plainUrn)
+					case Some(r) if (r.size > 1) => Some(plainUrn)
 					case _ => Some(urn)
 				}
 			}
-			CiteBinaryImageController.changeImage(urn,implementingObject,roiObj)
+			CiteBinaryImageController.changeImage(roiObjs)
 		} catch {
 			case e: Exception => {
 				validUrnInField.value = false
@@ -375,25 +447,114 @@ object CiteBinaryImageController {
 		}
 	}
 
-	def updateRois(u:Cite2Urn, roiObject:Option[ImageRoiModel.ImageRoi] = None):Unit = {
-			CiteBinaryImageModel.imageROIs.value = roiObject
+	def updateRois(u:Cite2Urn, roiOptionVector:Option[Vector[ImageRoiModel.Roi]] = None):Unit = {
+		roiOptionVector match {
+			case Some(rov) => CiteBinaryImageModel.loadROIs(rov)
+			case None => CiteBinaryImageModel.clearROIs
+		}
 	}
 
-	def getZoomSource(urn:Cite2Urn, obj:CiteObject):String = {
-		"zoomSource"
+	def getZoomUrlAndPath(urn:Cite2Urn):String = {
+		/* Remote, e.g.:
+				'http://www.homermultitext.org/iipsrv?DeepZoom=/project/homer/pyramidal/VenA/VA012RN_0013.tif.dzi',
+			Local, e.g.:
+				'image_archive/hmt/vaimg/2017a/VA012RN_0013.dzi'
+
+			Local needs the value in  property localDZProtocolString
+			Remote needs the value in property iipDZProtocolString
+		*/
+		try {
+			val useLocal:Boolean = CiteBinaryImageModel.imgUseLocal.value
+			useLocal match {
+				case true => {
+					val implObj:Option[CiteObject] = getImplementingObject(urn,true,true)
+					implObj match {
+						case Some(io) => {
+
+							// Get Url
+							val urlPropertyUrn:Cite2Urn =  DataModelController.propertyUrnFromPropertyName(implObj.get.urn, "url") 
+							// Sanitizing. We want this to end with a slash but not begin with one.
+							val zoomUrl1:String = io.propertyValue(urlPropertyUrn).toString
+							val zoomUrl2:String = if (zoomUrl1(0) == '/') zoomUrl1.tail else zoomUrl1
+							val zoomUrl3:String = s"${zoomUrl2}/".replaceAll("//","/")
+							// But we want to keep http://
+							val zoomUrl:String = s"${zoomUrl3}".replaceAll("http:/","http://")
+
+							// Get Path
+							val pathPropertyUrn:Cite2Urn =  DataModelController.propertyUrnFromPropertyName(implObj.get.urn, "path") 
+							// Do some sanitizing: We want a slash at the end _and_ at the beginning
+							val zoomPath1:String = io.propertyValue(pathPropertyUrn).toString
+							val zoomPath2:String = if (zoomPath1(0) == '/') zoomPath1.tail else zoomPath1
+							val zoomPath:String = s"/${zoomPath2}/".replaceAll("//","/")
+
+							// Get object-selector: this is the image-file name
+							val imgId:String = urn.dropExtensions.objectComponent
+
+							// assemble valid path for local Deep Zoom zooming
+							val returnVal:String = 	s"${CiteBinaryImageModel.imgArchivePath.value}${zoomUrl}${zoomPath}${imgId}.dzi"
+							returnVal
+						}
+						case None => {
+							throw new Exception("No implementingObject")
+						}
+					}
+				}
+				case _ => {
+					val implObj:Option[CiteObject] = getImplementingObject(urn,false,true)
+					implObj match {
+						case Some(io) => {
+
+							// Get Url
+							val urlPropertyUrn:Cite2Urn =  DataModelController.propertyUrnFromPropertyName(implObj.get.urn, "url") 
+							// Sanitizing. We want this to end with a slash but not begin with one.
+							val zoomUrl1:String = io.propertyValue(urlPropertyUrn).toString
+							val zoomUrl2:String = if (zoomUrl1(0) == '/') zoomUrl1.tail else zoomUrl1
+							val zoomUrl3:String = s"${zoomUrl2}".replaceAll("//","/")
+							// But we want to keep http://
+							val zoomUrl:String = s"${zoomUrl3}".replaceAll("http:/","http://")
+
+							// Get Path
+							val pathPropertyUrn:Cite2Urn =  DataModelController.propertyUrnFromPropertyName(implObj.get.urn, "path") 
+							// Do some sanitizing: We want a slash at the end _and_ at the beginning
+							val zoomPath1:String = io.propertyValue(pathPropertyUrn).toString
+							val zoomPath2:String = s"${zoomPath1}"
+							val zoomPath:String = s"${zoomPath2}/".replaceAll("//","/")
+
+							// Get object-selector: this is the image-file name. For iipDeepZoom, it must end in '.tif.dzi'
+							val imgId:String = s"${urn.dropExtensions.objectComponent}.tif.dzi"
+
+							val returnVal:String = s"${zoomUrl}${zoomPath}${imgId}"
+							returnVal
+						}
+						case None => {
+							throw new Exception("No implementingObject")
+						}
+					}
+				}
+			}
+		} catch {
+			case e:Exception => throw new Exception(s"getZoomPath: cannot get ${if (CiteBinaryImageModel.imgUseLocal.value) "local" else "remote"} zoom path for ${urn}: ${e}")
+		}
 	}
 
 
-	def changeImage(urn:Cite2Urn, implementingObject:CiteObject, roiObj:Option[ImageRoiModel.ImageRoi]):Unit = {
+	def changeImage(roiObj:Option[Vector[ImageRoiModel.Roi]]):Unit = {
 		CiteBinaryImageModel.urn.value match {
 			case Some(u) => {
 				val tempUrn:Cite2Urn = u
 				val collection:Cite2Urn = tempUrn.dropSelector
 				val ioo:Option[String] = tempUrn.objectComponentOption
+
+				// Double-check that we have an image, not a collection	
 				ioo match {
 					case Some(s) => {
-						CiteBinaryImageController.loadJsArray
-						val zoomPath:String = CiteBinaryImageController.getZoomSource(urn, implementingObject)
+						// If there is/are imageROI(s) grabbed, send them to JS for processing
+						CiteBinaryImageController.loadJsArray(roiObj)
+						// Based on local/remote, get zoom path
+						val zoomPath:String = CiteBinaryImageController.getZoomUrlAndPath(u)
+						// Alert user that ROIs will appear after a short delay
+						updateUserMessage("Regions-of-interest will appear on the image after a short delay.",1)
+						// Hand off to javascript for OpenSeadragon zooming
 						CiteBinaryImageController.updateImageJS(collection.toString, s, zoomPath )
 					}
 					case _ => {
@@ -408,8 +569,28 @@ object CiteBinaryImageController {
 		}
 	}
 
-	def loadJsArray:Unit = {
+	def loadJsArray(roiObj:Option[Vector[ImageRoiModel.Roi]]):Unit = {
+		g.console.log(roiObj.toString)
 		CiteBinaryImageController.clearJsRoiArray(true)
+		roiObj match {
+			case Some(ro) => {
+				for (roi <- ro){
+					val tempRoi:String = roi.toSubrefString	
+					val dataUrn:String = {
+						roi.dataUrn match {
+							case Some(du) => du.toString
+							case None => ""
+						}
+					}
+					// Fix this!!!
+					val groupId:String = "1"
+					val index:Int = 1
+					CiteBinaryImageController.addToJsRoiArray(index,tempRoi,dataUrn,groupId)
+				}
+
+			}
+			case None => // do nothing
+		}		
 		/*
 		for (iroi <- ImageModel.imageROIs.value){
 			val tempRoi:String = {

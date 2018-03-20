@@ -6,6 +6,7 @@ import scala.scalajs.js
 import scala.scalajs.js._
 import org.scalajs.dom._
 import org.scalajs.dom.ext._
+import scala.scalajs.js.Dynamic.{ global => g }
 import org.scalajs.dom.raw._
 import org.scalajs.dom.document
 import org.scalajs.dom.raw.Event
@@ -60,33 +61,33 @@ object CiteMainView {
 			}>
 				Image Source:
 				<span class={
-					(CiteBinaryImageModel.hasIiifApi.bind && CiteBinaryImageModel.hasLocalDeepZoom.bind) match {
+					(CiteBinaryImageModel.hasRemoteOption.bind && CiteBinaryImageModel.hasLocalOption.bind) match {
 				    		case true => "app_hidden"	
 				    		case false => "app_visible"	
 			    	}	
 				}>
 					<span class={ 
-						CiteBinaryImageModel.hasLocalDeepZoom.bind match {
+						CiteBinaryImageModel.hasLocalOption.bind match {
 							case true => "app_visible"
 							case _ => "app_hidden"
 						}
 					}>Using Local Images</span>
 					<span class={ 
-						CiteBinaryImageModel.hasIiifApi.bind match {
+						CiteBinaryImageModel.hasRemoteOption.bind match {
 							case true => "app_visible"
 							case _ => "app_hidden"
 						}
 			  	   }>Using Remote Images</span>
 			  	</span>
 				<div class={
-						(CiteBinaryImageModel.hasIiifApi.bind && CiteBinaryImageModel.hasLocalDeepZoom.bind) match {
+						(CiteBinaryImageModel.hasRemoteOption.bind && CiteBinaryImageModel.hasLocalOption.bind) match {
 					    		case true => "onoffswitch app_visible"	
 					    		case false => "onoffswitch app_hidden"	
 				    	}	
 					}>
 				    <input type="checkbox" name="onoffswitch" class={
 				    	
-				    	(CiteBinaryImageModel.hasIiifApi.bind && CiteBinaryImageModel.hasLocalDeepZoom.bind) match {
+				    	(CiteBinaryImageModel.hasRemoteOption.bind && CiteBinaryImageModel.hasLocalOption.bind) match {
 				    		case true => "onoffswitch-checkbox app_visible"	
 				    		case false => "onoffswitch-checkbox app_hidden"	
 				    	}

@@ -26,15 +26,18 @@ import js.annotation._
 @JSExportTopLevel("citeapp.ImageRoiModel")
 object ImageRoiModel {
 
-	case class ImageRoi(imageUrn:Cite2Urn, rois:Vector[Roi]) {
+	case class ImageRoi(imageUrn:Cite2Urn, rois:Vars[Roi]) {
 		override def toString = s"Image: ${imageUrn}. ${rois}"
 	}
 
  	case class Roi(val l:Float, t:Float, w:Float, h:Float, dataUrn:Option[Urn] = None ) {
 			override def toString = s"left:${l}, top:${t}, width:${w}, height:${h} => ${dataUrn}"
+			def toSubrefString:String = {
+				s"${l},${t},${w},${h}"
+			}
 	}
 
-	def roiFromUrn(u:Cite2Urn, data:Option[Urn]):Option[ImageRoi] = {
+	def roiFromUrn(u:Cite2Urn, data:Option[Urn]):Roi = {
 		// in this case, there will be only one Roi object in the ImageRoi
 		try {
 			u.objectExtensionOption match {
@@ -51,11 +54,9 @@ object ImageRoiModel {
 					if ( (h <0) | ( h > 1) ) throw new Exception(s"${h} must be > 0 and < 1.")
 					// Got here and we're good
 					val roi:Roi = Roi(l,t,w,h,data)
-					val roiVec = Vector(roi)
-					val roiObj = ImageRoi(u.dropExtensions,roiVec)
-					Some(roiObj)
+					roi
 				}
-				case None => None
+				case None => throw new Exception(s"${u} does not have a region-of-interest extension")
 			}
 		} catch {
 			case e:Exception => throw new Exception(s"Unable to make ROI from ${u}. ${e}")
