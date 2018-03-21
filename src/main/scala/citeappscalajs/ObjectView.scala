@@ -75,7 +75,12 @@ object ObjectView {
 		id="object_urnInput"
 		size={ 40 }
 		type="text"
-		value=""
+		value={ 
+			ObjectModel.displayUrn.bind match {
+				case Some(u) => { u.toString }
+				case None => ""
+			}
+		}
 		onkeyup={ urnValidatingKeyUpHandler }>
 		</input>
 
@@ -136,7 +141,7 @@ def objectToCollectionButton = {
 				//ObjectModel.limit.value = 2
 				ObjectModel.objectOrCollection.value = "collection"
 				ObjectController.updateUserMessage("Retrieving collection…",1)
-				val task = Task{ ObjectController.changeObject }
+				val task = Task{ ObjectController.changeUrn(Cite2Urn(s).dropSelector) }
 				val future = task.runAsync
 				/*
 				js.timers.setTimeout(200){

@@ -53,12 +53,8 @@ function addToJsRoiArray(i,r,u,g){
 
 function clearSelectedROIs(){
 	for (n = 0; n < roiArray.length; n++){
-			console.log("n = " + n );
-			console.log("roiArray.length = " + roiArray.length );
 			var roiId = idForMappedROI(n+1)
-			console.log("roiId = " + roiId);
 			var urnId = idForMappedUrn(n+1)
-			console.log("urnId = " + urnId);
 			var thisROI = document.getElementById(roiId)
 			var thisURN = document.getElementById(urnId)
 			thisROI.classList.remove("image_roi_selected")
@@ -87,7 +83,7 @@ function getGroup(i){
 }
 
 function initOpenSeadragon(imagePath) {
-		console.log(imagePath)
+		//console.log(imagePath)
 
 		if (viewer != null){
 				viewer.destroy();
@@ -132,15 +128,15 @@ function initOpenSeadragon(imagePath) {
     // Add overlays
 			setTimeout(function(){
 				if (viewer.world.getItemAt(0)){
-					console.log("defined");
+					//console.log("defined");
 				} else {
-					console.log("undefined");
+					//console.log("undefined");
 				}
 				var baseTimer = 0;
 				while( !(viewer.world.getItemAt(0))){
 					baseTimer = baseTimer + 1;
 				}
-				console.log(baseTimer);
+				//console.log(baseTimer);
 				var normH = viewer.world.getItemAt(0).getBounds().height;
 				var normW = viewer.world.getItemAt(0).getBounds().width;
 				if (roiArray.length > 0){
@@ -178,6 +174,6 @@ function initOpenSeadragon(imagePath) {
 								e.target.classList.add("image_roi_selected")
 						}, false);
 					}
-			},4000);
+			},6000);
 
 }

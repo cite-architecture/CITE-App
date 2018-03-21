@@ -84,7 +84,7 @@ object DataModelController {
 		}
 		ObjectModel.collRep.value match {
 			case Some(cr) => {
-				cr.citableObjects.filter(_.urn == urn).size match {
+				cr.citableObjects.filter(_.urn == urn.dropExtensions).size match {
 					case 1 => true
 					case _ => false
 				}	

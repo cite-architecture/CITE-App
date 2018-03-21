@@ -36,6 +36,7 @@ object ObjectController {
 		ObjectController.setDisplay
 	}
 
+
 	def objectIsPresent(u:Cite2Urn):Boolean = {
 		val tempU:Cite2Urn = u.dropExtensions
 		if (ObjectModel.collRep.value.get.citableObjects.filter(_.urn == tempU).size > 0){
@@ -118,7 +119,7 @@ object ObjectController {
 		ObjectModel.isOrdered.value = ObjectModel.collRep.value.get.isOrdered(collUrn)
 
 		if (
-				(ObjectModel.objectOrCollection.value == true) ||
+				(ObjectModel.objectOrCollection.value == "collection") ||
 				(ObjectModel.urn.value.get.isRange == true) ||
 				(ObjectModel.isOrdered.value == true) ||
 				(ObjectModel.urn.value.get.objectOption == None)
@@ -128,19 +129,21 @@ object ObjectController {
 
 			ObjectModel.objectOrCollection.value match {
 					case "object" => {
-						//g.console.log(s"Doing get [object]… ${ObjectModel.urn.value} =? ${tempUrn}")
+						g.console.log(s"Doing get [object]… ${ObjectModel.urn.value} =? ${tempUrn}")
 						ObjectModel.getObjects(tempUrn)
 					}
 					case "collection" =>{
-						//g.console.log(s"Doing get [collection]… ${ObjectModel.urn.value} =? ${tempUrn}")
+						g.console.log(s"Doing get [collection]… ${ObjectModel.urn.value} =? ${tempUrn}")
+						g.console.log(s"current urn: ${ObjectModel.urn.value}")
+						g.console.log(s"current display-urn: ${ObjectModel.displayUrn.value}")
 						ObjectModel.getObjects(tempUrn)
 					}
 					case "range" =>{
-						//g.console.log(s"Doing get [range]… ${ObjectModel.urn.value} =? ${tempUrn}")
+						g.console.log(s"Doing get [range]… ${ObjectModel.urn.value} =? ${tempUrn}")
 						ObjectModel.getObjects(tempUrn)
 					}
 					case _ => {
-						//g.console.log("Nothing to change.")
+						g.console.log("Nothing to change.")
 					}
 			}
 		ObjectController.setDisplay

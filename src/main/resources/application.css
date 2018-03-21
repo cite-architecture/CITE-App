@@ -20,8 +20,14 @@ li.citeLinks_linkItem:last-child, span.citeLinks_linkSpan:last-child{
 	border-right: none;
 }
 
+#image_mappedData li.citeLinks_linkItem {
+	display: block;
+	border: none;
+	margin-bottom: 0;
+}
+
 li.citeLinks_linkItem:nth-child(1){
-	padding-left: 0;
+	/* padding-left: 0; */
 }
 
 
@@ -578,13 +584,13 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 		color: green;
 }
 
-#o2_citedWorksContainer ul, #ngram_citedWorksContainer ul {
+#o2_citedWorksContainer ul, #ngram_citedWorksContainer ul, #image_imageCollectionsContainer ul, #image_mappedData ul, #object_objectCollectionsContainer ul {
 	list-style-type: decimal;
 	padding-left: 0;
 }
 
 
-#o2_citedWorksContainer ul li, #ngram_citedWorksContainer ul li {
+#o2_citedWorksContainer ul li, #ngram_citedWorksContainer ul li, #image_imageCollectionsContainer ul li, #image_mappedData ul li, #object_objectCollectionsContainer ul li {
 	line-height: 1.2em;
 	max-height: 2.4em;
 	white-space: nowrap;

@@ -60,7 +60,6 @@ object CiteBinaryImageController {
 						isBinaryImage
 					}).toVector	
 				}
-				//g.console.log(vColl.toString)
 				vColl.size match {
 					case s if (s > 0) => {
 						Some(vColl)
@@ -198,7 +197,6 @@ object CiteBinaryImageController {
 		if( CiteBinaryImageModel.hasRemoteOption.value && !(CiteBinaryImageModel.hasLocalOption.value)) {
 			CiteBinaryImageModel.imgUseLocal.value = false
 		}
-		//g.console.log(s"hasIiif: ${CiteBinaryImageModel.hasIiifApi.value}; hasDZ: ${CiteBinaryImageModel.hasLocalDeepZoom.value}")
 	}
 
 	/* Check to see if the Binary Image datamodel is:
@@ -386,7 +384,7 @@ object CiteBinaryImageController {
 		val pathMap:Map[String,String] = pathAndUrl(urn, obj)
 		// It is impossible to predict or remember whether to precede or follow
 		// these paths with "/", so let's double-up, and clean…
-		val s:String = "/" + pathMap("url") + pathMap("path") + "/"
+		val s:String = pathMap("url") + pathMap("path") + "/"
 		s.replaceAll("//","/")
 	}
 
@@ -576,7 +574,6 @@ object CiteBinaryImageController {
 	}
 
 	def loadJsArray(roiObj:Option[Vector[ImageRoiModel.Roi]]):Unit = {
-		g.console.log(roiObj.toString)
 		CiteBinaryImageController.clearJsRoiArray(true)
 		roiObj match {
 			case Some(ro) => {

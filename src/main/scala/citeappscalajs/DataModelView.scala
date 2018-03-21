@@ -65,19 +65,32 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 }
 
 @dom
-	def objectLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn) = {
-		//g.console.log("CiteLinks objectLinkItem")
-		DataModelController.hasObject(propVal) match {
+	def objectLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn,labeled:Boolean = false) = {
+		//g.console.log(s"propVal: ${propVal}, contextUrn: ${contextUrn}")
+		val tempUrn:Cite2Urn = propVal.dropExtensions.dropProperty
+		DataModelController.hasObject(tempUrn) match {
 			case true => {
 				<li class="citeLinks_linkItem">
 					<a onclick={ event: Event => {
 							//g.console.log(s"clicked: ${propVal}")
-							DataModelController.retrieveObject(contextUrn,propVal)
+							DataModelController.retrieveObject(contextUrn,tempUrn)
 						}
-				} >View Object </a></li>
+				} > { 
+					labeled match {
+						case true => {
+							s"${ObjectModel.collRep.value.get.citableObject(propVal.dropExtensions.dropProperty).label}" 
+						}
+						case _ => {
+							"View Item"
+						}
+					}
+				}</a></li>
 			}
 			case _ => {
-				<li class="citeLinks_linkItem">Object not in Library</li>
+				labeled match {
+					case true => { <li class="citeLinks_linkItem">{ s"Object ${tempUrn} not in Library" }</li> }
+					case _ => { <li>Object not in Library</li> }
+				}
 			}
 		}
 	
@@ -89,8 +102,8 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 		CiteBinaryImageController.implementedByImageCollObjects(propVal) match {
 			case Some(uv) => {
 				<li class="citeLinks_linkItem">
-					{ DataModelView.iiifApiLink(propVal, uv, contextUrn).bind }
-					{ DataModelView.dzLink(propVal, uv, contextUrn).bind }
+					{ DataModelView.iipDZLink(propVal, uv, contextUrn).bind }
+					{ DataModelView.localDZLink(propVal, uv, contextUrn).bind }
 				</li>
 			}
 			case None => {
@@ -100,7 +113,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 	}	
 
 	@dom
-	def iiifApiLink(urn:Cite2Urn, uv:Vector[Cite2Urn], contextUrn:Option[Cite2Urn]) = {
+	def iipDZLink(urn:Cite2Urn, uv:Vector[Cite2Urn], contextUrn:Option[Cite2Urn]) = {
 		CiteBinaryImageController.implementedByProtocol(uv,CiteBinaryImageModel.iiifApiProtocolString) match {
 			case Some(co) => {
 				CiteBinaryImageModel.imgUseLocal.bind match {
@@ -109,6 +122,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 							<a onclick={ event: Event => {
 									val roi:Option[Vector[ImageRoiModel.Roi]] = {
 										val tempRoi:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(urn, contextUrn)
+										CiteBinaryImageModel.currentContextUrn.value = contextUrn
 										tempRoi match {
 											case Some(r) => Some(Vector(r))
 											case None => None
@@ -130,7 +144,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 	}
 
 	@dom
-	def dzLink(urn:Cite2Urn, uv:Vector[Cite2Urn], contextUrn:Option[Cite2Urn]) = {
+	def localDZLink(urn:Cite2Urn, uv:Vector[Cite2Urn], contextUrn:Option[Cite2Urn]) = {
 		CiteBinaryImageController.implementedByProtocol(uv,CiteBinaryImageModel.localDZProtocolString) match {
 			case Some(co) => {
 				CiteBinaryImageModel.imgUseLocal.bind match {
@@ -138,6 +152,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 						<span class="citeLinks_linkSpan">
 							<a onclick={ event: Event => {
 									val thisRoi:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(urn, contextUrn)
+									CiteBinaryImageModel.currentContextUrn.value = contextUrn
 									val returnRoi:Option[Vector[ImageRoiModel.Roi]] = {
 										thisRoi match {
 											case Some(r) => Some(Vector(r))

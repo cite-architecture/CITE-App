@@ -144,9 +144,16 @@ object CiteBinaryImageView {
 		<h2>Mapped Data</h2>
 		<div id="image_mappedData">
 			<ul>
-				<li>{
-					CiteBinaryImageModel.currentContextUrn.bind.toString	
-				}</li>
+				{
+					CiteBinaryImageModel.currentContextUrn.bind match {
+						case Some(cu) => {
+							val curn:Option[Cite2Urn] = CiteBinaryImageModel.urn.value
+							DataModelView.objectLinkItem(curn, cu.asInstanceOf[Cite2Urn], true).bind
+						}
+						case None => { <!-- empty content --> }
+					}
+
+				}
 				{ allImageRoisListItems.bind}
 			</ul>
 		</div>
@@ -156,9 +163,25 @@ object CiteBinaryImageView {
 	@dom
 	def allImageRoisListItems = {
 		for (roi <- CiteBinaryImageModel.imageROIs) yield {
-			<li>{
-				roi.dataUrn.toString
-			}</li>
+			{
+				val curn:Option[Cite2Urn] = CiteBinaryImageModel.urn.value
+				roi.dataUrn match {
+					case Some(du) => {
+						du.toString.take(7) match {
+							case s if (s == "urn:cts") => {
+								DataModelView.textLinkItem(curn, du.asInstanceOf[CtsUrn]).bind
+							}
+							case _ => {
+								DataModelView.objectLinkItem(curn, du.asInstanceOf[Cite2Urn], true).bind
+							}
+						}
+					}
+					case _ => { 
+						<!-- empty content --> 
+					}
+				}
+			}
+			
 		}
 	}
 

@@ -136,7 +136,7 @@ object CiteMainController {
 			var timeStart = new js.Date().getTime()
 			val repo:CiteLibrary = CiteLibrary(cexString, CiteMainModel.cexMainDelimiter, CiteMainModel.cexSecondaryDelimiter)
 			var timeEnd = new js.Date().getTime()
-			g.console.log(s"Created CiteLibrary in ${(timeEnd - timeStart)/1000} seconds.")
+			//g.console.log(s"Created CiteLibrary in ${(timeEnd - timeStart)/1000} seconds.")
 			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
 			var loadMessage:String = ""
 
@@ -166,7 +166,7 @@ object CiteMainController {
 				}
 			}
 			timeEnd = new js.Date().getTime()
-			g.console.log(s"Initialized TextRepository in ${(timeEnd - timeStart)/1000} seconds.")
+			//g.console.log(s"Initialized TextRepository in ${(timeEnd - timeStart)/1000} seconds.")
 
 			// Collection Repository Stuff
 			timeStart = new js.Date().getTime()
@@ -185,7 +185,7 @@ object CiteMainController {
 				}
 			}
 			timeEnd = new js.Date().getTime()
-			g.console.log(s"Initialized collectionRepository in ${(timeEnd - timeStart)/1000} seconds.")
+			//g.console.log(s"Initialized collectionRepository in ${(timeEnd - timeStart)/1000} seconds.")
 
 			// Data Model Stuff
 			timeStart = new js.Date().getTime()
@@ -206,7 +206,7 @@ object CiteMainController {
 			}
 			//g.console.log(s"hasBinaryImages = ${CiteBinaryImageModel.hasBinaryImages.value}")
 			timeEnd = new js.Date().getTime()
-			g.console.log(s"Initialized DataModels in ${(timeEnd - timeStart)/1000} seconds.")
+			//g.console.log(s"Initialized DataModels in ${(timeEnd - timeStart)/1000} seconds.")
 
 			checkDefaultTab
 
