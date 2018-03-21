@@ -127,12 +127,12 @@ object NGModel {
 
   def getNGram(ngCorpus:Corpus, filterString: String, n: Int, occ: Int, ignorePunc: Boolean ): StringHistogram = {
 
-		var hist: StringHistogram = null
-
-		if( filterString == ""){
-			hist = ngCorpus.ngramHisto(n, occ, ignorePunc)
-		} else {
-			hist = ngCorpus.ngramHisto(filterString, n, occ , ignorePunc)
+		val hist:StringHistogram = {
+			if( filterString == ""){
+				ngCorpus.ngramHisto(n, occ, ignorePunc)
+			} else {
+				ngCorpus.ngramHisto(filterString, n, occ , ignorePunc)
+			}
 		}
 		hist
 	}

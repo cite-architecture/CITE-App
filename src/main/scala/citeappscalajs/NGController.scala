@@ -119,44 +119,56 @@ def executeQuery(q:NGModel.StringSearch) = {
 
 
 def executeQuery(q:NGModel.TokenSearch):Unit = {
-		NGController.clearResults
-		NGController.updateUserMessage(s"""Searching for tokens "${q.tt.mkString(" ")}". Please be patient…""",1)
-		val timeStart = new js.Date().getTime()
-		NGModel.nGramResults.value.clear
-		NGModel.citationResults.value.clear
+	NGController.clearResults
+	NGController.updateUserMessage(s"""Searching for tokens "${q.tt.mkString(" ")}". Please be patient…""",1)
+	val timeStart = new js.Date().getTime()
+	NGModel.nGramResults.value.clear
+	NGModel.citationResults.value.clear
 
-		var tempCorpus:Corpus = null
-		var foundCorpus:Corpus = null
-
-		if (O2Model.textRepo.value == None){
-			NGController.updateUserMessage("No library loaded.",2)
-		} else {
-		q.urn match {
-			case Some(urn) => {
-					tempCorpus = O2Model.textRepo.value.get.corpus ~~ NGModel.urn.value
+	val tempCorpus:Option[Corpus] = {
+		O2Model.textRepo.value match {
+			case Some(tr) => {
+				q.urn match {
+					case Some(urn) => {
+							Some(O2Model.textRepo.value.get.corpus ~~ NGModel.urn.value)
+						}
+						case _ => {
+							Some(O2Model.textRepo.value.get.corpus)
+					}
 				}
-				case _ => {
-					tempCorpus = O2Model.textRepo.value.get.corpus
 			}
+			case None => {
+				NGController.updateUserMessage("No library loaded.",2)
+				None
+			}
+
 		}
 	}
 
 	// If there is only one token, do findToken
-	q.tt.size match {
-		case 0 => {
-			NGController.updateUserMessage(s"No token entered.",2)
-			foundCorpus = null
-		}
-		case 1 => {
-			foundCorpus = tempCorpus.findToken(q.tt(0))
-		}
-		case _ => {
-			foundCorpus = tempCorpus.findTokensWithin(q.tt,q.p)
+	val foundCorpus:Option[Corpus] = {
+		q.tt.size match {
+			case 0 => {
+				NGController.updateUserMessage(s"No token entered.",2)
+				None
+			}
+			case 1 => {
+				tempCorpus match {
+					case Some(tc) => Some(tc.findToken(q.tt(0)))
+					case None => None
+				}
+			}
+			case _ => {
+				tempCorpus match {
+					case Some(tc) => Some(tc.findTokensWithin(q.tt,q.p))
+					case None => None
+				}
+			}
 		}
 	}
 
-	if ((tempCorpus != null) && (foundCorpus != null)){
-		for (n <- foundCorpus.nodes){
+	if ((tempCorpus != None) && (foundCorpus != None)){
+		for (n <- foundCorpus.get.nodes){
 				NGModel.citationResults.value += NGModel.SearchResult(Var(n.urn), Var(n.kwic(s" ${q.tt(0)} ",30)))
 		}
 	}

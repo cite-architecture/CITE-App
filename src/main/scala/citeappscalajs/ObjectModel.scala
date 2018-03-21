@@ -37,8 +37,6 @@ object ObjectModel {
 	val collections = Vars.empty[CiteCollectionDef]
 
 	// Binding up objects, their properties, and extensions
-	// Is this used?
-	//val citeObject:Var[CiteObject] = null
 
 	case class BoundCiteProperty(urn:Var[Cite2Urn],propertyType:Var[CitePropertyType],propertyValue:Var[String])
 
