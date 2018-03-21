@@ -43,10 +43,10 @@ def textLinks(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 }
 
 @dom
-def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
+def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "") = {
 	DataModelController.hasText(u) match {
 		case true => {
-			<li class="citeLinks_linkItem">
+			<li class="citeLinks_linkItem" id={idString}>
 				<a
 					onclick={ event: Event => {
 						DataModelController.retrieveTextPassage(contextUrn, u)
@@ -65,12 +65,12 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 }
 
 @dom
-	def objectLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn,labeled:Boolean = false) = {
+	def objectLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn,labeled:Boolean = false, idString:String = "") = {
 		//g.console.log(s"propVal: ${propVal}, contextUrn: ${contextUrn}")
 		val tempUrn:Cite2Urn = propVal.dropExtensions.dropProperty
 		DataModelController.hasObject(tempUrn) match {
 			case true => {
-				<li class="citeLinks_linkItem">
+				<li class="citeLinks_linkItem" id={idString}>
 					<a onclick={ event: Event => {
 							//g.console.log(s"clicked: ${propVal}")
 							DataModelController.retrieveObject(contextUrn,tempUrn)

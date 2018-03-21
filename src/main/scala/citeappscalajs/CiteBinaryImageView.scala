@@ -144,16 +144,6 @@ object CiteBinaryImageView {
 		<h2>Mapped Data</h2>
 		<div id="image_mappedData">
 			<ul>
-				{
-					CiteBinaryImageModel.currentContextUrn.bind match {
-						case Some(cu) => {
-							val curn:Option[Cite2Urn] = CiteBinaryImageModel.urn.value
-							DataModelView.objectLinkItem(curn, cu.asInstanceOf[Cite2Urn], true).bind
-						}
-						case None => { <!-- empty content --> }
-					}
-
-				}
 				{ allImageRoisListItems.bind}
 			</ul>
 		</div>
@@ -162,17 +152,20 @@ object CiteBinaryImageView {
 
 	@dom
 	def allImageRoisListItems = {
+		// 
+		CiteBinaryImageModel.roiIncrementer = 0
 		for (roi <- CiteBinaryImageModel.imageROIs) yield {
 			{
+				CiteBinaryImageModel.roiIncrementer = CiteBinaryImageModel.roiIncrementer + 1
 				val curn:Option[Cite2Urn] = CiteBinaryImageModel.urn.value
 				roi.dataUrn match {
 					case Some(du) => {
 						du.toString.take(7) match {
 							case s if (s == "urn:cts") => {
-								DataModelView.textLinkItem(curn, du.asInstanceOf[CtsUrn]).bind
+								DataModelView.textLinkItem(curn, du.asInstanceOf[CtsUrn], idString=s"image_mappedUrn_${CiteBinaryImageModel.roiIncrementer}").bind
 							}
 							case _ => {
-								DataModelView.objectLinkItem(curn, du.asInstanceOf[Cite2Urn], true).bind
+								DataModelView.objectLinkItem(curn, du.asInstanceOf[Cite2Urn], labeled=true, idString=s"image_mappedUrn_${CiteBinaryImageModel.roiIncrementer}").bind
 							}
 						}
 					}

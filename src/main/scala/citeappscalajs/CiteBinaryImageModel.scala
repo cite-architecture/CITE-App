@@ -76,6 +76,8 @@ object CiteBinaryImageModel {
 	// An ImageROI object associates an roi with a urn; 
 	// our image may have none, one, or many
 	val imageROIs = Vars.empty[ImageRoiModel.Roi]
+	// Sad, but this might be the best way to handle this
+	var roiIncrementer:Int = 0
 	val currentContextUrn = Var[Option[Urn]](None)
 
 
@@ -94,6 +96,7 @@ object CiteBinaryImageModel {
 
 	def clearROIs:Unit = {
 		imageROIs.value.clear
+		roiIncrementer = 0
 	}
 
 	def loadROIs(rois:Vector[ImageRoiModel.Roi]):Unit = {
@@ -101,7 +104,10 @@ object CiteBinaryImageModel {
 		for ( roi <- rois){
 			CiteBinaryImageModel.imageROIs.value += roi
 		}
+	}
 
+	def addToROIs(roi:ImageRoiModel.Roi):Unit = {
+			CiteBinaryImageModel.imageROIs.value += roi
 	}
 
 	def imageRoisToOptionVector:Option[Vector[ImageRoiModel.Roi]] = {

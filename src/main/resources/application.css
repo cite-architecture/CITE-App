@@ -296,11 +296,12 @@ a.image_roi_selected {
 	background-color: rgba(230,230,0,0);
 }
 
+
 a.image_roi_hovered {
 	background-color: rgba(230,230,0,0.2);
 }
 
-p.image_roi_selected {
+p.image_roi_selected, li.image_roi_selected {
 	background-color: #ddd;
 	border: 1px solid #aaa;
 }

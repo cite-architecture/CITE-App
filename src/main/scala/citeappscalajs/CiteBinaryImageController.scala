@@ -446,6 +446,7 @@ object CiteBinaryImageController {
 	}
 
 	def updateRois(u:Cite2Urn, roiOptionVector:Option[Vector[ImageRoiModel.Roi]] = None):Unit = {
+		g.console.log(s"updateRois, with urn = ${u}")
 		roiOptionVector match {
 			case Some(rov) => CiteBinaryImageModel.loadROIs(rov)
 			case None => CiteBinaryImageModel.clearROIs
