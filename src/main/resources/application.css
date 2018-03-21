@@ -1,27 +1,58 @@
 /* CiteLinks */
 div#object_objectContainer ul.citeLinks_linksList, ul.citeLinks_linksList {
-	dislay: block;
+	display: block;
 	margin-top: 4px;
 	margin-bottom: 4px;
 }
 
-li.citeLinks_linkItem {
+li#image_imagePreviewDiv {
+	list-style: none;
+}
+
+li.citeLinks_linkItem, span.citeLinks_linkSpan {
 	display: inline;
 	list-style: none;
 	border-right: 1px solid silver;
 	padding:4px;
 }
 
-li.citeLinks_linkItem:nth-last-child(-n+1){
+li.citeLinks_linkItem:last-child, span.citeLinks_linkSpan:last-child{
 	border-right: none;
 }
 
+#image_mappedData li.citeLinks_linkItem {
+	display: block;
+	border: none;
+	margin-bottom: 0;
+}
+
 li.citeLinks_linkItem:nth-child(1){
-	padding-left: 0;
+	/* padding-left: 0; */
 }
 
 
 /* Object Formatting */
+
+p#object_breadcrumbs {
+	padding: 0;	
+	font-size: 60%;
+	line-height: 1.3em;
+}
+
+span.object_breadcrumb {
+	display: inline;
+	list-style: none;
+}
+
+span.object_breadcrumb:after {
+	content: "…";
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+span.object_breadcrumb:nth-last-child(-n+1):after{
+	content: "";
+}
 
 div#object_objectContainer table {
 	max-width: 700px;
@@ -161,13 +192,13 @@ img.object_imgThumb, img#image_previewImg {
 	max-height: 200px;
 }
 
-div#image_imageContainer {
+div#image_zoomContainer {
 	max-width: 70%;
 	width: auto;
 	height: 600px;
 }
 
-div#image_imageContainer.fullpage {
+div#image_zoomContainer.fullpage {
 	max-width: 100%;
 }
 
@@ -469,6 +500,7 @@ div.app_sidebarDiv h2 {
 
 #app_filePicker {
 	width: 175px;
+	margin-right: 1em;
 }
 
 /* appwide forms */
@@ -552,13 +584,13 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 		color: green;
 }
 
-#o2_citedWorksContainer ul, #ngram_citedWorksContainer ul {
+#o2_citedWorksContainer ul, #ngram_citedWorksContainer ul, #image_imageCollectionsContainer ul, #image_mappedData ul, #object_objectCollectionsContainer ul {
 	list-style-type: decimal;
 	padding-left: 0;
 }
 
 
-#o2_citedWorksContainer ul li, #ngram_citedWorksContainer ul li {
+#o2_citedWorksContainer ul li, #ngram_citedWorksContainer ul li, #image_imageCollectionsContainer ul li, #image_mappedData ul li, #object_objectCollectionsContainer ul li {
 	line-height: 1.2em;
 	max-height: 2.4em;
 	white-space: nowrap;
@@ -577,6 +609,7 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 }
 
 .app_reportingCurrentUrn {
+	height: 1em;
 	font-size: 80%;
 	color: #777;
 	padding-top: 0;
@@ -826,6 +859,52 @@ input{
 	margin-left: -1px;
 }
 
+
+/* OpenSeadragon Guides CSS */
+.osd-guide {
+  z-index: 0;
+  cursor: pointer;
+  pointer-events: none;
+}
+
+.osd-guide-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  transform-origin: center;
+  pointer-events: auto;
+}
+
+.osd-guide-horizontal {
+  position: absolute;
+  left: 50% !important;
+  height: 2px !important;
+  width: 150% !important;
+  cursor: row-resize;
+  transform: translateX(-50%);
+}
+
+.osd-guide-horizontal .osd-guide-line {
+  border-top: 3px solid #fff600;
+}
+
+.osd-guide-vertical {
+  position: absolute;
+  top: 50% !important;
+  height: 150% !important;
+  width: 2px !important;
+  cursor: col-resize;
+  transform: translateY(-50%);
+}
+
+.osd-guide-vertical .osd-guide-line {
+  border-left: 3px solid #D262F1;
+}
+
+
+
 /* Experimenting with pure-CSS tabs */
 
 .app_tabs {
@@ -961,6 +1040,9 @@ column-gap: 30px;
 	padding-top: 0px;
 }
 */
+
+/* OpenSeadragon Styles */
+
 
 /* OpenSeadragon Guides CSS */
 .osd-guide {

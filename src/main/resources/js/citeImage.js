@@ -62,10 +62,9 @@ function clearSelectedROIs(){
 	}
 }
 
-function updateImageJS( collection, imageObject, path ){
+function updateImageJS(collection, imageObject, path ){
 		//var collDirectory = collection.replace(new RegExp(':', 'g'), '_');
 		//var imagePath = "../../../image_archive/" + collDirectory + "/" + imageObject + ".dzi"
-		console.log("In js: " + collection + ", " + imageObject + ", " + path);
 		initOpenSeadragon(path)
 	}
 
@@ -84,6 +83,7 @@ function getGroup(i){
 }
 
 function initOpenSeadragon(imagePath) {
+		//console.log(imagePath)
 
 		if (viewer != null){
 				viewer.destroy();
@@ -91,17 +91,15 @@ function initOpenSeadragon(imagePath) {
 		}
 
 		viewer = OpenSeadragon({
-        id: "image_imageContainer",
-        prefixUrl: "js/images/",
-			  crossOriginPolicy: "Anonymous",
-        tileSources: imagePath,
-				springStiffness: 20,
-				animationTime: 8,
-				homeFillsViewer: false,
-				gestureSettingsMouse: {
-					clickToZoom: false
-				}
-		});
+		id: 'image_zoomContainer',
+		prefixUrl: 'js/images/',
+		crossOriginPolicy: "Anonymous",
+		defaultZoomLevel: 1,
+		tileSources: imagePath,
+		//tileSources: 'http://www.homermultitext.org/iipsrv?DeepZoom=/project/homer/pyramidal/deepzoom/hmt/vaimg/2017a/VA024RN_0025.tif.dzi',
+		minZoomImageRatio: 0.1, // of viewer size
+		immediateRender: true 
+	});
 
 		viewer.guides({
 		  allowRotation: false,        // Make it possible to rotate the guidelines (by double clicking them)
@@ -130,15 +128,15 @@ function initOpenSeadragon(imagePath) {
     // Add overlays
 			setTimeout(function(){
 				if (viewer.world.getItemAt(0)){
-					console.log("defined");
+					//console.log("defined");
 				} else {
-					console.log("undefined");
+					//console.log("undefined");
 				}
 				var baseTimer = 0;
 				while( !(viewer.world.getItemAt(0))){
 					baseTimer = baseTimer + 1;
 				}
-				console.log(baseTimer);
+				//console.log(baseTimer);
 				var normH = viewer.world.getItemAt(0).getBounds().height;
 				var normW = viewer.world.getItemAt(0).getBounds().width;
 				if (roiArray.length > 0){
@@ -176,6 +174,6 @@ function initOpenSeadragon(imagePath) {
 								e.target.classList.add("image_roi_selected")
 						}, false);
 					}
-			},8000);
+			},6000);
 
 }

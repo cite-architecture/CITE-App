@@ -6,6 +6,7 @@ import scala.scalajs.js
 import scala.scalajs.js._
 import org.scalajs.dom._
 import org.scalajs.dom.ext._
+import scala.scalajs.js.Dynamic.{ global => g }
 import org.scalajs.dom.raw._
 import org.scalajs.dom.document
 import org.scalajs.dom.raw.Event
@@ -13,7 +14,7 @@ import org.scalajs.dom.ext.Ajax
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
-
+import scala.scalajs.js.annotation.JSExport
 import js.annotation._
 
 
@@ -22,8 +23,17 @@ object CiteMainView {
 
 	val textView = O2View.o2div
 	val ngramView = NGView.nGdiv
+	val objectView = ObjectView.objectDiv
+	val imageView = CiteBinaryImageView.imageDiv
 
 
+	def changeTab(tab:String):Unit = {
+		tab match {
+			case "text" => js.Dynamic.global.document.getElementById("tab-1").checked = true
+			case "object" => js.Dynamic.global.document.getElementById("tab-3").checked = true
+			case "image" => js.Dynamic.global.document.getElementById("tab-4").checked = true
+		}
+	}
 
 	// *** Apropos Microservice ***
 	// We will want a switch here
@@ -36,7 +46,60 @@ object CiteMainView {
 				type="file"
 				onchange={ event: Event => CiteMainController.loadLocalLibrary( event )}
 				></input>
+				{ imageLocalRemoteSwitch.bind }
 		</span>
+	}
+
+	// *** Apropos Microservice ***
+	@dom
+	def imageLocalRemoteSwitch = {
+			<div id="imageSourceSwitchContainer" class={
+				CiteBinaryImageModel.hasBinaryImages.bind match {
+					case true => "app_visible"
+					case _ => "app_hidden"
+				}
+			}>
+				Image Source:
+				<span class={
+					(CiteBinaryImageModel.hasRemoteOption.bind && CiteBinaryImageModel.hasLocalOption.bind) match {
+				    		case true => "app_hidden"	
+				    		case false => "app_visible"	
+			    	}	
+				}>
+					<span class={ 
+						CiteBinaryImageModel.hasLocalOption.bind match {
+							case true => "app_visible"
+							case _ => "app_hidden"
+						}
+					}>Using Local Images</span>
+					<span class={ 
+						CiteBinaryImageModel.hasRemoteOption.bind match {
+							case true => "app_visible"
+							case _ => "app_hidden"
+						}
+			  	   }>Using Remote Images</span>
+			  	</span>
+				<div class={
+						(CiteBinaryImageModel.hasRemoteOption.bind && CiteBinaryImageModel.hasLocalOption.bind) match {
+					    		case true => "onoffswitch app_visible"	
+					    		case false => "onoffswitch app_hidden"	
+				    	}	
+					}>
+				    <input type="checkbox" name="onoffswitch" class={
+				    	
+				    	(CiteBinaryImageModel.hasRemoteOption.bind && CiteBinaryImageModel.hasLocalOption.bind) match {
+				    		case true => "onoffswitch-checkbox app_visible"	
+				    		case false => "onoffswitch-checkbox app_hidden"	
+				    	}
+				    	} id="citeMain_localImageSwitch" checked={CiteBinaryImageModel.imgUseLocal.bind}
+						onchange={ event: Event => CiteBinaryImageController.setPreferredImageSource}
+						/>
+				    <label class="onoffswitch-label" for="citeMain_localImageSwitch">
+				        <span class="image_onoffswitch-inner onoffswitch-inner"></span>
+				        <span class="image_onoffswitch-switch onoffswitch-switch"></span>
+				    </label>
+				</div>
+			</div>
 	}
 
 
@@ -90,7 +153,33 @@ object CiteMainView {
 						</div>
 				</div>
 
+				<div id="app_tab_collections"
+					class={
+							CiteMainModel.showCollections.bind match {
+								case true => "app_visible app_tab"
+								case _ => "app_hidden app_tab"
+							}
+					}>
+					<input type="radio" id="tab-3" name="tab-group-1" checked={ false }/>
+					<label class="tab_label" for="tab-3">Collections</label>
+						<div class="content">
+						 { objectView.bind }
+						</div>
+				</div>
 
+				<div id="app_tab_images"
+					class={
+							CiteMainModel.showImages.bind match {
+								case true => "app_visible app_tab"
+								case _ => "app_hidden app_tab"
+							}
+					}>
+					<input type="radio" id="tab-4" name="tab-group-1" checked={ false }/>
+					<label class="tab_label" for="tab-4">Images</label>
+						<div class="content">
+						 { imageView.bind }
+						</div>
+				</div>
 
 			</div>
 		</article>
@@ -107,7 +196,7 @@ object CiteMainView {
 		{ CiteMainModel.currentLibraryMetadataString.bind }
 		</p>
 		<p>
-		CITE/CTS is ©2002–2017 Neel Smith and Christopher Blackwell. This implementation of the <a href="http://cite-architecture.github.i">CITE</a> data models was written by Neel Smith and Christopher Blackwell using <a href="https://www.scala-lang.org">Scala</a>, <a href="http://www.scala-js.org">Scala-JS</a>, and <a href="https://github.com/ThoughtWorksInc/Binding.scala">Binding.scala</a>. Licensed under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL 3.0</a>. Sourcecode on <a href="https://github.com/cite-architecture/ScalaJS-CITE-Environment">GitHub</a>. Copyright and licensing information for the default library is available <a href="https://raw.githubusercontent.com/Eumaeus/cts-demo-corpus/master/CEX-Files/LICENSE.markdown">here</a>.
+		CITE/CTS is ©2002–2018 Neel Smith and Christopher Blackwell. This implementation of the <a href="http://cite-architecture.github.i">CITE</a> data models was written by Neel Smith and Christopher Blackwell using <a href="https://www.scala-lang.org">Scala</a>, <a href="http://www.scala-js.org">Scala-JS</a>, and <a href="https://github.com/ThoughtWorksInc/Binding.scala">Binding.scala</a>. Licensed under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL 3.0</a>. Sourcecode on <a href="https://github.com/cite-architecture/ScalaJS-CITE-Environment">GitHub</a>. Copyright and licensing information for the default library is available <a href="https://raw.githubusercontent.com/Eumaeus/cts-demo-corpus/master/CEX-Files/LICENSE.markdown">here</a>.
 		</p>
 	}
 

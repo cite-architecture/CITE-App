@@ -169,8 +169,8 @@ def citedWorksContainer = {
 	{
 		for (urn <- O2Model.citedWorks) yield {
 			<li>
-			{ workUrnSpan( urn, O2Model.textRepository.catalog.label(urn) ).bind }
-			<br/>( { O2Model.textRepository.catalog.entriesForUrn(urn)(0).citationScheme  } )
+			{ workUrnSpan( urn, O2Model.textRepo.value.get.catalog.label(urn) ).bind }
+			<br/>( { O2Model.textRepo.value.get.catalog.entriesForUrn(urn)(0).citationScheme  } )
 			</li>
 		}
 	}

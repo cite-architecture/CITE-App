@@ -89,10 +89,10 @@ object NGModel {
 
 	@dom
 	def updateShortWorkLabel = {
-		if ( O2Model.textRepository == null){
+		if ( O2Model.textRepo.value == None){
 					NGModel.shortWorkLabel.value = "- no selected text -"
 		} else {
-			val longS:String = O2Model.textRepository.catalog.label(NGModel.urn.value)
+			val longS:String = O2Model.textRepo.value.get.catalog.label(NGModel.urn.value)
 			if (longS.size > 50){
 				val shortS:String = longS.take(24) + " … " + longS.takeRight(23)
 				NGModel.shortWorkLabel.value = shortS
@@ -108,7 +108,7 @@ object NGModel {
 		NGController.clearResults
 		NGController.clearInputs
 		// N.b. The textRepository remains with the Ohco2 Model.
-		for ( cw <- O2Model.textRepository.corpus.citedWorks){
+		for ( cw <- O2Model.textRepo.value.get.corpus.citedWorks){
 			NGModel.citedWorks.value += cw
 		}
 	}
@@ -117,33 +117,33 @@ object NGModel {
 	/* NGram Searching */
 
  def getNGram(filterString: String, n: Int, occ: Int, ignorePunc: Boolean ): StringHistogram = {
-		 getNGram(O2Model.textRepository.corpus, filterString, n, occ, ignorePunc)
+		 getNGram(O2Model.textRepo.value.get.corpus, filterString, n, occ, ignorePunc)
  }
 
  def getNGram(ngUrn: CtsUrn, filterString: String, n: Int, occ: Int, ignorePunc: Boolean): StringHistogram = {
-	 val newCorpus: Corpus = O2Model.textRepository.corpus ~~ ngUrn
+	 val newCorpus: Corpus = O2Model.textRepo.value.get.corpus ~~ ngUrn
 	 getNGram(newCorpus, filterString, n, occ, ignorePunc)
  }
 
   def getNGram(ngCorpus:Corpus, filterString: String, n: Int, occ: Int, ignorePunc: Boolean ): StringHistogram = {
 
-		var hist: StringHistogram = null
-
-		if( filterString == ""){
-			hist = ngCorpus.ngramHisto(n, occ, ignorePunc)
-		} else {
-			hist = ngCorpus.ngramHisto(filterString, n, occ , ignorePunc)
+		val hist:StringHistogram = {
+			if( filterString == ""){
+				ngCorpus.ngramHisto(n, occ, ignorePunc)
+			} else {
+				ngCorpus.ngramHisto(filterString, n, occ , ignorePunc)
+			}
 		}
 		hist
 	}
 
  def getUrnsForNGram(s: String, ignorePunc: Boolean ): Vector[CtsUrn] ={
-	 val vurn = O2Model.textRepository.corpus.urnsForNGram(s, 1, ignorePunc)
+	 val vurn = O2Model.textRepo.value.get.corpus.urnsForNGram(s, 1, ignorePunc)
 	 vurn
  }
 
  def getUrnsForNGram(ngUrn: CtsUrn, s: String, ignorePunc: Boolean ): Vector[CtsUrn] ={
-	 val newCorpus: Corpus = O2Model.textRepository.corpus >= ngUrn
+	 val newCorpus: Corpus = O2Model.textRepo.value.get.corpus >= ngUrn
 	 val vurn = newCorpus.urnsForNGram(s, 1, ignorePunc)
 	 vurn
  }
@@ -155,13 +155,13 @@ object NGModel {
 
 /* String and Token Finding */
 def findString(urn:CtsUrn, s:String):Corpus = {
-		val tempCorpus = O2Model.textRepository.corpus >= urn
+		val tempCorpus = O2Model.textRepo.value.get.corpus >= urn
 		val foundCorpus = tempCorpus.find(s)
 		foundCorpus
 }
 
 def findString(s:String):Corpus = {
-		val foundCorpus = O2Model.textRepository.corpus.find(s)
+		val foundCorpus = O2Model.textRepo.value.get.corpus.find(s)
 		foundCorpus
 }
 

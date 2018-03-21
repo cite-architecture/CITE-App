@@ -14,6 +14,8 @@ import scala.concurrent
 import scala.scalajs.js
 import scala.scalajs.js._
 import js.annotation._
+import edu.holycross.shot.scm._
+
 
 @JSExportTopLevel("citeapp.CiteMainModel")
 object CiteMainModel {
@@ -26,6 +28,7 @@ object CiteMainModel {
 
 		val currentLibraryMetadataString = Var("No library loaded.")
 
+		// These are terrible and need to be replaced with real data model stuff
 		val textProtocol:String = "TextProtocol"
 		val objectProtocol:String = "ObjectProtocol"
 		val localImageProtocol:String = "LocalImageProtocol"
@@ -36,5 +39,8 @@ object CiteMainModel {
 
 		val showTexts = Var(true)
 		val showNg = Var(true)
+		val showCollections = Var(true)
+		val showImages = Var(true)
+		val mainLibrary = Var[Option[CiteLibrary]](None)
 
 }

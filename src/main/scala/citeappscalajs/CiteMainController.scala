@@ -25,10 +25,14 @@ import scala.scalajs.js.annotation.JSExport
 @JSExportTopLevel("citeapp.CiteMainController")
 object CiteMainController {
 
-	@JSExport
-	def main(libUrl: String): Unit = {
 
-//		ImageModel.imgArchivePath = localImagePath
+	/* 
+		Initiate app with a URL to an online CEX file	
+	*/
+	@JSExport
+	def main(libUrl: String, localImagePath:String): Unit = {
+
+		CiteBinaryImageModel.imgArchivePath.value = localImagePath
 
 		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
 		val task = Task{ CiteMainController.loadRemoteLibrary(libUrl) }
@@ -37,6 +41,9 @@ object CiteMainController {
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
 
+	/*
+		Use AJAX request to get remote CEX file; update repository with CEX data
+	*/
 	def loadRemoteLibrary(url: String):Unit = {
 
 		val xhr = new XMLHttpRequest()
@@ -50,15 +57,11 @@ object CiteMainController {
 			}
 		}
 		xhr.send()
-
-		/* Ajax.get(url).onSuccess { case xhr =>
-		CiteMainController.updateUserMessage("Got remote library.",0)
-		val contents:String = xhr.responseText
-		CiteMainController.updateRepository(contents, libDelim, fieldDelim)
-	}
-	*/
 }
-
+	/*
+	 	Handles displaying messages to the user, color-coded according to type.
+	 	Fades after 10 seconds.		
+	*/
 	def updateUserMessage(msg: String, alert: Int): Unit = {
 		CiteMainModel.userMessageVisibility.value = "app_visible"
 		CiteMainModel.userMessage.value = msg
@@ -71,7 +74,9 @@ object CiteMainController {
 		CiteMainModel.msgTimer = js.timers.setTimeout(10000){ CiteMainModel.userMessageVisibility.value = "app_hidden" }
 	}
 
-
+	/*
+		Loads library from local CEX file; updates repository
+	*/
 	def loadLocalLibrary(e: Event):Unit = {
 		val reader = new org.scalajs.dom.raw.FileReader()
 		CiteMainController.updateUserMessage("Loading local library.",0)
@@ -82,25 +87,39 @@ object CiteMainController {
 		}
 	}
 
-	def retrieveTextPassage(urn:CtsUrn):Unit = {
-			O2Controller.changeUrn(urn)
-			js.Dynamic.global.document.getElementById("tab-1").checked = true
-	}
-
+	/*
+		Hide all tabs. Done initially. Tabs are shown based on the contexts
+		of the CEX library.
+	*/
 	def hideTabs:Unit = {
 
-	  CiteMainModel.showTexts.value = true
-	  CiteMainModel.showNg.value = true
+	  CiteMainModel.showTexts.value = false 
+	  CiteMainModel.showNg.value = false
+	  CiteMainModel.showCollections.value = false
+	  CiteMainModel.showImages.value = false
 	}
 
+	/*
+		Which tabe should be shown by default upon library load.
+	*/
 	def checkDefaultTab:Unit = {
-		if (CiteMainModel.showTexts.value) {
-			js.Dynamic.global.document.getElementById("tab-1").checked = true
-		} 
+		CiteMainModel.showCollections.value match {
+			case true => js.Dynamic.global.document.getElementById("tab-3").checked = true
+			case _ => {
+				if (CiteMainModel.showTexts.value) {
+					js.Dynamic.global.document.getElementById("tab-1").checked = true
+				}
+			}
+		}
 	}
 
+	/*
+			Clear all data.
+	*/
 	def clearRepositories:Unit = {
-		O2Model.textRepository = null
+		O2Model.textRepo.value = None
+		ObjectModel.collRep.value = None
+		CiteMainModel.mainLibrary.value = None
 	}
 
 
@@ -113,19 +132,26 @@ object CiteMainController {
 		clearRepositories
 
 		try {
-
+			// Set up repo 
+			var timeStart = new js.Date().getTime()
 			val repo:CiteLibrary = CiteLibrary(cexString, CiteMainModel.cexMainDelimiter, CiteMainModel.cexSecondaryDelimiter)
+			var timeEnd = new js.Date().getTime()
+			//g.console.log(s"Created CiteLibrary in ${(timeEnd - timeStart)/1000} seconds.")
 			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
 			var loadMessage:String = ""
 
+			CiteMainModel.mainLibrary.value = Some(repo)
+
+			// Text Repository Stuff
+			timeStart = new js.Date().getTime()
 			repo.textRepository match {
 				case Some(tr) => {
 					CiteMainModel.showTexts.value = true
 					CiteMainModel.showNg.value = true
 					CiteMainModel.currentLibraryMetadataString.value = mdString
-					O2Model.textRepository = tr
-					CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepository.catalog.size } works. ",0)
-					loadMessage += s"Updated text repository: ${ O2Model.textRepository.catalog.size } works. "
+					O2Model.textRepo.value = Some(tr)
+					CiteMainController.updateUserMessage(s"Updated text repository: ${ O2Model.textRepo.value.get.catalog.size } works. ",0)
+					loadMessage += s"Updated text repository: ${ O2Model.textRepo.value.get.catalog.size } works. "
 					O2Model.updateCitedWorks
 					NGModel.updateCitedWorks
 					NGController.clearResults
@@ -139,6 +165,48 @@ object CiteMainController {
 					loadMessage += "No texts. "
 				}
 			}
+			timeEnd = new js.Date().getTime()
+			//g.console.log(s"Initialized TextRepository in ${(timeEnd - timeStart)/1000} seconds.")
+
+			// Collection Repository Stuff
+			timeStart = new js.Date().getTime()
+			repo.collectionRepository match {
+				case Some(cr) => {
+					CiteMainModel.showCollections.value = true
+					val numCollections:Int = cr.collections.size
+					val numObjects:Int = cr.citableObjects.size
+					loadMessage += s" ${numCollections} collections. ${numObjects} objects. "
+					ObjectModel.collRep.value	= Some(cr)			
+					ObjectModel.clearObject
+					ObjectModel.updateCollections
+				}
+				case None => {
+					loadMessage += "No Collections. "	
+				}
+			}
+			timeEnd = new js.Date().getTime()
+			//g.console.log(s"Initialized collectionRepository in ${(timeEnd - timeStart)/1000} seconds.")
+
+			// Data Model Stuff
+			timeStart = new js.Date().getTime()
+			repo.dataModels match {
+				case Some(dm) => {
+					DataModelModel.dataModels.value = Some(dm)
+					CiteBinaryImageController.discoverProtocols
+					CiteBinaryImageController.setImageSwitch
+					CiteBinaryImageModel.hasBinaryImages.value match {
+						case true => CiteMainModel.showImages.value = true 
+						case _ => CiteMainModel.showImages.value = false
+					}
+					CiteBinaryImageController.setBinaryImageCollections
+				}
+				case None => { 
+					DataModelController.clearDataModels
+				}
+			}
+			//g.console.log(s"hasBinaryImages = ${CiteBinaryImageModel.hasBinaryImages.value}")
+			timeEnd = new js.Date().getTime()
+			//g.console.log(s"Initialized DataModels in ${(timeEnd - timeStart)/1000} seconds.")
 
 			checkDefaultTab
 

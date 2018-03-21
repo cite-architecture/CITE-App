@@ -17,11 +17,11 @@ import js.annotation._
 import scala.scalajs.js.annotation.JSExport
 
 @JSExportTopLevel("CiteMain")
-class CiteMain(remoteUrl:String) {
+class CiteMain(remoteUrl:String, localImagePath:String) {
 
 	@JSExport
 	def main(): Unit = {
-		CiteMainController.main(remoteUrl: String)
+		CiteMainController.main(remoteUrl: String, localImagePath:String)
 	}
 
 
