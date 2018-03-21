@@ -213,7 +213,7 @@ def renderObjects = {
 							<td>URN</td>
 							<td>Cite2UrnType</td>
 							<td>
-							{ ObjectView.renderCiteUrnProperty(None, obj.urn.value).bind }
+							{ ObjectView.renderCiteUrnProperty(Some(obj.urn.value), obj.urn.value).bind }
 							</td>
 						</tr>
 						<tr>

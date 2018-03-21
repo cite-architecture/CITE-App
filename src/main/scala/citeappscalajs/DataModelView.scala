@@ -107,7 +107,13 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 					case false => {
 						<span class="citeLinks_linkSpan">
 							<a onclick={ event: Event => {
-									val roi:ImageRoiModel.Roi = ImageRoiModel.roiFromUrn(urn, contextUrn)
+									val roi:Option[Vector[ImageRoiModel.Roi]] = {
+										val tempRoi:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(urn, contextUrn)
+										tempRoi match {
+											case Some(r) => Some(Vector(r))
+											case None => None
+										}
+									}
 									DataModelController.viewImage(contextUrn, co, urn, roi)
 							}
 						} >Remote Image</a></span>
@@ -131,7 +137,14 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn) = {
 					case true => {
 						<span class="citeLinks_linkSpan">
 							<a onclick={ event: Event => {
-									DataModelController.viewImage(contextUrn, co, urn, roiObj = None)
+									val thisRoi:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(urn, contextUrn)
+									val returnRoi:Option[Vector[ImageRoiModel.Roi]] = {
+										thisRoi match {
+											case Some(r) => Some(Vector(r))
+											case None => None
+										}
+									}
+									DataModelController.viewImage(contextUrn, co, urn, returnRoi)
 								}
 						} >Local Image</a></span>
 					}

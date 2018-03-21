@@ -143,12 +143,27 @@ object CiteBinaryImageView {
 	def imageMappedDataDiv = {
 		<h2>Mapped Data</h2>
 		<div id="image_mappedData">
+			<ul>
+				<li>{
+					CiteBinaryImageModel.currentContextUrn.bind.toString	
+				}</li>
+				{ allImageRoisListItems.bind}
+			</ul>
 		</div>
 
 	}
 
 	@dom
-	def mappedUrnP(iroi:ImageRoiModel.Roi) = {
+	def allImageRoisListItems = {
+		for (roi <- CiteBinaryImageModel.imageROIs) yield {
+			<li>{
+				roi.dataUrn.toString
+			}</li>
+		}
+	}
+
+	@dom
+	def mappedUrnP(urn:Urn) = {
 		<p>URN HERE!</p>
 	}
 

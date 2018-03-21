@@ -37,7 +37,7 @@ object ImageRoiModel {
 			}
 	}
 
-	def roiFromUrn(u:Cite2Urn, data:Option[Urn]):Roi = {
+	def roiFromUrn(u:Cite2Urn, data:Option[Urn]):Option[Roi] = {
 		// in this case, there will be only one Roi object in the ImageRoi
 		try {
 			u.objectExtensionOption match {
@@ -54,9 +54,9 @@ object ImageRoiModel {
 					if ( (h <0) | ( h > 1) ) throw new Exception(s"${h} must be > 0 and < 1.")
 					// Got here and we're good
 					val roi:Roi = Roi(l,t,w,h,data)
-					roi
+					Some(roi)
 				}
-				case None => throw new Exception(s"${u} does not have a region-of-interest extension")
+				case None => None
 			}
 		} catch {
 			case e:Exception => throw new Exception(s"Unable to make ROI from ${u}. ${e}")

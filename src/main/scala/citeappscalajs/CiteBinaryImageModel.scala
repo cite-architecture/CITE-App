@@ -38,7 +38,7 @@ object CiteBinaryImageModel {
 
 
 	// this is changed by the user using the local/remote switch	
-	val imgUseLocal = Var[Boolean](false)
+	val imgUseLocal = Var[Boolean](true)
 
 	// this is set at app init
 	val imgArchivePath = Var[String]("")
@@ -76,6 +76,7 @@ object CiteBinaryImageModel {
 	// An ImageROI object associates an roi with a urn; 
 	// our image may have none, one, or many
 	val imageROIs = Vars.empty[ImageRoiModel.Roi]
+	val currentContextUrn = Var[Option[Urn]](None)
 
 
 	// User Interface stuff

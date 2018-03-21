@@ -426,7 +426,7 @@ object CiteBinaryImageController {
 					case _ => Some(urn)
 				}
 			}
-			CiteBinaryImageController.changeImage(roiObjs)
+			CiteBinaryImageController.changeImage(roiObjs, contextUrn)
 		} catch {
 			case e: Exception => {
 				validUrnInField.value = false
@@ -537,13 +537,17 @@ object CiteBinaryImageController {
 		}
 	}
 
-
 	def changeImage(roiObj:Option[Vector[ImageRoiModel.Roi]]):Unit = {
+		changeImage(roiObj, None)
+	}
+
+	def changeImage(roiObj:Option[Vector[ImageRoiModel.Roi]], contextUrn:Option[Cite2Urn]):Unit = {
 		CiteBinaryImageModel.urn.value match {
 			case Some(u) => {
 				val tempUrn:Cite2Urn = u
 				val collection:Cite2Urn = tempUrn.dropSelector
 				val ioo:Option[String] = tempUrn.objectComponentOption
+				CiteBinaryImageModel.currentContextUrn.value = contextUrn
 
 				// Double-check that we have an image, not a collection	
 				ioo match {
@@ -553,7 +557,9 @@ object CiteBinaryImageController {
 						// Based on local/remote, get zoom path
 						val zoomPath:String = CiteBinaryImageController.getZoomUrlAndPath(u)
 						// Alert user that ROIs will appear after a short delay
-						updateUserMessage("Regions-of-interest will appear on the image after a short delay.",1)
+						if (CiteBinaryImageModel.imageROIs.value.size > 0){
+							updateUserMessage("Regions-of-interest will appear on the image after a short delay.",1)
+						}							
 						// Hand off to javascript for OpenSeadragon zooming
 						CiteBinaryImageController.updateImageJS(collection.toString, s, zoomPath )
 					}

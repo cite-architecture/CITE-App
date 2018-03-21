@@ -134,15 +134,22 @@ object DataModelController {
 			CiteMainView.changeTab("object")
 	}
 
-	def viewImage(contextUrn:Option[Cite2Urn], implementingObject:CiteObject, urn:Cite2Urn, roiObj:Vector[ImageRoiModel.Roi]):Unit = {
-		viewImage(contextUrn, implementingObject, urn, Some(roiObj))
-	}
-
-	def viewImage(contextUrn:Option[Cite2Urn], implementingObject:CiteObject, urn:Cite2Urn, roiObj:ImageRoiModel.Roi):Unit = {
+	def viewImage(
+		contextUrn:Option[Cite2Urn], 
+		implementingObject:CiteObject, 
+		urn:Cite2Urn, 
+		roiObj:ImageRoiModel.Roi
+	):Unit = {
 		viewImage(contextUrn, implementingObject, urn, Some(Vector(roiObj)))
 	}
 
-	def viewImage(contextUrn:Option[Cite2Urn], implementingObject:CiteObject, urn:Cite2Urn, roiObj:Option[Vector[ImageRoiModel.Roi]]):Unit = {
+
+	def viewImage(
+		contextUrn:Option[Cite2Urn], 
+		implementingObject:CiteObject, 
+		urn:Cite2Urn, 
+		roiObj:Option[Vector[ImageRoiModel.Roi]]
+	):Unit = {
 			CiteBinaryImageController.changeUrn(contextUrn, urn, roiObj)
 			CiteMainView.changeTab("image")
 		}
