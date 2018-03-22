@@ -593,9 +593,9 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 
 #o2_citedWorksContainer ul li, #ngram_citedWorksContainer ul li, #image_imageCollectionsContainer ul li, #image_mappedData ul li, #object_objectCollectionsContainer ul li {
 	line-height: 1.2em;
-	max-height: 2.4em;
-	white-space: nowrap;
-	overflow: hidden;
+	/* max-height: 2.4em; */
+	/* white-space: nowrap; */
+	/* overflow: hidden; */
 	width: auto;
 	list-style-position:inside;
 	text-overflow: ellipsis;
