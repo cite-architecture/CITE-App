@@ -136,6 +136,7 @@ object CiteMainController {
 			var timeStart = new js.Date().getTime()
 			val repo:CiteLibrary = CiteLibrary(cexString, CiteMainModel.cexMainDelimiter, CiteMainModel.cexSecondaryDelimiter)
 			var timeEnd = new js.Date().getTime()
+			g.console.log("==========================")
 			g.console.log(s"Created CiteLibrary in ${(timeEnd - timeStart)/1000} seconds.")
 			val mdString = s"Repository: ${repo.name}. Library URN: ${repo.urn}. License: ${repo.license}"
 			var loadMessage:String = ""
