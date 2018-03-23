@@ -75,6 +75,7 @@ object DataModelController {
 	}
 
 	def hasObject(u:Cite2Urn):Boolean = {
+		g.console.log(s"hasObject: ${u}")
 		val urn:Cite2Urn = {
 			val tempU:Cite2Urn = u.dropExtensions	
 			tempU.isRange match {

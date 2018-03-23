@@ -1,5 +1,7 @@
 # Release notes
 
+**1.4.1**: Fixed bug where collection-level URNs in object property values would cause browsing to fail silently.
+
 **1.4.0**: Added Objects Tab for viewing and querying CITE Collections. Added Images tab, taking advantage of the `CiteBinaryImage` datamodel in CEX, to show binary image data.
 
 **1.3.10**: Updated dependencies.

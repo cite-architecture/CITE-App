@@ -28,11 +28,20 @@ object DataModelView {
 
 @dom
 def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
-	<ul class="citeLinks_linksList">
-		{ CiteBinaryImageView.imageThumbItem(propVal, CiteBinaryImageModel.imgUseLocal.bind).bind }
-		{ DataModelView.objectLinkItem(contextUrn, propVal).bind }
-		{ DataModelView.imageLinkItem(contextUrn, propVal).bind }
-	</ul>
+	propVal.objectComponentOption match {
+		case Some(oc) => {
+			<ul class="citeLinks_linksList">
+				{ CiteBinaryImageView.imageThumbItem(propVal, CiteBinaryImageModel.imgUseLocal.bind).bind }
+				{ DataModelView.objectLinkItem(contextUrn, propVal).bind }
+				{ DataModelView.imageLinkItem(contextUrn, propVal).bind }
+			</ul>
+		}
+		case None => { 
+			<ul class="citeLinks_linksList">
+				{ DataModelView.objectLinkItem(contextUrn, propVal).bind }
+			</ul>
+		}
+	}
 }
 
 @dom
@@ -66,7 +75,6 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "") = 
 
 @dom
 	def objectLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn,labeled:Boolean = false, idString:String = "") = {
-		//g.console.log(s"propVal: ${propVal}, contextUrn: ${contextUrn}")
 		val tempUrn:Cite2Urn = propVal.dropExtensions.dropProperty
 		DataModelController.hasObject(tempUrn) match {
 			case true => {
@@ -81,12 +89,14 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "") = 
 							s"${ObjectModel.collRep.value.get.citableObject(propVal.dropExtensions.dropProperty).label}" 
 						}
 						case _ => {
+							g.console.log("got here: view item")
 							"View Item"
 						}
 					}
 				}</a></li>
 			}
 			case _ => {
+				// need to see if it is a collection or range
 				labeled match {
 					case true => { <li class="citeLinks_linkItem">{ s"Object ${tempUrn} not in Library" }</li> }
 					case _ => { <li>Object not in Library</li> }
