@@ -38,7 +38,7 @@ object CiteBinaryImageModel {
 
 
 	// this is changed by the user using the local/remote switch	
-	val imgUseLocal = Var[Boolean](true)
+	val imgUseLocal = Var[Boolean](false)
 
 	// this is set at app init
 	val imgArchivePath = Var[String]("")

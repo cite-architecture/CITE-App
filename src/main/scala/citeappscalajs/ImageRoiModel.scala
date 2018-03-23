@@ -37,7 +37,7 @@ object ImageRoiModel {
 			}
 	}
 
-	def roiFromUrn(u:Cite2Urn, data:Option[Urn]):Option[Roi] = {
+	def roiFromUrn(u:Cite2Urn, data:Option[Urn] = None):Option[Roi] = {
 		// in this case, there will be only one Roi object in the ImageRoi
 		try {
 			u.objectExtensionOption match {

@@ -208,7 +208,7 @@ object CiteBinaryImageController {
 	def implementedByImageCollObjects(u:Cite2Urn):Option[Vector[Cite2Urn]] ={
 		val collUrn:Cite2Urn = u.dropSelector
 		val binaryImageModelUrn:Cite2Urn = CiteBinaryImageModel.binaryImageModelUrn
-		g.console.log(s"ibico: ${u}")
+		//g.console.log(s"ibico: ${u}")
 		// First, do we have some datamodels?
 		DataModelModel.dataModels.value match {
 			case None => {
@@ -238,11 +238,11 @@ object CiteBinaryImageController {
 										}).flatten
 									objectsImplementing.size match {
 										case s if (s > 0) => {
-											g.console.log("s > 0")
+											//g.console.log("s > 0")
 											Some(objectsImplementing)
 										}
 										case _ => {
-											g.console.log("s == 0")
+											//g.console.log("s == 0")
 											None
 										}
 									}

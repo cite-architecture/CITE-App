@@ -89,7 +89,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "") = 
 							s"${ObjectModel.collRep.value.get.citableObject(propVal.dropExtensions.dropProperty).label}" 
 						}
 						case _ => {
-							g.console.log("got here: view item")
+							//g.console.log("got here: view item")
 							"View Item"
 						}
 					}
@@ -97,9 +97,48 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "") = 
 			}
 			case _ => {
 				// need to see if it is a collection or range
-				labeled match {
-					case true => { <li class="citeLinks_linkItem">{ s"Object ${tempUrn} not in Library" }</li> }
-					case _ => { <li>Object not in Library</li> }
+				var isBrowsable:Boolean = {
+					( propVal.isRange ) || 
+					( propVal.objectComponentOption == None)
+				}
+				//g.console.log(s"${propVal} isBrowsable == ${isBrowsable}")
+				isBrowsable match {
+					case false => {
+						labeled match {
+							case true => { <li class="citeLinks_linkItem">{ s"Object ${tempUrn} not in Library" }</li> }
+							case _ => { <li>Object not in Library</li> }
+						}
+					}
+					case _ => {
+						val coll:Option[CiteCollectionDef] = {
+							ObjectModel.collRep.value.get.catalog.collection(propVal)
+						}
+						coll match {
+							case Some(c) => {
+								<li class="citeLinks_linkItem" id={idString}>
+									<a onclick={ event: Event => {
+											//g.console.log(s"clicked: ${propVal}")
+											DataModelController.retrieveObject(contextUrn,tempUrn)
+										}
+								} > { 
+								labeled match {
+									case true => {  
+										val l:String = c.collectionLabel
+										l
+									}
+									case _ => { "Browse Collection" }
+								}
+
+								}</a></li>
+							}
+							case None => {
+								<li class="citeLinks_linkItem" id={idString}>
+									{ "Collection not in library." }
+								</li>
+							}
+						}
+						
+					}
 				}
 			}
 		}
