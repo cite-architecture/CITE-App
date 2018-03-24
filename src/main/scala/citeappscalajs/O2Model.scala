@@ -11,6 +11,7 @@ import org.scalajs.dom.raw._
 import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
+import scala.collection.immutable.SortedMap
 
 import scala.scalajs.js.annotation.JSExport
 import js.annotation._
@@ -86,9 +87,12 @@ object O2Model {
 
 		var currentVersionUrnStr = ""
 
+
 		if (tempCorpus.size > 0){
 			// set up columns
-			for ( cn <- tempCorpus.nodes ) {
+
+			
+			for ( (cn,i) <- tempCorpus.nodes.zipWithIndex ) {
 
 				var descEl = ""
 				if (cn.urn.dropPassage.toString != currentVersionUrnStr ){
@@ -98,7 +102,7 @@ object O2Model {
 				}
 				val citString:String = s"""<span class="o2_passageUrn">${cn.urn.passageComponent}</span>"""
 
-				val txtString:String = """<p class="o2_passage">""" + citString + cn.text + "</p>"
+				val txtString:String = """<span class="o2_passage">""" + citString + cn.text + "</span>"
 
 				O2Model.isRtlPassage.value = O2Model.checkForRTL(cn.text)
 
