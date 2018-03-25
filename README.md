@@ -43,4 +43,4 @@ Running CiteApp locally, and attempting to access images, can run afoul of the C
 
 ## Credits
 
-CITEApplication, © 2017, Neel Smith and Christopher Blackwell. Available for use, modification, and distribution under the terms of the [GPL 3.0](https://opensource.org/licenses/gpl-3.0.html) license. Based on the CITE and CTS protocols, by Neel Smith and Christopher Blackwell.
+CITEApplication, © 2017, 2018: Neel Smith and Christopher Blackwell. Available for use, modification, and distribution under the terms of the [GPL 3.0](https://opensource.org/licenses/gpl-3.0.html) license. Based on the [CITE and CTS protocols](http://cite-architecture.github.io), by Neel Smith and Christopher Blackwell.
