@@ -541,6 +541,34 @@ select#ngram_nGramScopeOption {
 	padding-top: 15px;
 }
 
+p.o2_textPassage {
+	margin: 0.5em;
+	padding: 0;
+}
+
+div.o2_citationBlock {
+	display: block;
+	margin: 0.5em;
+	padding: 0;
+}
+
+div.o2_citationBlock .o2_textPassage {
+	display: inline;
+	margin-right: 0.5em;
+}
+
+div.o2_citationBlock .o2_textPassageLong {
+	display: block;
+}
+
+
+
+div.o2_versionContainer {
+	width: 40em;
+	float: left;
+	margin-right: 2em;
+}
+
 .o2_passage {
 	margin: 0;
 	padding: 0;
@@ -654,6 +682,7 @@ div.o2_1_cols{
 }
 
 div#o2_navButtonContainer_bottom{
+	margin-top: 1.5em;
 	clear: both;
 }
 div#o2_navButtonContainer_top{

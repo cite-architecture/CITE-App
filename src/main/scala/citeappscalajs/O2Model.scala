@@ -76,6 +76,37 @@ object O2Model {
 		O2Model.versionsForCurrentUrn.value = 0
 	}
 
+	def passageLevel(u:CtsUrn):Int = {
+		try {
+			val urn = u.dropSubref
+			if (urn.isRange) throw new Exception(s"Cannot report passage level for ${urn} becfause it is a range.")
+			urn.passageComponentOption match {
+				case Some(p) => {
+					p.split('.').size
+				}
+				case None => throw new Exception(s"Cannot report passage level for ${u} because it does not have a passage component.")
+			}
+		} catch {
+			case e:Exception => throw new Exception(s"${e}")	
+		}
+	} 
+
+	def valueForLevel(u:CtsUrn,level:Int):String = {
+		try {
+			val urn = u.dropSubref
+			val pl:Int = passageLevel(urn)
+			if (pl < level) throw new Exception(s"${u} has a ${pl}-deep citation level, which is less than ${level}.")
+			urn.passageComponentOption match {
+				case Some(p) => {
+					p.split('.')(level-1)
+				}
+				case None => throw new Exception(s"Cannot report passage level for ${u} because it does not have a passage component.")
+			}
+		} catch {
+			case e:Exception => throw new Exception(s"${e}")	
+		}	
+	}
+
 	@dom
 	def displayPassage(newUrn: CtsUrn):Unit = {
 		val tempCorpus: Corpus = O2Model.textRepo.value.get.corpus >= newUrn
@@ -90,26 +121,82 @@ object O2Model {
 
 		if (tempCorpus.size > 0){
 			// set up columns
+			val groupedBy:Map[CtsUrn,Vector[CitableNode]] = tempCorpus.nodes.groupBy(_.urn.dropPassage)
+			val sortedUrns:Vector[CtsUrn] = tempCorpus.nodes.map(_.urn.dropPassage).distinct
+			for ( u <- sortedUrns) {
+				val desc:String = O2Model.textRepo.value.get.catalog.label(u)
+				val descElementOpen = s"""<div class="o2_versionContainer"><p class="o2_versionDescription ltr">${desc} : ${u.toString}</p>"""
+				wholePassageElement += descElementOpen
 
-			
-			for ( (cn,i) <- tempCorpus.nodes.zipWithIndex ) {
+				for ( (n, i) <- groupedBy(u).zipWithIndex ){
+					val prevUrn:Option[CtsUrn] = {
+						i match {
+							case i if (i > 0) => Some(groupedBy(u)(i-1).urn)
+							case _ => None
+						}
+					}
 
-				var descEl = ""
-				if (cn.urn.dropPassage.toString != currentVersionUrnStr ){
-					currentVersionUrnStr = cn.urn.dropPassage.toString
-					val desc = O2Model.textRepo.value.get.catalog.label(cn.urn)
-					descEl = s"""<span class="o2_versionDescription ltr">${desc} : ${cn.urn.dropPassage.toString}</span>"""
-				}
-				val citString:String = s"""<span class="o2_passageUrn">${cn.urn.passageComponent}</span>"""
+					// For exemplars, group by the penultimate citation value
+					val citationBlockOpen:String = {
+						n.urn.exemplarOption match {
+							case Some(eo) => {
+								val pl:Int = passageLevel(n.urn)
+								val testVal:String = valueForLevel(n.urn, (pl-1))
+								prevUrn match {
+									case Some(pu) => {
+										val prevVal:String = valueForLevel(pu, (pl-1))
+										(prevVal == testVal) match {
+											case true => ""
+											case _ => {
+												// For long "tokenizations" make them display as blocks
+												n.text.size match {
+													case textSize if (textSize < 50) => {
+														"""</div><div class="o2_citationBlock">"""
+													}
+													case _ => {
+														"""</div><div class="o2_citationBlockLong">"""
+													}	
+												}
+											}
+										}
+									}
+									case None => {
+										n.text.size match {
+											case textSize if (textSize < 50) => {
+												"""<div class="o2_citationBlock">"""
+											}
+											case _ => {
+												"""<div class="o2_citationBlockLong">"""
+											}	
+										}
+									}
+								}	
+							}
+							case None => ""
+						}	
+					}
+					wholePassageElement += citationBlockOpen
 
-				val txtString:String = """<span class="o2_passage">""" + citString + cn.text + "</span>"
 
-				O2Model.isRtlPassage.value = O2Model.checkForRTL(cn.text)
+					val citString:String = s"""<span class="o2_passageUrn">${n.urn.passageComponent}</span>"""
 
-				val divClass =	if (O2Model.isRtlPassage.value){ "rtl" } else { "ltr" }
-				val elString:String = s"""<div class="p ${divClass}">""" + descEl + txtString + "</div>"
-				wholePassageElement += elString
-				//O2Model.passage.get += cn
+					val txtString:String = """<span class="o2_passage">""" + citString + n.text + "</span>"
+					O2Model.isRtlPassage.value = O2Model.checkForRTL(n.text)
+
+					val divClass =	if (O2Model.isRtlPassage.value){ "rtl" } else { "ltr" }
+					val elString:String = s"""<p class="o2_textPassage ${divClass}">""" + txtString + "</p>"
+					wholePassageElement += elString
+				}	
+				val citationBlockClose:String = {
+						u.exemplarOption match {
+							case Some(eo) => "</div>"
+							case None => ""
+						}
+				}	
+				wholePassageElement += citationBlockClose
+				val descElementClose:String = "</div>"
+				wholePassageElement += descElementClose
+
 			}
 		} else {
 			// Display notice that there was no text found
