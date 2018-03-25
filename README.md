@@ -30,7 +30,13 @@ If `sbt fastOptJS` completes successfully, run the app by opening `CITE-App/targ
 
 If `sbt fullOptJS` completes successfully, run the app by opening `CITE-App/target/scala-2.12/classes/index-opt.html` in your browser.
 
+## Images for CiteApp
+
+Documentation for configuring collections of images for CiteApp is underway at <https://github.com/cite-architecture/CITE-image-configurations>.
+
 ## Python SimpleServer
+
+Running CiteApp locally, and attempting to access images, can run afoul of the Cross-Origin-Restrictions (CORS). It may be possible to tell your browser to ignore that security precaution. Or, a safer alternative, is to serve CiteApp locally. If Python is installed, navigate to the directory that contains `cite-VERSION.html`, and execute:
 
 `python -m SimpleHTTPServer`
 
