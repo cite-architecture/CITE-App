@@ -16,6 +16,8 @@ CITE Application, by default, downloads a sample corpus of texts. Licensing and 
 
 CITE Application is a single web page you can open in a browser. Precompiled versions are available in the [downloads directory](downloads), and named `cite-VERSION.html`.
 
+**N.b.** In the `downloads` directory there is a `js` directory that CiteApp uses for providing zooming views of binary images, using [OpenSeadragon](https://openseadragon.github.io). 
+
 ## Building
 
 CITE Application is targetted for Scala 2.12.You can use normal `sbt` using normal tasks for [ScalaJS projects](https://www.scala-js.org/doc/project/building.html) such as  `sbt fastOptJS` or `sbt fullOptJS`.
