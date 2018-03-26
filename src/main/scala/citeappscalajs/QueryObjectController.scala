@@ -82,6 +82,40 @@ object QueryObjectController {
 	def loadQuery(q:QueryObjectModel.CiteCollectionQuery):Unit = {
 		QueryObjectModel.currentQuery.value =  Some(q)
 		QueryObjectModel.selectedPropertyType.value =  q.qPropertyType
+		QueryObjectModel.currentQueryCollection.value = q.qCollection
+		// -----
+		QueryObjectModel.queryProperty.value = q.qProperty
+		QueryObjectModel.currentControlledVocabItem.value = q.qControlledVocabItem
+		QueryObjectModel.currentSearchString.value = q.qSearchString
+		QueryObjectModel.currentRegexState.value = { 
+			q.qRegex match {
+				case Some(b) => b
+				case None => false
+			}
+		}
+		QueryObjectModel.currentCaseSensitiveState.value = {
+			q.qCaseSensitive match {
+				case Some(b) => b
+				case None => false
+			}
+		}
+		QueryObjectModel.currentNumericQuery1.value = q.qNum1
+		QueryObjectModel.currentNumericQuery2.value = q.qNum2
+		QueryObjectModel.currentNumericOperator.value = {
+			q.qNumOperator match {
+				case Some(s) => s	
+				case None => ""
+			}
+		}
+		QueryObjectModel.currentBooleanVal.value = {
+			q.qBoolVal match {
+				case Some(b) => b
+				case None => false
+			}
+		}
+		QueryObjectModel.currentCtsUrnQuery.value = q.qCtsUrn
+		QueryObjectModel.currentCite2UrnQuery.value = q.qCite2Urn
+		// ------
 		initQuery
 	}
 
@@ -401,7 +435,6 @@ qCite2Urn: Option[Cite2Urn]
 	}
 
 	def initCtsUrnSearch:Unit = {
-		g.console.log("got here 1")
 		val collUrn = {
 			QueryObjectModel.currentQueryCollection.value match {
 				case None => None
@@ -418,11 +451,9 @@ qCite2Urn: Option[Cite2Urn]
 	}
 
 	def doCtsUrnSearch(cq:QueryObjectModel.CiteCollectionQuery):Unit = {
-		g.console.log("got here 2")
 			cq.qProperty match {
 				case None =>{
 							val ov:Vector[CiteObject] = ObjectModel.collRep.value.get.urnMatch(cq.qCtsUrn.get)
-							g.console.log("got here 3")
 							cq.qCollection match {
 								case Some(u) =>{
 									val fv:Vector[CiteObject] = ov.filter(_.urn ~~ u)

@@ -36,6 +36,15 @@ object ObjectModel {
 	// Keeping track of current collection data
 	val collections = Vars.empty[CiteCollectionDef]
 
+	// Keeping track of the history of object-viewing
+	val objectHistory = Vars.empty[Cite2Urn]
+
+	def updateHistory(u:Cite2Urn):Unit = {
+		if (ObjectModel.objectHistory.value.contains(u) == false)  {
+	    	ObjectModel.objectHistory.value += u
+		}		
+	}
+
 	// Binding up objects, their properties, and extensions
 
 	case class BoundCiteProperty(urn:Var[Cite2Urn],propertyType:Var[CitePropertyType],propertyValue:Var[String])
@@ -252,6 +261,8 @@ object ObjectModel {
 
 	// Given a URN, gets all objects
 	def getObjects(u:Cite2Urn) = {
+		// Stash this in the history
+		ObjectModel.updateHistory(u)	
 			if (u.isRange){
 				if (ObjectModel.collRep.value.get.isOrdered(u.dropSelector)){
 					//ObjectController.updateUserMessage(s"Will deal with range ${u}.",1)
@@ -261,7 +272,7 @@ object ObjectModel {
 					ObjectModel.getRangeObjects(rb, re)
 					//ObjectController.setDisplay
 				} else {
-					//ObjectController.updateUserMessage(s"The collection ${u.dropSelector} is not an ordered collection, so range-citations are not applicable.",2)
+					ObjectController.updateUserMessage(s"The collection ${u.dropSelector} is not an ordered collection, so range-citations are not applicable.",2)
 				}
 			} else {
 				u.objectComponentOption match {

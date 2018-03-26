@@ -490,26 +490,46 @@ def propertyListEnumeration = {
 def previousQueryMenu = {
 	<div id="queryObject_previousMenu"
 	class={
-		{ if (QueryObjectModel.pastQueries.value.size == 0) { "dropdown empty" } else {"dropdown"} }
+			{ if ((QueryObjectModel.pastQueries.bind.size < 1) && (ObjectModel.objectHistory.bind.size < 1)) { 
+				"dropdown empty" 
+			} else {
+				"dropdown"
+			} 
+		}
 	} >
 	<span>History</span>
-	{ QueryObjectView.previousQueries.bind }
+	{ QueryObjectView.previousQueriesMenu.bind }
 	</div>
 }
 
 @dom
-def previousQueries = {
+def previousQueriesMenu = {
 	<div class="dropdown-content">
-		{
-			for (q <- QueryObjectModel.pastQueries) yield {
+		{ QueryObjectView.loadPreviousSearches.bind }
+		{ QueryObjectView.loadPreviousObjects.bind }
+	</div>
+}
+
+@dom
+def loadPreviousSearches = {
+for (q <- QueryObjectModel.pastQueries) yield {
 
 				<p onclick={ event: Event => {
 						QueryObjectController.loadQuery(q)
+						
 					}
 				}>{ q.toString }</p>
 			}
-		}
-	</div>
+}
+
+@dom
+def loadPreviousObjects = {
+for (u <- ObjectModel.objectHistory) yield {
+				<p onclick={ event: Event => {
+					ObjectController.changeUrn(u)	
+					}
+				}>{ u.toString }</p>
+			}	
 }
 
 @dom
