@@ -34,6 +34,7 @@ def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 				{ CiteBinaryImageView.imageThumbItem(propVal, CiteBinaryImageModel.imgUseLocal.bind).bind }
 				{ DataModelView.objectLinkItem(contextUrn, propVal).bind }
 				{ DataModelView.imageLinkItem(contextUrn, propVal).bind }
+				{ DataModelView.dseLinkItem(contextUrn, propVal).bind }
 			</ul>
 		}
 		case None => { 
@@ -160,6 +161,24 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "") = 
 			}
 		}
 	}	
+
+	@dom
+	def dseLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn) = {
+		// First, see if this is a binary image
+		CiteBinaryImageController.implementedByImageCollObjects(propVal) match {
+			case Some(uv) => {
+				//Then, see if it is represented in DSE
+				<span class="citeLinks_linkSpan">
+					<a onclick={ event:Event => {
+							g.console.log(s"Will get mapped data for ${propVal}.")	
+							val dseUrns:Option[Vector[Cite2Urn]] = DSEModel.implementedByDSE_image(propVal)
+							g.console.log(s"${dseUrns}")
+						}
+					} > Mapped Data</a></span>
+			}
+			case None => { <!-- empty content --> }
+		}
+	}
 
 	@dom
 	def iipDZLink(urn:Cite2Urn, uv:Vector[Cite2Urn], contextUrn:Option[Cite2Urn]) = {
