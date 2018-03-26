@@ -104,7 +104,7 @@ object CiteMainController {
 	*/
 	def checkDefaultTab:Unit = {
 		CiteMainModel.showCollections.value match {
-			case true => js.Dynamic.global.document.getElementById("tab-1").checked = true
+			case true => js.Dynamic.global.document.getElementById("tab-3").checked = true
 			case _ => {
 				if (CiteMainModel.showTexts.value) {
 					js.Dynamic.global.document.getElementById("tab-1").checked = true

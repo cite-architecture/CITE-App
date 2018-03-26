@@ -1,5 +1,9 @@
 # Release notes
 
+**1.4.4**: Increased selection menu for NGram size up to 15. Now showing property labels (not property URNs) in object-view.
+
+**1.4.3**: Added a working history menu for object browsing and querying.
+
 **1.4.2**: Significant refactoring of text display. Improved display of citations for Exemplars.
 
 **1.4.1**: Fixed bug where collection-level URNs in object property values would cause browsing to fail silently.

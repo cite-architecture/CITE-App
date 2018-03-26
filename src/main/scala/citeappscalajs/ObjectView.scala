@@ -258,9 +258,30 @@ def renderObjects = {
 </p>
 }
 
+@dom
+def propertyLabelFromPropertyUrn(urn:Cite2Urn) = {
+	val collectionUrn:Cite2Urn = urn.dropSelector.dropProperty
+	val propertyUrn:Cite2Urn = urn.dropSelector
+	val collDef:Option[CiteCollectionDef] = ObjectModel.collRep.value.get.catalog.collection(collectionUrn)
+	collDef match {
+		case Some(cd) => {
+			val propDefs:Vector[CitePropertyDef] = cd.propertyDefs.filter(_.urn == propertyUrn).toVector
+			propDefs.size match {
+				case s if (s > 0) => propDefs(0).label
+				case _ => urn.toString
+			}
+
+
+		}
+		case None => urn.toString
+	}
+}
+
 @dom def renderProperty(contextUrn:Option[Cite2Urn], p:ObjectModel.BoundCiteProperty) = {
 	<tr>
-	<td>{ p.urn.bind.toString }</td>
+	<td>{ 
+		propertyLabelFromPropertyUrn(p.urn.value).bind
+	}</td>
 	<td>{ p.propertyType.bind.toString }</td>
 	<td>{
 		p.propertyType.value match {
