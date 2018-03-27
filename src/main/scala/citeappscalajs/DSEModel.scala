@@ -67,5 +67,59 @@ object DSEModel {
  		None
  	}
 
+ 	def roisForImage(urn:Cite2Urn, contextUrn:Option[Cite2Urn], dseUrns:Option[Vector[Cite2Urn]]):Option[Vector[ImageRoiModel.Roi]] = {
+ 		try {
+	 		// If there is an ROI already on the URN, and a contextUrn, make an ROI object for those
+			val originalRoi:Option[Vector[ImageRoiModel.Roi]] = {
+				val tempRoi:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(urn, contextUrn)
+				tempRoi match {
+					case Some(r) => Some(Vector(r))
+					case None => None
+				}
+			}
+
+			//Get an ROI for the surface (there should be only one)
+
+			// Get ROI objects for all objects in dseUrns
+			val allRois:Option[Vector[ImageRoiModel.Roi]] = {
+					dseUrns match {
+						case None => None
+						case Some(dus) => {
+							val roiVec:Vector[ImageRoiModel.Roi] = dus.map(du => {
+								// Get Object for CiteUrn du
+								val thisObject:CiteObject = ObjectModel.collRep.value.get.citableObject(du)
+								val roiUrn:Cite2Urn = thisObject.propertyValue(DataModelController.propertyUrnFromPropertyName(du, dseImageProp )).asInstanceOf[Cite2Urn]
+								val textUrn:CtsUrn = thisObject.propertyValue(DataModelController.propertyUrnFromPropertyName(du, dseTextProp )).asInstanceOf[CtsUrn]
+								val thisRoiObject:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(roiUrn,Some(textUrn))
+								thisRoiObject.get	
+							}).toVector
+							Some(roiVec)
+						}
+					}	
+			}
+
+
+			val totalRois:Option[Vector[ImageRoiModel.Roi]] = {
+				originalRoi match {
+					case None => {
+						allRois match {
+							case None => None
+							case Some(arois) => Some(arois)
+						}
+					}
+					case Some(oroi) => {
+						allRois match {
+							case None => Some(oroi)
+							case Some(arois) => Some(oroi ++ arois)
+						}
+					}
+				}
+			}
+			totalRois
+		} catch {
+			case e:Exception => throw new Exception(s"DSE Model: ${e}.")
+		}
+ 	}
+
 
 }

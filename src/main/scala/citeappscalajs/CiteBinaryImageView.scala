@@ -141,6 +141,16 @@ object CiteBinaryImageView {
 	/* Search Image Properties Forms */
 	@dom
 	def imageMappedDataDiv = {
+			<h2>Show/Hide Mapped Data</h2>
+			<ul id="image_showHideGroups">
+				<li class="image_roiGroup_0 image_showHideGroup_shown">Hide Group 0</li>
+				<li class="image_roiGroup_1 image_showHideGroup_hidden">Show Group 1</li>
+				<li class="image_roiGroup_2 image_showHideGroup_hidden">Show Group 2</li>
+				<li class="image_roiGroup_3 image_showHideGroup_shown">Hide Group 3</li>
+				<li class="image_roiGroup_4 image_showHideGroup_hidden">Show Group 4</li>
+				<li class="image_roiGroup_5 image_showHideGroup_hidden">Show Group 5</li>
+				<li class="image_roiGroup_6 image_showHideGroup_hidden">Show Group 6</li>
+			</ul>
 		<h2>Mapped Data</h2>
 		<div id="image_mappedData">
 			<ul>
@@ -152,20 +162,22 @@ object CiteBinaryImageView {
 
 	@dom
 	def allImageRoisListItems = {
-		// 
-		CiteBinaryImageModel.roiIncrementer = 0
-		for (roi <- CiteBinaryImageModel.imageROIs) yield {
+		val roiPreVec =  CiteBinaryImageModel.imageRoiTuple.bind.map(_._2).toVector
+		val groupMap = CiteBinaryImageController.groupsForROIs(roiPreVec)
+
+		for (roi <- CiteBinaryImageModel.imageRoiTuple) yield {
 			{
-				CiteBinaryImageModel.roiIncrementer = CiteBinaryImageModel.roiIncrementer + 1
 				val curn:Option[Cite2Urn] = CiteBinaryImageModel.urn.value
-				roi.dataUrn match {
+				roi._2.dataUrn match {
 					case Some(du) => {
 						du.toString.take(7) match {
 							case s if (s == "urn:cts") => {
-								DataModelView.textLinkItem(curn, du.asInstanceOf[CtsUrn], idString=s"image_mappedUrn_${CiteBinaryImageModel.roiIncrementer}").bind
+							   val groupId:String = groupMap(du.asInstanceOf[CtsUrn].dropPassage.toString).toString	
+								DataModelView.textLinkItem(curn, du.asInstanceOf[CtsUrn], idString=s"image_mappedUrn_${roi._1}", groupId=groupId).bind
 							}
 							case _ => {
-								DataModelView.objectLinkItem(curn, du.asInstanceOf[Cite2Urn], labeled=true, idString=s"image_mappedUrn_${CiteBinaryImageModel.roiIncrementer}").bind
+								val groupId:String = groupMap(du.asInstanceOf[Cite2Urn].dropSelector.toString).toString
+								DataModelView.objectLinkItem(curn, du.asInstanceOf[Cite2Urn], labeled=true, idString=s"image_mappedUrn_${roi._1}", groupId=groupId).bind
 							}
 						}
 					}

@@ -75,9 +75,8 @@ object CiteBinaryImageModel {
 
 	// An ImageROI object associates an roi with a urn; 
 	// our image may have none, one, or many
-	val imageROIs = Vars.empty[ImageRoiModel.Roi]
-	// Sad, but this might be the best way to handle this
-	var roiIncrementer:Int = 0
+	val imageRoiTuple = Vars.empty[(Int,ImageRoiModel.Roi)]
+
 	val currentContextUrn = Var[Option[Urn]](None)
 
 
@@ -95,31 +94,34 @@ object CiteBinaryImageModel {
 	val versionsForCurrentUrn = Var(1)
 
 	def clearROIs:Unit = {
-		imageROIs.value.clear
-		roiIncrementer = 0
+		imageRoiTuple.value.clear
+		g.console.log("rois cleared")
 	}
 
 	def loadROIs(rois:Vector[ImageRoiModel.Roi]):Unit = {
 		clearROIs
-		for ( roi <- rois){
-			CiteBinaryImageModel.imageROIs.value += roi
+		for ( (roi,i) <- rois.zipWithIndex){
+			val t:(Int,ImageRoiModel.Roi) = (i, roi)
+			CiteBinaryImageModel.imageRoiTuple.value += t
 		}
 	}
 
 	def addToROIs(roi:ImageRoiModel.Roi):Unit = {
-			CiteBinaryImageModel.imageROIs.value += roi
+			val i = imageRoiTuple.value.size
+			val t:(Int,ImageRoiModel.Roi) = (i, roi)
+			CiteBinaryImageModel.imageRoiTuple.value += t
+
 	}
 
 	def imageRoisToOptionVector:Option[Vector[ImageRoiModel.Roi]] = {
-		imageROIs.value.size match {
+		imageRoiTuple.value.size match {
 			case s if (s == 1) => None 
 			case _ => {
-				val roiVec:Vector[ImageRoiModel.Roi] = imageROIs.value.map( r => r).toVector	
+				val roiVec:Vector[ImageRoiModel.Roi] = imageRoiTuple.value.map( r => r._2).toVector
 				Some(roiVec)
 			}
 		}	
 	}
-
 
 	/* This is how to pass data to the global JS scope */
 	/*

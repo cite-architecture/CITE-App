@@ -52,9 +52,10 @@ function addToJsRoiArray(i,r,u,g){
 }
 
 function clearSelectedROIs(){
-	for (n = 0; n < roiArray.length; n++){
+	for (n = 0; n < (roiArray.length - 1); n++){
 			var roiId = idForMappedROI(n+1)
 			var urnId = idForMappedUrn(n+1)
+			console.log("roiId=" + roiId + " urnId=" + urnId);
 			var thisROI = document.getElementById(roiId)
 			var thisURN = document.getElementById(urnId)
 			thisROI.classList.remove("image_roi_selected")
