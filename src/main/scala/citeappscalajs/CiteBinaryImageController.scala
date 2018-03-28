@@ -448,7 +448,6 @@ object CiteBinaryImageController {
 	}
 
 	def updateRois(u:Cite2Urn, roiOptionVector:Option[Vector[ImageRoiModel.Roi]] = None):Unit = {
-		g.console.log(s"updateRois, with urn = ${u}")
 		roiOptionVector match {
 			case Some(rov) => CiteBinaryImageModel.loadROIs(rov)
 			case None => CiteBinaryImageModel.clearROIs
@@ -576,12 +575,12 @@ object CiteBinaryImageController {
 		}
 	}
 
-	def groupsForROIs(tupleVec:Vector[(Int,ImageRoiModel.Roi)], placeHolder:String = ""):Map[String,Int] = {
+	def groupsForROIs(tupleVec:Vector[(Int,ImageRoiModel.Roi)], placeHolder:String = ""):Option[Map[String,Int]] = {
 		val vec:Vector[ImageRoiModel.Roi] = tupleVec.map(_._2).toVector
 		groupsForROIs(vec)
 	}
 
-	def groupsForROIs(vec:Vector[ImageRoiModel.Roi]):Map[String,Int] = {
+	def groupsForROIs(vec:Vector[ImageRoiModel.Roi]):Option[Map[String,Int]] = {
 		val list:Vector[String] = {
 			vec.map(vo => {
 				vo.dataUrn match {
@@ -597,7 +596,7 @@ object CiteBinaryImageController {
 		}
 		list.size match {
 			case 0 => {
-				val emptyMap:Map[String,Int] = Map()
+				val emptyMap:Option[Map[String,Int]] = None
 				emptyMap
 			}
 			case _ => {
@@ -605,7 +604,7 @@ object CiteBinaryImageController {
 				val mapVec:Vector[Map[String,Int]] = zipVec.map( i => { Map(i._1 -> i._2)})
 				val groupMap:Map[String,Int] = mapVec.reduce(_ ++ _)
 				val immutableGroupMap = groupMap
-				immutableGroupMap
+				Some(immutableGroupMap)
 			}
 		}
 	}
@@ -623,17 +622,22 @@ object CiteBinaryImageController {
 						}
 					}
 					// Fix this!!!
-					val groupMap:Map[String,Int] = groupsForROIs(roiObj)
+					//val groupMap:Map[String,Int] = groupsForROIs(roiObj)
 					val groupId:String = {
-						roi._2.dataUrn match {
-							case Some(u) => {
-								u match {
-									case ctsUrn if (ctsUrn.toString.take(8) == "urn:cts:") => groupMap(ctsUrn.asInstanceOf[CtsUrn].dropPassage.toString).toString
-									case cite2Urn if (cite2Urn.toString.take(10) == "urn:cite2:") => groupMap(cite2Urn.asInstanceOf[Cite2Urn].dropSelector.toString).toString
-									case _ => groupMap("None").toString
+						CiteBinaryImageModel.imageRoiGroups.value match {
+							case Some(irg) => {
+								roi._2.dataUrn match {
+									case Some(u) => {
+										u match {
+											case ctsUrn if (ctsUrn.toString.take(8) == "urn:cts:") => irg(ctsUrn.asInstanceOf[CtsUrn].dropPassage.toString).toString
+											case cite2Urn if (cite2Urn.toString.take(10) == "urn:cite2:") => irg(cite2Urn.asInstanceOf[Cite2Urn].dropSelector.toString).toString
+											case _ => irg("None").toString
+										}
+									}
+									case _ => irg("None").toString
 								}
 							}
-							case _ => groupMap("None").toString
+							case None => ""
 						}
 					}
 					//val index:Int = 1
@@ -684,6 +688,41 @@ object CiteBinaryImageController {
 		def apply(collection: String, imageObject: String, path:String): js.Dynamic = js.native
 	}
 
+	def showHideGroup(idName:String, className:String):Unit = {
+		g.console.log(s"Will show/hide: ${className}")
+		val elems:scala.scalajs.js.Dynamic = js.Dynamic.global.document.querySelectorAll(className)
+		val thisElement:scala.scalajs.js.Dynamic = js.Dynamic.global.document.querySelector(idName)
+
+
+		if ( thisElement.classList.contains("image_showHideGroup_shown").asInstanceOf[Boolean] == true ) {
+			thisElement.classList.remove("image_showHideGroup_shown")
+			thisElement.classList.add("image_showHideGroup_hidden")
+			val ih:String = thisElement.innerHTML.toString
+			thisElement.innerHTML = ih.replace("Hide", "Show")
+
+		} else {
+			thisElement.classList.add("image_showHideGroup_shown")
+			thisElement.classList.remove("image_showHideGroup_hidden")
+			val ih:String = thisElement.innerHTML.toString
+			thisElement.innerHTML = ih.replace("Show", "Hide")
+		}
+
+		val l:Int = elems.length.asInstanceOf[Int]
+		g.console.log("--------")
+		g.console.log(l.toString)
+		g.console.log(elems.item(0))
+		g.console.log("--------")
+		// Nasty loop, because JS
+		for (i <- 0 until l){
+			g.console.log(elems.item(i))
+			if ( elems.item(i).classList.contains("roi_hidden").asInstanceOf[Boolean] == true) {
+				elems.item(i).classList.remove("roi_hidden")
+			} else {
+				elems.item(i).classList.add("roi_hidden")
+			}
+		}
+
+	}
 
 
 

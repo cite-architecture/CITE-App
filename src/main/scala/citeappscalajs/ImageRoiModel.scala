@@ -30,14 +30,14 @@ object ImageRoiModel {
 		override def toString = s"Image: ${imageUrn}. ${rois}"
 	}
 
- 	case class Roi(val l:Float, t:Float, w:Float, h:Float, dataUrn:Option[Urn] = None ) {
+ 	case class Roi(val l:Float, t:Float, w:Float, h:Float, dataUrn:Option[Urn] = None, contextUrn:Option[Cite2Urn] = None ) {
 			override def toString = s"left:${l}, top:${t}, width:${w}, height:${h} => ${dataUrn}"
 			def toSubrefString:String = {
 				s"${l},${t},${w},${h}"
 			}
 	}
 
-	def roiFromUrn(u:Cite2Urn, data:Option[Urn] = None):Option[Roi] = {
+	def roiFromUrn(u:Cite2Urn, data:Option[Urn] = None, context:Option[Cite2Urn] = None):Option[Roi] = {
 		// in this case, there will be only one Roi object in the ImageRoi
 		try {
 			u.objectExtensionOption match {
@@ -53,7 +53,7 @@ object ImageRoiModel {
 					if ( (w <0) | ( w > 1) ) throw new Exception(s"${w} must be > 0 and < 1.")
 					if ( (h <0) | ( h > 1) ) throw new Exception(s"${h} must be > 0 and < 1.")
 					// Got here and we're good
-					val roi:Roi = Roi(l,t,w,h,data)
+					val roi:Roi = Roi(l,t,w,h,data, context)
 					Some(roi)
 				}
 				case None => None

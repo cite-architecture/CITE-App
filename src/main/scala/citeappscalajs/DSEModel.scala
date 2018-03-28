@@ -71,7 +71,7 @@ object DSEModel {
  		try {
 	 		// If there is an ROI already on the URN, and a contextUrn, make an ROI object for those
 			val originalRoi:Option[Vector[ImageRoiModel.Roi]] = {
-				val tempRoi:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(urn, contextUrn)
+				val tempRoi:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(urn, data = None, context = contextUrn)
 				tempRoi match {
 					case Some(r) => Some(Vector(r))
 					case None => None
@@ -90,7 +90,7 @@ object DSEModel {
 								val thisObject:CiteObject = ObjectModel.collRep.value.get.citableObject(du)
 								val roiUrn:Cite2Urn = thisObject.propertyValue(DataModelController.propertyUrnFromPropertyName(du, dseImageProp )).asInstanceOf[Cite2Urn]
 								val textUrn:CtsUrn = thisObject.propertyValue(DataModelController.propertyUrnFromPropertyName(du, dseTextProp )).asInstanceOf[CtsUrn]
-								val thisRoiObject:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(roiUrn,Some(textUrn))
+								val thisRoiObject:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(roiUrn,data = Some(textUrn), context = Some(thisObject.urn))
 								thisRoiObject.get	
 							}).toVector
 							Some(roiVec)
