@@ -75,9 +75,12 @@ object CiteBinaryImageModel {
 
 	// An ImageROI object associates an roi with a urn; 
 	// our image may have none, one, or many
-	val imageROIs = Vars.empty[ImageRoiModel.Roi]
-	// Sad, but this might be the best way to handle this
-	var roiIncrementer:Int = 0
+	val imageRoiTuple = Vars.empty[(Int,ImageRoiModel.Roi)]
+	// This splits imageRoiTuple up into groups
+	val imageRoiGroups = Var[Option[Map[String,Int]]](None)
+	// And for convenience, and making Binding happen, another view of the roiGroups…
+	val imageRoiGroupSeq = Vars.empty[(String,Int)]
+
 	val currentContextUrn = Var[Option[Urn]](None)
 
 
@@ -95,31 +98,48 @@ object CiteBinaryImageModel {
 	val versionsForCurrentUrn = Var(1)
 
 	def clearROIs:Unit = {
-		imageROIs.value.clear
-		roiIncrementer = 0
+		imageRoiTuple.value.clear
+		imageRoiGroups.value = None
+		imageRoiGroupSeq.value.clear
 	}
 
 	def loadROIs(rois:Vector[ImageRoiModel.Roi]):Unit = {
 		clearROIs
-		for ( roi <- rois){
-			CiteBinaryImageModel.imageROIs.value += roi
+		for ( (roi,i) <- rois.zipWithIndex){
+			val t:(Int,ImageRoiModel.Roi) = (i, roi)
+			CiteBinaryImageModel.imageRoiTuple.value += t
 		}
+		imageRoiGroups.value = CiteBinaryImageController.groupsForROIs(rois)
+		imageRoiGroups.value match {
+			case Some(irg) => {
+				irg.toVector.foreach( g => {
+					imageRoiGroupSeq.value += g
+				})
+			}	
+			case None => imageRoiGroupSeq.value.clear
+		}
+
 	}
 
+	
 	def addToROIs(roi:ImageRoiModel.Roi):Unit = {
-			CiteBinaryImageModel.imageROIs.value += roi
+			val i = imageRoiTuple.value.size
+			val t:(Int,ImageRoiModel.Roi) = (i, roi)
+			CiteBinaryImageModel.imageRoiTuple.value += t
+		   val roiPreVec =  CiteBinaryImageModel.imageRoiTuple.value.map(_._2).toVector
+		   imageRoiGroups.value = None // Clear it out
+		   imageRoiGroups.value = CiteBinaryImageController.groupsForROIs(roiPreVec)
 	}
 
 	def imageRoisToOptionVector:Option[Vector[ImageRoiModel.Roi]] = {
-		imageROIs.value.size match {
+		imageRoiTuple.value.size match {
 			case s if (s == 1) => None 
 			case _ => {
-				val roiVec:Vector[ImageRoiModel.Roi] = imageROIs.value.map( r => r).toVector	
+				val roiVec:Vector[ImageRoiModel.Roi] = imageRoiTuple.value.map( r => r._2).toVector
 				Some(roiVec)
 			}
 		}	
 	}
-
 
 	/* This is how to pass data to the global JS scope */
 	/*

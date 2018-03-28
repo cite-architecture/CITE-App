@@ -448,7 +448,6 @@ object CiteBinaryImageController {
 	}
 
 	def updateRois(u:Cite2Urn, roiOptionVector:Option[Vector[ImageRoiModel.Roi]] = None):Unit = {
-		g.console.log(s"updateRois, with urn = ${u}")
 		roiOptionVector match {
 			case Some(rov) => CiteBinaryImageModel.loadROIs(rov)
 			case None => CiteBinaryImageModel.clearROIs
@@ -554,11 +553,11 @@ object CiteBinaryImageController {
 				ioo match {
 					case Some(s) => {
 						// If there is/are imageROI(s) grabbed, send them to JS for processing
-						CiteBinaryImageController.loadJsArray(roiObj)
+						CiteBinaryImageController.loadJsArray(CiteBinaryImageModel.imageRoiTuple.value.toVector)
 						// Based on local/remote, get zoom path
 						val zoomPath:String = CiteBinaryImageController.getZoomUrlAndPath(u)
 						// Alert user that ROIs will appear after a short delay
-						if (CiteBinaryImageModel.imageROIs.value.size > 0){
+						if (CiteBinaryImageModel.imageRoiTuple.value.size > 0){
 							updateUserMessage("Regions-of-interest will appear on the image after a short delay.",1)
 						}							
 						// Hand off to javascript for OpenSeadragon zooming
@@ -576,26 +575,77 @@ object CiteBinaryImageController {
 		}
 	}
 
-	def loadJsArray(roiObj:Option[Vector[ImageRoiModel.Roi]]):Unit = {
+	def groupsForROIs(tupleVec:Vector[(Int,ImageRoiModel.Roi)], placeHolder:String = ""):Option[Map[String,Int]] = {
+		val vec:Vector[ImageRoiModel.Roi] = tupleVec.map(_._2).toVector
+		groupsForROIs(vec)
+	}
+
+	def groupsForROIs(vec:Vector[ImageRoiModel.Roi]):Option[Map[String,Int]] = {
+		val list:Vector[String] = {
+			vec.map(vo => {
+				vo.dataUrn match {
+					case None => "None"
+					case Some(u) => {
+						u.toString.take(8) match {
+							case "urn:cts:" => u.asInstanceOf[CtsUrn].dropPassage.toString
+							case _ => u.asInstanceOf[Cite2Urn].dropSelector.toString
+						}
+					}
+				}
+			}).toVector.distinct
+		}
+		list.size match {
+			case 0 => {
+				val emptyMap:Option[Map[String,Int]] = None
+				emptyMap
+			}
+			case _ => {
+				val zipVec:Vector[(String,Int)] = list.zipWithIndex
+				val mapVec:Vector[Map[String,Int]] = zipVec.map( i => { Map(i._1 -> i._2)})
+				val groupMap:Map[String,Int] = mapVec.reduce(_ ++ _)
+				val immutableGroupMap = groupMap
+				Some(immutableGroupMap)
+			}
+		}
+	}
+
+	def loadJsArray(roiObj:Vector[(Int,ImageRoiModel.Roi)]):Unit = {
 		CiteBinaryImageController.clearJsRoiArray(true)
-		roiObj match {
-			case Some(ro) => {
-				for (roi <- ro){
-					val tempRoi:String = roi.toSubrefString	
+		roiObj.size match {
+			case s if (s > 0) => {
+				for (roi <- roiObj){
+					val tempRoi:String = roi._2.toSubrefString	
 					val dataUrn:String = {
-						roi.dataUrn match {
+						roi._2.dataUrn match {
 							case Some(du) => du.toString
 							case None => ""
 						}
 					}
 					// Fix this!!!
-					val groupId:String = "1"
-					val index:Int = 1
-					CiteBinaryImageController.addToJsRoiArray(index,tempRoi,dataUrn,groupId)
+					//val groupMap:Map[String,Int] = groupsForROIs(roiObj)
+					val groupId:String = {
+						CiteBinaryImageModel.imageRoiGroups.value match {
+							case Some(irg) => {
+								roi._2.dataUrn match {
+									case Some(u) => {
+										u match {
+											case ctsUrn if (ctsUrn.toString.take(8) == "urn:cts:") => irg(ctsUrn.asInstanceOf[CtsUrn].dropPassage.toString).toString
+											case cite2Urn if (cite2Urn.toString.take(10) == "urn:cite2:") => irg(cite2Urn.asInstanceOf[Cite2Urn].dropSelector.toString).toString
+											case _ => irg("None").toString
+										}
+									}
+									case _ => irg("None").toString
+								}
+							}
+							case None => ""
+						}
+					}
+					//val index:Int = 1
+					CiteBinaryImageController.addToJsRoiArray(roi._1,tempRoi,dataUrn,groupId)
 				}
 
 			}
-			case None => // do nothing
+			case _ => // do nothing
 		}		
 		/*
 		for (iroi <- ImageModel.imageROIs.value){
@@ -638,6 +688,41 @@ object CiteBinaryImageController {
 		def apply(collection: String, imageObject: String, path:String): js.Dynamic = js.native
 	}
 
+	def showHideGroup(idName:String, className:String):Unit = {
+		g.console.log(s"Will show/hide: ${className}")
+		val elems:scala.scalajs.js.Dynamic = js.Dynamic.global.document.querySelectorAll(className)
+		val thisElement:scala.scalajs.js.Dynamic = js.Dynamic.global.document.querySelector(idName)
+
+
+		if ( thisElement.classList.contains("image_showHideGroup_shown").asInstanceOf[Boolean] == true ) {
+			thisElement.classList.remove("image_showHideGroup_shown")
+			thisElement.classList.add("image_showHideGroup_hidden")
+			val ih:String = thisElement.innerHTML.toString
+			thisElement.innerHTML = ih.replace("Hide", "Show")
+
+		} else {
+			thisElement.classList.add("image_showHideGroup_shown")
+			thisElement.classList.remove("image_showHideGroup_hidden")
+			val ih:String = thisElement.innerHTML.toString
+			thisElement.innerHTML = ih.replace("Show", "Hide")
+		}
+
+		val l:Int = elems.length.asInstanceOf[Int]
+		g.console.log("--------")
+		g.console.log(l.toString)
+		g.console.log(elems.item(0))
+		g.console.log("--------")
+		// Nasty loop, because JS
+		for (i <- 0 until l){
+			g.console.log(elems.item(i))
+			if ( elems.item(i).classList.contains("roi_hidden").asInstanceOf[Boolean] == true) {
+				elems.item(i).classList.remove("roi_hidden")
+			} else {
+				elems.item(i).classList.add("roi_hidden")
+			}
+		}
+
+	}
 
 
 

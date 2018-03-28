@@ -134,6 +134,7 @@ object DataModelController {
 			CiteMainView.changeTab("object")
 	}
 
+
 	def viewImage(
 		contextUrn:Option[Cite2Urn], 
 		implementingObject:CiteObject, 

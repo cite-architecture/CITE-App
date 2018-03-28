@@ -54,6 +54,7 @@ object CiteBinaryImageView {
 		<div id="image_sidebar" class="app_sidebarDiv">
 			{ imageCollectionsContainer.bind }
 			{ imagePreviewDiv.bind }
+			{ imageShowHideMappedData.bind }
 			{ imageMappedDataDiv.bind }
 		</div>
 
@@ -138,13 +139,47 @@ object CiteBinaryImageView {
 		</div>
 	}
 
+
+	@dom
+	def imageShowHideMappedData = {
+		<h2>Show/Hide Data Groups</h2>	
+		<ul id="image_showHideGroups">
+			{
+				for (g <- CiteBinaryImageModel.imageRoiGroupSeq) yield {
+					CiteBinaryImageView.showHideGroupItem(g).bind
+				}
+			}
+		</ul>
+	}
+
+	@dom
+	def showHideGroupItem(g:(String,Int)) = {
+		<li class={ s"image_showHideGroup_shown image_roiGroupHider_${g._2}" }
+			id = { s"image_showHideSwitch_${g._2}" }
+			onclick={ event: Event => {
+				val className:String = s".image_roiGroup_${g._2}"
+				val idName:String = s"#image_showHideSwitch_${g._2}"
+				val task = Task{ CiteBinaryImageController.showHideGroup(idName, className) }
+				val future = task.runAsync
+//				js.timers.setTimeout(200){
+					//Future{ O2Controller.changePassage }
+//				}
+			}
+		} >
+			 Hide Group 
+			{ g._2.toString }
+			:
+			{ g._1 }
+		</li>
+	}
+
 	/* Search Image Properties Forms */
 	@dom
 	def imageMappedDataDiv = {
 		<h2>Mapped Data</h2>
 		<div id="image_mappedData">
 			<ul>
-				{ allImageRoisListItems.bind}
+				{ allImageRoisListItems.bind }
 			</ul>
 		</div>
 
@@ -152,20 +187,37 @@ object CiteBinaryImageView {
 
 	@dom
 	def allImageRoisListItems = {
-		// 
-		CiteBinaryImageModel.roiIncrementer = 0
-		for (roi <- CiteBinaryImageModel.imageROIs) yield {
+		//val roiPreVec =  CiteBinaryImageModel.imageRoiTuple.bind.map(_._2).toVector
+		//val groupMap = CiteBinaryImageController.groupsForROIs(roiPreVec)
+
+		for (roi <- CiteBinaryImageModel.imageRoiTuple) yield {
 			{
-				CiteBinaryImageModel.roiIncrementer = CiteBinaryImageModel.roiIncrementer + 1
 				val curn:Option[Cite2Urn] = CiteBinaryImageModel.urn.value
-				roi.dataUrn match {
+				roi._2.dataUrn match {
 					case Some(du) => {
 						du.toString.take(7) match {
 							case s if (s == "urn:cts") => {
-								DataModelView.textLinkItem(curn, du.asInstanceOf[CtsUrn], idString=s"image_mappedUrn_${CiteBinaryImageModel.roiIncrementer}").bind
+							   val groupId:String = {
+							   	CiteBinaryImageModel.imageRoiGroups.bind match {
+							   		case Some(irg) => {
+									   	irg(du.asInstanceOf[CtsUrn].dropPassage.toString).toString	
+							   		}
+								   	case None => ""
+							   	}
+							   }	
+								//DataModelView.textLinkItem(curn, du.asInstanceOf[CtsUrn], idString=s"image_mappedUrn_${roi._1}", groupId=groupId).bind
+								DataModelView.objectLinkItem(curn, roi._2.contextUrn.get, labeled=true, idString=s"image_mappedUrn_${roi._1}", groupId=groupId).bind
 							}
 							case _ => {
-								DataModelView.objectLinkItem(curn, du.asInstanceOf[Cite2Urn], labeled=true, idString=s"image_mappedUrn_${CiteBinaryImageModel.roiIncrementer}").bind
+								val groupId:String = {
+							   	CiteBinaryImageModel.imageRoiGroups.bind match {
+							   		case Some(irg) => {
+											irg(du.asInstanceOf[Cite2Urn].dropSelector.toString).toString
+							   		}
+								   	case None => ""
+							   	}
+								}
+								DataModelView.objectLinkItem(curn, du.asInstanceOf[Cite2Urn], labeled=true, idString=s"image_mappedUrn_${roi._1}", groupId=groupId).bind
 							}
 						}
 					}

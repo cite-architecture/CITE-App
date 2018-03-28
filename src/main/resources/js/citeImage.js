@@ -52,7 +52,7 @@ function addToJsRoiArray(i,r,u,g){
 }
 
 function clearSelectedROIs(){
-	for (n = 0; n < roiArray.length; n++){
+	for (n = 0; n < (roiArray.length - 1); n++){
 			var roiId = idForMappedROI(n+1)
 			var urnId = idForMappedUrn(n+1)
 			var thisROI = document.getElementById(roiId)
@@ -97,7 +97,7 @@ function initOpenSeadragon(imagePath) {
 		defaultZoomLevel: 1,
 		tileSources: imagePath,
 		//tileSources: 'http://www.homermultitext.org/iipsrv?DeepZoom=/project/homer/pyramidal/deepzoom/hmt/vaimg/2017a/VA024RN_0025.tif.dzi',
-		minZoomImageRatio: 0.1, // of viewer size
+		minZoomImageRatio: 0.25, // of viewer size
 		immediateRender: true 
 	});
 
