@@ -708,10 +708,6 @@ object CiteBinaryImageController {
 		}
 
 		val l:Int = elems.length.asInstanceOf[Int]
-		g.console.log("--------")
-		g.console.log(l.toString)
-		g.console.log(elems.item(0))
-		g.console.log("--------")
 		// Nasty loop, because JS
 		for (i <- 0 until l){
 			g.console.log(elems.item(i))
