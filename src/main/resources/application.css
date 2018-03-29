@@ -595,7 +595,7 @@ div.o2_citationBlock {
 }
 
 div.o2_citationBlock .o2_textPassage {
-	display: inline;
+	display: inline-block;
 	margin-right: 0.5em;
 }
 
