@@ -1,5 +1,7 @@
 # Release notes
 
+**1.5.1**: Fixed Issue #132: <https://github.com/cite-architecture/CITE-App/issues/132>. 
+
 **1.5.0**: Implemented the DSE datamodel for data mapped to images.
 
 **1.4.4**: Increased selection menu for NGram size up to 15. Now showing property labels (not property URNs) in object-view.
