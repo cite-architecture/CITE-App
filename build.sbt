@@ -2,7 +2,7 @@ enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
 name := "citeapp"
 
-version := "1.5.1"
+version := "1.5.2"
 
 scalaVersion := "2.12.3"
 
@@ -19,7 +19,7 @@ libraryDependencies ++= Seq(
   "edu.holycross.shot" %%% "scm" % "5.3.2",
   "edu.holycross.shot" %%% "citeobj" % "6.1.1",
   "edu.holycross.shot" %%% "citerelations" % "2.0.3",
-  "edu.holycross.shot" %%% "citebinaryimage" % "1.1.0",
+  "edu.holycross.shot" %%% "citebinaryimage" % "1.1.2",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
 )
 

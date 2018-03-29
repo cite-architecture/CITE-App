@@ -1,5 +1,7 @@
 # Release notes
 
+**1.5.2**: Fixed Issue #131: <https://github.com/cite-architecture/CITE-App/issues/131>. 
+
 **1.5.1**: Fixed Issue #132: <https://github.com/cite-architecture/CITE-App/issues/132>. 
 
 **1.5.0**: Implemented the DSE datamodel for data mapped to images.
