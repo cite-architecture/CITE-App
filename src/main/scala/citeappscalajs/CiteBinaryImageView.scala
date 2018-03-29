@@ -23,6 +23,8 @@ import js.annotation._
 @JSExportTopLevel("citeapp.ImageView")
 object CiteBinaryImageView {
 
+	val roiGroupClassPrefix:String = "image_roiGroup_"
+	val showHideSwitchIdPrefix:String = "image_showHideSwitch_"
 
 	// HTML Div holding messages
 	@dom
@@ -155,10 +157,10 @@ object CiteBinaryImageView {
 	@dom
 	def showHideGroupItem(g:(String,Int)) = {
 		<li class={ s"image_showHideGroup_shown image_roiGroupHider_${g._2}" }
-			id = { s"image_showHideSwitch_${g._2}" }
+			id = { s"${showHideSwitchIdPrefix}${g._2}" }
 			onclick={ event: Event => {
-				val className:String = s".image_roiGroup_${g._2}"
-				val idName:String = s"#image_showHideSwitch_${g._2}"
+				val className:String = s".${roiGroupClassPrefix}${g._2}"
+				val idName:String = s"#${showHideSwitchIdPrefix}${g._2}"
 				val task = Task{ CiteBinaryImageController.showHideGroup(idName, className) }
 				val future = task.runAsync
 //				js.timers.setTimeout(200){

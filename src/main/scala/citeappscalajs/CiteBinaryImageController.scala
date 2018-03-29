@@ -76,6 +76,7 @@ object CiteBinaryImageController {
 		val imgSourceStr:String = js.Dynamic.global.document.getElementById("citeMain_localImageSwitch").checked.toString
 		if (CiteBinaryImageModel.hasLocalOption.value && CiteBinaryImageModel.hasRemoteOption.value){
 			CiteBinaryImageModel.imgUseLocal.value = { imgSourceStr == "true" }
+			CiteBinaryImageController.showAllGroups
 			CiteBinaryImageController.changeImage(CiteBinaryImageModel.imageRoisToOptionVector)
 		}
 	}
@@ -688,8 +689,33 @@ object CiteBinaryImageController {
 		def apply(collection: String, imageObject: String, path:String): js.Dynamic = js.native
 	}
 
+	def showAllGroups:Unit = {
+		try {
+			for ( rg <- CiteBinaryImageModel.imageRoiGroupSeq.value) yield {
+				g.console.log(s"Will set group ${rg._2} to Shown")
+				val idName:String = s"#${CiteBinaryImageView.showHideSwitchIdPrefix}${rg._2}"	
+				val className:String = s".${CiteBinaryImageView.roiGroupClassPrefix}${rg._2}"
+				val elems:scala.scalajs.js.Dynamic = js.Dynamic.global.document.querySelectorAll(className)
+				val thisElement:scala.scalajs.js.Dynamic = js.Dynamic.global.document.querySelector(idName)
+
+				// Set switch
+				thisElement.classList.remove("image_showHideGroup_hidden")
+				thisElement.classList.add("image_showHideGroup_shown")
+				val ih:String = thisElement.innerHTML.toString
+				thisElement.innerHTML = ih.replace("Show", "Hide")
+				val l:Int = elems.length.asInstanceOf[Int]
+
+				// Nasty loop, because JS
+				for (i <- 0 until l){
+					elems.item(i).classList.remove("roi_hidden")
+				}
+			}
+		} catch {
+			case e:Exception => updateUserMessage(s"Error resetting ROIs. ${e}",3)
+		}
+	}
+
 	def showHideGroup(idName:String, className:String):Unit = {
-		g.console.log(s"Will show/hide: ${className}")
 		val elems:scala.scalajs.js.Dynamic = js.Dynamic.global.document.querySelectorAll(className)
 		val thisElement:scala.scalajs.js.Dynamic = js.Dynamic.global.document.querySelector(idName)
 
@@ -710,7 +736,6 @@ object CiteBinaryImageController {
 		val l:Int = elems.length.asInstanceOf[Int]
 		// Nasty loop, because JS
 		for (i <- 0 until l){
-			g.console.log(elems.item(i))
 			if ( elems.item(i).classList.contains("roi_hidden").asInstanceOf[Boolean] == true) {
 				elems.item(i).classList.remove("roi_hidden")
 			} else {
