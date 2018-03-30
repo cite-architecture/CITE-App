@@ -437,6 +437,11 @@ a:hover {
 	text-decoration: none;
 }
 
+.app_clickable:active, a:active {
+	color: #af6460;
+	text-decoration: none;
+}
+
 .app_clickable:hover, a:hover {
 		text-decoration: underline;
 }

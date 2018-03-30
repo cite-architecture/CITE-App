@@ -311,7 +311,6 @@ object CiteBinaryImageView {
 
 		// Set up path to images
 		var pathPrefix:String = CiteBinaryImageModel.imgArchivePath.value
-		//g.console.log(s"pathPrefix = ${pathPrefix}")
 		var path:String = (pathPrefix + CiteBinaryImageController.getLocalThumbPath(justUrn, obj)).replaceAll("//","/") 
 
 		// Create a canvas, drawing context, offscreen- and onscreen-image	

@@ -84,7 +84,6 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 			case true => {
 				<li class={groupClass} id={idString}>
 					<a onclick={ event: Event => {
-							//g.console.log(s"clicked: ${propVal}")
 							DataModelController.retrieveObject(contextUrn,tempUrn)
 						}
 				} > { 
@@ -93,7 +92,6 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 							s"${ObjectModel.collRep.value.get.citableObject(propVal.dropExtensions.dropProperty).label}" 
 						}
 						case _ => {
-							//g.console.log("got here: view item")
 							"View Item"
 						}
 					}
@@ -105,7 +103,6 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 					( propVal.isRange ) || 
 					( propVal.objectComponentOption == None)
 				}
-				//g.console.log(s"${propVal} isBrowsable == ${isBrowsable}")
 				isBrowsable match {
 					case false => {
 						labeled match {
@@ -121,7 +118,6 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 							case Some(c) => {
 								<li class={groupClass} id={idString}>
 									<a onclick={ event: Event => {
-											//g.console.log(s"clicked: ${propVal}")
 											DataModelController.retrieveObject(contextUrn,tempUrn)
 										}
 								} > { 
@@ -151,12 +147,37 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 
 	@dom
 	def imageLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn) = {
-		//g.console.log("CiteLinks objectLinkItem")
 		CiteBinaryImageController.implementedByImageCollObjects(propVal) match {
 			case Some(uv) => {
 				<li class="citeLinks_linkItem">
-					{ DataModelView.iipDZLink(propVal, uv, contextUrn, roiObject = None).bind }
-					{ DataModelView.localDZLink(propVal, uv, contextUrn, roiObject = None).bind }
+					{ DataModelView.iipDZLink(propVal, 
+						uv, 
+						contextUrn, 
+						roiObject = {
+							val tr = ImageRoiModel.roiFromUrn(propVal, contextUrn, contextUrn )
+							val optVecRoi:Option[Vector[ImageRoiModel.Roi]] = {
+								tr match {
+									case Some(r) => Some(Vector(r))
+									case None => None
+								}
+							}
+							optVecRoi
+						}
+						).bind }
+					{ DataModelView.localDZLink(propVal, 
+						uv, 
+						contextUrn, 
+						roiObject = {
+							val tr = ImageRoiModel.roiFromUrn(propVal, contextUrn, contextUrn )
+							val optVecRoi:Option[Vector[ImageRoiModel.Roi]] = {
+								tr match {
+									case Some(r) => Some(Vector(r))
+									case None => None
+								}
+							}
+							optVecRoi
+						}
+						).bind }
 				</li>
 			}
 			case None => {
@@ -172,11 +193,16 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 			case Some(uv) => {
 				//Then, see if it is represented in DSE
 				val dseUrns:Option[Vector[Cite2Urn]] = DSEModel.implementedByDSE_image(propVal)
-				val allRois:Option[Vector[ImageRoiModel.Roi]] = DSEModel.roisForImage(propVal, contextUrn, dseUrns)
+				// If there is an existing ROI, add that to allRois
+				val allRois:Option[Vector[ImageRoiModel.Roi]] = {
+					val dseRois:Option[Vector[ImageRoiModel.Roi]] = DSEModel.roisForImage(propVal, contextUrn, dseUrns)
+					dseRois
+				}
+
 				<span class="citeLinks_linkSpan"> 
 					Data Mapped to:
-					{ DataModelView.iipDZLink(propVal, uv, contextUrn, roiObject = allRois).bind }
-					{ DataModelView.localDZLink(propVal, uv, contextUrn, roiObject = allRois).bind }
+					{ DataModelView.iipDZLink(propVal.dropExtensions, uv, contextUrn, roiObject = allRois).bind }
+					{ DataModelView.localDZLink(propVal.dropExtensions, uv, contextUrn, roiObject = allRois).bind }
 				</span>
 			}
 			case None => { <!-- empty content --> }
@@ -203,7 +229,9 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 											}
 											roi
 										}
-									case Some(rois) => Some(rois)
+									case Some(rois) => {
+										Some(rois)
+									}
 								}
 							DataModelController.viewImage(contextUrn, co, urn, roisToPaint)
 							}
@@ -240,7 +268,9 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 											}
 											roi
 										}
-									case Some(rois) => Some(rois)
+									case Some(rois) => {
+										Some(rois)
+									}
 								}
 							DataModelController.viewImage(contextUrn, co, urn, roisToPaint)
 							}

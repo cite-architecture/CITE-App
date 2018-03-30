@@ -209,7 +209,6 @@ object CiteBinaryImageController {
 	def implementedByImageCollObjects(u:Cite2Urn):Option[Vector[Cite2Urn]] ={
 		val collUrn:Cite2Urn = u.dropSelector
 		val binaryImageModelUrn:Cite2Urn = CiteBinaryImageModel.binaryImageModelUrn
-		//g.console.log(s"ibico: ${u}")
 		// First, do we have some datamodels?
 		DataModelModel.dataModels.value match {
 			case None => {
@@ -239,11 +238,9 @@ object CiteBinaryImageController {
 										}).flatten
 									objectsImplementing.size match {
 										case s if (s > 0) => {
-											//g.console.log("s > 0")
 											Some(objectsImplementing)
 										}
 										case _ => {
-											//g.console.log("s == 0")
 											None
 										}
 									}
@@ -264,17 +261,13 @@ object CiteBinaryImageController {
 	Given a CITE URN to an object, and a protocol string, report whether that object is implemented by the given protocol
 	*/
 	def implementedByProtocol(urnV:Vector[Cite2Urn], protocol:String):Option[CiteObject] = {
-	//	g.console.log(s"implementedByProtocol: ${protocol} :: ${urnV}")
 		try {
 			urnV.size match {
 				case s if (s > 0) => {
 					val implementedUrns:Vector[Cite2Urn] = urnV.filter(u => {
 						val cr = ObjectModel.collRep.value.get	
 						val oneObject:CiteObject = cr.citableObjects.filter(_.urn == u)(0)
-					//	g.console.log(s"oneObject: ${oneObject.urn}")
 						val propId:Cite2Urn = DataModelController.propertyUrnFromPropertyName(u, CiteBinaryImageModel.protocolPropertyName)
-					//	g.console.log(s"propId = ${propId}")
-						//g.console.log(s"equals: ${oneObject.valueEquals(propId,protocol)}")
 						oneObject.valueEquals(propId,protocol)
 					})
 					implementedUrns.size match {
@@ -393,7 +386,14 @@ object CiteBinaryImageController {
 
 	// *** Apropos Microservice ***
 	def changeUrn(urn:Cite2Urn): Unit = 	{
-		changeUrn(None, urn, None)
+		val roi:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(urn)
+		val vecRoi:Option[Vector[ImageRoiModel.Roi]] = {
+			roi match {
+				case Some(r) => Some(Vector(r))
+				case None => None
+			}
+		}
+		changeUrn(None, urn, vecRoi)
 	}
 
 	// *** Apropos Microservice ***
@@ -632,10 +632,14 @@ object CiteBinaryImageController {
 										u match {
 											case ctsUrn if (ctsUrn.toString.take(8) == "urn:cts:") => irg(ctsUrn.asInstanceOf[CtsUrn].dropPassage.toString).toString
 											case cite2Urn if (cite2Urn.toString.take(10) == "urn:cite2:") => irg(cite2Urn.asInstanceOf[Cite2Urn].dropSelector.toString).toString
-											case _ => irg("None").toString
+											case _ => {
+												irg("None").toString
+											}
 										}
 									}
-									case _ => irg("None").toString
+									case _ => {
+										irg("None").toString
+									}
 								}
 							}
 							case None => ""
@@ -692,7 +696,6 @@ object CiteBinaryImageController {
 	def showAllGroups:Unit = {
 		try {
 			for ( rg <- CiteBinaryImageModel.imageRoiGroupSeq.value) yield {
-				g.console.log(s"Will set group ${rg._2} to Shown")
 				val idName:String = s"#${CiteBinaryImageView.showHideSwitchIdPrefix}${rg._2}"	
 				val className:String = s".${CiteBinaryImageView.roiGroupClassPrefix}${rg._2}"
 				val elems:scala.scalajs.js.Dynamic = js.Dynamic.global.document.querySelectorAll(className)
