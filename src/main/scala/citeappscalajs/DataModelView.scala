@@ -79,7 +79,13 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 @dom
 	def objectLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn,labeled:Boolean = false, idString:String = "", groupId:String = "") = {
 		val tempUrn:Cite2Urn = propVal.dropExtensions.dropProperty
-		val groupClass:String = s"citeLinks_linkItem image_roiGroup_${groupId}"
+		val roiGroupClass:String = {
+			groupId match {
+				case s if (s == "") => ""
+				case _ => s"image_roiGroup_${groupId}"
+			}
+		}
+		val groupClass:String = s"citeLinks_linkItem ${roiGroupClass}"
 		DataModelController.hasObject(tempUrn) match {
 			case true => {
 				<li class={groupClass} id={idString}>

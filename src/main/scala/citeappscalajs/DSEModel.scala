@@ -67,11 +67,15 @@ object DSEModel {
  		None
  	}
 
+ 	def objectsForCorpus(urns:Vector[CtsUrn]):Option[Vector[Cite2Urn]] = {
+ 		None
+ 	}
+
  	def roisForImage(urn:Cite2Urn, contextUrn:Option[Cite2Urn], dseUrns:Option[Vector[Cite2Urn]]):Option[Vector[ImageRoiModel.Roi]] = {
  		try {
 	 		// If there is an ROI already on the URN, and a contextUrn, make an ROI object for those
 			val originalRoi:Option[Vector[ImageRoiModel.Roi]] = {
-				val tempRoi:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(urn, data = None, context = contextUrn)
+				val tempRoi:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(urn, data = contextUrn, context = contextUrn)
 				tempRoi match {
 					case Some(r) => Some(Vector(r))
 					case None => None
