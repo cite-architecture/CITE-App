@@ -293,7 +293,38 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 		}
 	}
 	
+	@dom
+	def mappedDseTextContainer = {
+		O2Model.textRepo.bind match {
+			case None => {
+				<!-- empty content -->	
+			}
+			case _ => {
+				<div id="o2_mappedDseContainer">
+					<h2>Mapped Passages</h2>
+					{ mappedDsePassages.bind }
+				</div>
+			}
+		}
 
+	}
+
+	@dom
+	def mappedDsePassages = {
+		O2Model.currentCitableNodes.bind match {
+			case 0 => { <p>None</p> }
+			case _ => {  
+				val currentUrn:CtsUrn = O2Model.urn.bind
+				val uv:Vector[CtsUrn] = (O2Model.textRepo.value.get.corpus >= currentUrn).nodes.map(_.urn)
+				val dseUrns:Option[Vector[Cite2Urn]] = DSEModel.dseObjectsForCorpus(uv)
+				<ul>{ 
+					for (u <- O2Model.currentListOfDseUrns) yield {
+						{ DataModelView.objectLinkItem(None, u, true).bind }
+					}
+				} </ul>
+			}
+		}	
+	}
 
 
 }

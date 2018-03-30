@@ -35,7 +35,7 @@ object O2Controller {
 				val timeEnd = new js.Date().getTime()
 				O2Controller.updateUserMessage(s"Fetched ${O2Model.currentCitableNodes.value} citation objects in ${(timeEnd - timeStart)/1000} seconds.",0)
 		}
-		val fuure1 = task1.runAsync
+		val future1 = task1.runAsync
 		/*
 		js.timers.setTimeout(200){
 			Future{

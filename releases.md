@@ -1,5 +1,9 @@
 # Release notes
 
+**1.6.0**: Fully implemented CiteBinaryImageModel and DSEModel.
+
+**1.5.4**: Added DSE Mappings to Text View. Fixed Issue #128: <https://github.com/cite-architecture/CITE-App/issues/133>. 
+
 **1.5.3**: Fixed Issue #133: <https://github.com/cite-architecture/CITE-App/issues/133>. 
 
 **1.5.2**: Fixed Issue #131: <https://github.com/cite-architecture/CITE-App/issues/131>. 

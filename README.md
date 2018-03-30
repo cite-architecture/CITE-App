@@ -2,7 +2,7 @@
 
 A single-page browser application for exploring citable resources, written in [Scala.js](http://www.scala-js.org/).
 
-## Current version: 1.5.0
+## Current version: 1.6.0
 
 See [release notes](releases.md).
 

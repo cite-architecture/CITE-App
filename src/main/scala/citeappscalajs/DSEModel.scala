@@ -63,12 +63,66 @@ object DSEModel {
 		}
  	}
 
- 	def implementedByDSE_text(u:CtsUrn):Option[Vector[Cite2Urn]] ={
- 		None
+ 	def implementedByDSE_text(urn:CtsUrn):Option[Vector[Cite2Urn]] ={
+ 		DataModelModel.dataModels.value match {
+			case Some(dm) => { 
+			// get any collections that implement DSE	
+				val dseColls:Vector[Cite2Urn] = dm.filter(_.model == dseModelUrn).map(_.collection)
+				dseColls.size match {
+					case 0 => None		
+					case _ => {
+						val dseUrns:Vector[Cite2Urn] = {
+							dseColls.map(coll => {
+								// Get property URN
+								val propUrn:Cite2Urn = DataModelController.propertyUrnFromPropertyName(coll,dseTextProp)		
+								val hits:Vector[CitePropertyValue] = ObjectModel.collRep.value.get.collectionData(coll).data.filter(_.urn ~~ propUrn).filter(pt => {
+										 val v:CtsUrn = pt.propertyValue.asInstanceOf[CtsUrn]
+										 v ==  urn 
+								})
+								val roiObjectUrns:Vector[Cite2Urn] = hits.map(_.urn.dropProperty)
+								roiObjectUrns
+							}).flatten
+						}
+						dseUrns.size match {
+							case 0 => None
+							case _ => Some(dseUrns)
+						}
+					}
+				}
+			}
+			case None => None
+		}
  	}
 
- 	def objectsForCorpus(urns:Vector[CtsUrn]):Option[Vector[Cite2Urn]] = {
- 		None
+ 	def dseObjectsForCorpus(corp:Vector[CtsUrn]):Option[Vector[Cite2Urn]] = {
+ 		val outerObjectVector:Vector[Vector[Option[Cite2Urn]]] = {
+ 			corp.map(c => {
+ 				val innerObjectVector:Vector[Option[Cite2Urn]] = {
+ 					implementedByDSE_text(c) match {
+	 					case None => Vector(None)
+						case Some(objVec) => objVec.map(o => Some(o)).toVector
+	 				}
+	 			}
+	 			innerObjectVector
+ 			})
+ 		}
+ 		val objectVector:Vector[Option[Cite2Urn]] = outerObjectVector.flatten
+ 		val returnVector:Option[Vector[Cite2Urn]] = {
+ 			val filteredObj: Vector[Cite2Urn] = objectVector.filter(obj => {
+ 				obj match {
+ 					case Some(o) => true
+ 					case None => false
+ 				}	
+ 			}).toVector.map( _.get )
+
+ 			val finalVector:Option[Vector[Cite2Urn]] = filteredObj.size match {
+ 				case s if (s == 0) => None
+ 				case _ => Some(filteredObj)
+ 			}
+
+ 			finalVector
+ 		}
+ 		returnVector
  	}
 
  	def roisForImage(urn:Cite2Urn, contextUrn:Option[Cite2Urn], dseUrns:Option[Vector[Cite2Urn]]):Option[Vector[ImageRoiModel.Roi]] = {

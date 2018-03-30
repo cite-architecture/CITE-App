@@ -336,7 +336,9 @@ a.image_roiGroup_9 {   outline: 3px solid #ff38a2; }
 a.image_roi_selected {
 	outline: 3px solid rgb(230,230,0);
 	border: 1px solid black;
+	/*
 	background-color: rgba(249,255,0,.2);
+	*/
 }
 
 
@@ -660,13 +662,13 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 		color: green;
 }
 
-#o2_citedWorksContainer ul, #ngram_citedWorksContainer ul, #image_imageCollectionsContainer ul, #image_mappedData ul, #object_objectCollectionsContainer ul {
+#o2_citedWorksContainer ul, #ngram_citedWorksContainer ul, #image_imageCollectionsContainer ul, #image_mappedData ul, #object_objectCollectionsContainer ul, #o2_mappedDseContainer ul {
 	list-style-type: decimal;
 	padding-left: 0;
 }
 
 
-#o2_citedWorksContainer ul li, #ngram_citedWorksContainer ul li, #image_imageCollectionsContainer ul li, #image_mappedData ul li, #object_objectCollectionsContainer ul li {
+#o2_citedWorksContainer ul li, #ngram_citedWorksContainer ul li, #image_imageCollectionsContainer ul li, #image_mappedData ul li, #object_objectCollectionsContainer ul li, #o2_mappedDseContainer ul li.citeLinks_linkItem {
 	line-height: 1.2em;
 	/* max-height: 2.4em; */
 	/* white-space: nowrap; */
@@ -675,9 +677,10 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 	list-style-position:inside;
 	text-overflow: ellipsis;
 	margin-bottom: 1em;
+	padding-left: 0;
 }
 
-#o2_citedWorksContainer ul li:hover {
+#o2_citedWorksContainer ul li:hover, #o2_mappedDseContainer ul li.citeLinks_linkItem:hover {
 	line-height: 1.2em;
 	white-space: normal;
 	max-height: 800px;

@@ -51,6 +51,7 @@ object O2View {
 
 		<div id="02_sidebar" class="app_sidebarDiv">
 		{ citedWorksContainer.bind }
+		{ DataModelView.mappedDseTextContainer.bind }
 		</div>
 
 		{ o2messageDiv.bind }

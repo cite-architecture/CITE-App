@@ -25,6 +25,8 @@ object O2Model {
 	//var xmlPassage = new org.scalajs.dom.raw.DOMParser().parseFromString( "<cts:passage></cts:passage>", "text/xml" )
 	var xmlPassage = js.Dynamic.global.document.createElement("div")
 	val currentCitableNodes = Var(0)
+	val currentListOfUrns = Vars.empty[CtsUrn]
+	val currentListOfDseUrns = Vars.empty[Cite2Urn]
 	val isRtlPassage = Var(false)
 
 	// urn is what the user requested
@@ -66,6 +68,33 @@ object O2Model {
 		u
 	}
 
+	def updateCurrentListOfUrns(c:Corpus):Unit = {
+		O2Model.currentListOfUrns.value.clear
+		for (n <- c.nodes){
+			O2Model.currentListOfUrns.value += n.urn
+		}	
+	}
+
+	def updateCurrentListOfDseUrns(c:Corpus):Unit = {
+		O2Model.currentListOfDseUrns.value.clear
+		O2Model.currentListOfUrns.value.size match {
+			case 0 => 
+			case _ =>{
+				val urnVec:Vector[CtsUrn] = {
+					var v:Vector[CtsUrn] = O2Model.currentListOfUrns.value.toVector
+					v
+				}
+				val dseUrns = DSEModel.dseObjectsForCorpus(urnVec)
+				dseUrns match {
+					case Some(v) => {
+						for (n <- v) O2Model.currentListOfDseUrns.value += n
+					}
+					case None =>
+				}
+			}
+		}
+	}
+
 	def displayNewPassage(urn:CtsUrn):Unit = {
 			O2Model.displayPassage(urn)
 	}
@@ -74,6 +103,8 @@ object O2Model {
 	def clearPassage:Unit = {
 		O2Model.xmlPassage.innerHTML = ""
 		O2Model.versionsForCurrentUrn.value = 0
+		O2Model.currentListOfUrns.value.clear
+		O2Model.currentListOfDseUrns.value.clear
 	}
 
 	def passageLevel(u:CtsUrn):Int = {
@@ -110,6 +141,8 @@ object O2Model {
 	@dom
 	def displayPassage(newUrn: CtsUrn):Unit = {
 		val tempCorpus: Corpus = O2Model.textRepo.value.get.corpus >= newUrn
+		O2Model.updateCurrentListOfUrns(tempCorpus)
+		O2Model.updateCurrentListOfDseUrns(tempCorpus)
 		O2Model.currentCitableNodes.value = tempCorpus.size
 		//O2Model.passage.get.clear
 		O2Model.xmlPassage.innerHTML = ""
