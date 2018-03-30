@@ -363,6 +363,22 @@ object CiteBinaryImageController {
       imageUrlString
 	}
 
+	/* return a string, the source of a remotely served image thumbnail */
+	def hirezSourceRemote(urn:Cite2Urn, obj:CiteObject):String = {
+		// We will use CiteBinaryImage for this. We need:
+		// 1. the URN, which we have
+		// 2. the base URL
+		// 3. the local ImagePath. We can get these from the implementing object Obj
+		val pathMap:Map[String,String] = pathAndUrl(urn, obj)
+		val path:String = pathMap("path")
+		val url:String = pathMap("url")
+
+      val bis:IIIFApi = IIIFApi(baseUrl = url, imagePath = path)
+      val imageUrlString:String = bis.serviceRequest(urn)
+
+      imageUrlString
+	}
+
 	/* return a string, the source of a locally served image thumbnail */
 	/*
 	def thumbSourceLocal(urn:Cite2Urn, obj:CiteObject):String = {

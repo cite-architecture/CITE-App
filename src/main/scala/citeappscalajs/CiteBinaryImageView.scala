@@ -260,9 +260,11 @@ object CiteBinaryImageView {
 						CiteBinaryImageController.implementedByProtocol(uv,CiteBinaryImageModel.iiifApiProtocolString) match {
 							case Some(obj) => {
 								<li id="image_imagePreviewDiv" >
+									<a href={ CiteBinaryImageController.hirezSourceRemote(u, obj) } target="_blank">
 									<img id="image_previewImg" src={
 										CiteBinaryImageController.thumbSourceRemote(u, obj)
 										}/>
+									</a>
 								</li>
 							}
 							case _ => { 
@@ -318,7 +320,16 @@ object CiteBinaryImageView {
 		canvas.setAttribute("crossOrigin","Anonymous")
 		val ctx = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
 		val offScreenImg = document.createElement("img").asInstanceOf[HTMLImageElement]
+
+		/*
+		Full-rez preview deprecated for local images
+		val hirezAnchor = document.createElement("a").asInstanceOf[HTMLAnchorElement]
+		hirezAnchor.setAttribute("href","https://www.google.com")
+		hirezAnchor.setAttribute("target","_blank")
+		*/
+
 		val onScreenImg = document.createElement("img").asInstanceOf[HTMLImageElement]
+
 
 		// Attempt to get around crossOrigin policies
 		offScreenImg.setAttribute("crossOrigin","Anonymous")
@@ -334,7 +345,12 @@ object CiteBinaryImageView {
 			onScreenImg.setAttribute("src",s)
 			onScreenImg.setAttribute("class","object_imgThumb")
 		}
+
 		onScreenImg
+
+		// Below, for link to full-rez preview. Deprecated
+		//hirezAnchor.appendChild(onScreenImg)
+		//hirezAnchor
 
 	}
 
