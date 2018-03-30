@@ -1,5 +1,7 @@
 # Release notes
 
+**1.6.1**: Update OHCO2 library to 10.7.0, xCite library to 3.3.0; links to rull-rez image-downloads when viewing remote images.
+
 **1.6.0**: Fully implemented CiteBinaryImageModel and DSEModel.
 
 **1.5.4**: Added DSE Mappings to Text View. Fixed Issue #128: <https://github.com/cite-architecture/CITE-App/issues/133>. 
