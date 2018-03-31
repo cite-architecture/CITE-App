@@ -92,7 +92,7 @@ function initOpenSeadragon(imagePath) {
 
 		viewer = OpenSeadragon({
 		id: 'image_zoomContainer',
-		prefixUrl: 'js/images/',
+		prefixUrl: 'citeApp-js/images/',
 		crossOriginPolicy: "Anonymous",
 		defaultZoomLevel: 1,
 		tileSources: imagePath,
@@ -105,7 +105,7 @@ function initOpenSeadragon(imagePath) {
 		  allowRotation: false,        // Make it possible to rotate the guidelines (by double clicking them)
 		  horizontalGuideButton: null, // Element for horizontal guideline button
 		  verticalGuideButton: null,   // Element for vertical guideline button
-		  prefixUrl: "js/images/",             // Images folder
+		  prefixUrl: "citeApp-js/images/",             // Images folder
 		  removeOnClose: false,        // Remove guidelines when viewer closes
 		  useSessionStorage: false,    // Save guidelines in sessionStorage
 		  navImages: {

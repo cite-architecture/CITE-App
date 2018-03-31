@@ -155,10 +155,11 @@ object O2Model {
 		if (tempCorpus.size > 0){
 			// set up columns
 			val groupedBy:Map[CtsUrn,Vector[CitableNode]] = tempCorpus.nodes.groupBy(_.urn.dropPassage)
+			val justPassage:String = newUrn.passageComponent
 			val sortedUrns:Vector[CtsUrn] = tempCorpus.nodes.map(_.urn.dropPassage).distinct
 			for ( u <- sortedUrns) {
 				val desc:String = O2Model.textRepo.value.get.catalog.label(u)
-				val descElementOpen = s"""<div class="o2_versionContainer"><p class="o2_versionDescription ltr">${desc} : ${u.toString}</p>"""
+				val descElementOpen = s"""<div class="o2_versionContainer"><p class="o2_versionDescription ltr">${desc} : ${u.toString}${justPassage}</p>"""
 				wholePassageElement += descElementOpen
 
 				for ( (n, i) <- groupedBy(u).zipWithIndex ){
