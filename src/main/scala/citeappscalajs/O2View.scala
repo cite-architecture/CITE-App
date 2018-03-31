@@ -80,6 +80,8 @@ object O2View {
 	</div>
 }
 
+
+
 @dom
 def retrievePassageButton = {
 	<button
@@ -127,7 +129,14 @@ def passageContainer = {
 			{ prevButton.bind }
 			{ nextButton.bind }
 		</div>
-		<div id="o2_xmlPassageContainer"></div>
+		<div id="o2_xmlPassageContainer">
+			
+			{ 	for ( versionCorpus <- O2Model.currentCorpus) yield {
+					{ textVersionContainer(versionCorpus).bind }	
+				}
+			}	
+
+		</div>
 		<div id="o2_navButtonContainer_bottom">
 			{ prevButton.bind }
 			{ nextButton.bind }
@@ -135,6 +144,20 @@ def passageContainer = {
 
 	</div>
 
+}
+
+@dom
+def textVersionContainer(vCorp:O2Model.BoundCorpus) = {
+	<div class="o2_versionContainer">
+		<p class="o2_versionDescription ltr">
+			{ textVersionLabelAndLink(vCorp.versionUrn.value ,vCorp.versionLabel.value ).bind }
+		</p>
+	</div>
+}
+
+@dom
+def textVersionLabelAndLink(u:CtsUrn, label:String) = {
+	{ passageUrnSpan(u, label).bind }	
 }
 
 
@@ -195,10 +218,16 @@ def workUrnSpan(urn:CtsUrn, s:String) = {
 
 @dom
 def passageUrnSpan(urn:CtsUrn, s:String) = {
+	<span>
+	{ s }
+	</span>
 	<span
 	class="app_clickable"
-	onclick={ event: Event => println(s"Passage-click: ${urn}") }>
-	{ s }
+	onclick={ event: Event => {
+				O2Controller.changeUrn(urn)
+		}
+	}>
+	{ urn.toString}
 	</span>
 }
 

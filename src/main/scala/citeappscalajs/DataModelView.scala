@@ -311,7 +311,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 
 	@dom
 	def mappedDsePassages = {
-		O2Model.currentCitableNodes.bind match {
+		O2Model.currentNumberOfCitableNodes.bind match {
 			case 0 => { <p>None</p> }
 			case _ => {  
 				val currentUrn:CtsUrn = O2Model.urn.bind

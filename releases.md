@@ -1,5 +1,7 @@
 # Release notes
 
+**1.7.0**: Rebuilt text-display code following more sound binding principles, giving more flexibility to expand text presentation with datamodels.
+
 **1.6.1**: Update OHCO2 library to 10.7.0, xCite library to 3.3.0; links to rull-rez image-downloads when viewing remote images.
 
 **1.6.0**: Fully implemented CiteBinaryImageModel and DSEModel.

@@ -11,6 +11,7 @@ import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import scala.concurrent._
+import scala.scalajs.js.Dynamic.{ global => g }
 //import ExecutionContext.Implicits.global
 import monix.execution.Scheduler.Implicits.global
 import monix.eval._
@@ -27,25 +28,17 @@ object O2Controller {
 
 	/* A lot of work gets done here */
 	def changePassage: Unit = {
+		g.console.log("Doing changePassage")
 		val timeStart = new js.Date().getTime()
 		val newUrn: CtsUrn = O2Model.urn.value
+		g.console.log(s"new Urn: ${newUrn}")
 		val task1 = Task{
 				O2Model.versionsForCurrentUrn.value = O2Model.versionsForUrn(newUrn)
 				O2Model.displayPassage(newUrn)
 				val timeEnd = new js.Date().getTime()
-				O2Controller.updateUserMessage(s"Fetched ${O2Model.currentCitableNodes.value} citation objects in ${(timeEnd - timeStart)/1000} seconds.",0)
+				O2Controller.updateUserMessage(s"Fetched ${O2Model.currentNumberOfCitableNodes.value} citation objects in ${(timeEnd - timeStart)/1000} seconds.",0)
 		}
 		val future1 = task1.runAsync
-		/*
-		js.timers.setTimeout(200){
-			Future{
-				O2Model.versionsForCurrentUrn.value = O2Model.versionsForUrn(newUrn)
-				O2Model.displayPassage(newUrn)
-				val timeEnd = new js.Date().getTime()
-				O2Controller.updateUserMessage(s"Fetched ${O2Model.currentCitableNodes.get} citation objects in ${(timeEnd - timeStart)/1000} seconds.",0)
-			}
-		}
-		*/
 		val task2 = Task{ O2Model.getPrevNextUrn(O2Model.urn.value) }
 		val future2 = task2.runAsync
 	}

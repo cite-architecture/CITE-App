@@ -23,11 +23,22 @@ object O2Model {
 
 	//val passage = Vars.empty[CitableNode]
 	//var xmlPassage = new org.scalajs.dom.raw.DOMParser().parseFromString( "<cts:passage></cts:passage>", "text/xml" )
-	var xmlPassage = js.Dynamic.global.document.createElement("div")
-	val currentCitableNodes = Var(0)
+	//var xmlPassage = js.Dynamic.global.document.createElement("div")
+
+	/*  
+	Binding Variables for holding currently active corpus
+	*/
+
+	case class BoundCorpus(versionUrn:Var[CtsUrn], versionLabel:Var[String], nodes:Vars[CitableNode] )
+
+	val currentCorpus = Vars.empty[BoundCorpus]
+
+	val currentNumberOfCitableNodes = Var(0)
 	val currentListOfUrns = Vars.empty[CtsUrn]
 	val currentListOfDseUrns = Vars.empty[Cite2Urn]
 	val isRtlPassage = Var(false)
+
+
 
 	// urn is what the user requested
 	val urn = Var(CtsUrn("urn:cts:ns:group.work.version.exemplar:passage"))
@@ -63,7 +74,12 @@ object O2Model {
 	}
 
 	def collapseToWorkUrn(urn:CtsUrn):CtsUrn = {
-		val s = s"urn:cts:${urn.namespace}:${urn.textGroup}.${urn.work}:${urn.passageComponent}"
+		val s = {
+			urn.passageComponentOption match {
+				case Some(pc) => s"urn:cts:${urn.namespace}:${urn.textGroup}.${urn.work}:${pc}"
+				case None => s"urn:cts:${urn.namespace}:${urn.textGroup}.${urn.work}:"
+			}
+		}
 		val u = CtsUrn(s)
 		u
 	}
@@ -73,6 +89,46 @@ object O2Model {
 		for (n <- c.nodes){
 			O2Model.currentListOfUrns.value += n.urn
 		}	
+	}
+
+
+	// case class BoundCorpus(versionUrn:Var[CtsUrn], versionLabel:Var[String], nodes:Vars[CitableNode] )
+//	val currentCorpus = Vars.empty[BoundCorpus]
+
+	def updateCurrentCorpus(c:Corpus, u:CtsUrn):Unit = {
+		try {
+			O2Model.currentCorpus.value.clear
+			if (O2Model.textRepo.value != None) {
+				// Get Corpus into a Vector of tuples: (version-level-urn, vector[CitableNode])
+				val tempCorpusVector:Vector[(CtsUrn, Vector[CitableNode])] = c.nodes.groupBy(_.urn.dropPassage).toVector
+				
+				for (tc <- tempCorpusVector) {
+					val versionLabel:String = O2Model.textRepo.value.get.catalog.label(tc._1)		
+					val passageString:String = {
+						u.passageComponentOption match {
+							case Some(s) => s
+							case None => ""
+						}
+					}
+					val boundVersionLabel = Var(versionLabel)
+
+					val versionUrn:CtsUrn = CtsUrn(s"${tc._1}${passageString}")
+					val boundVersionUrn = Var(versionUrn)
+
+					val tempNodesBindingVector = Vars.empty[CitableNode]
+					for (n <- tc._2) {
+						tempNodesBindingVector.value += n
+					}
+					O2Model.currentCorpus.value += BoundCorpus(boundVersionUrn, boundVersionLabel, tempNodesBindingVector)
+				}	
+				g.console.log(s"Current Bound Corpus Size: ${O2Model.currentCorpus.value.size}")
+			}
+
+		} catch {
+			case e:Exception => {
+				O2Controller.updateUserMessage(s"O2Model Exception in 'updateCurrentCorpus': ${e}",2)
+			}
+		}
 	}
 
 	def updateCurrentListOfDseUrns(c:Corpus):Unit = {
@@ -101,7 +157,7 @@ object O2Model {
 
 	@dom
 	def clearPassage:Unit = {
-		O2Model.xmlPassage.innerHTML = ""
+		//O2Model.xmlPassage.innerHTML = ""
 		O2Model.versionsForCurrentUrn.value = 0
 		O2Model.currentListOfUrns.value.clear
 		O2Model.currentListOfDseUrns.value.clear
@@ -138,6 +194,18 @@ object O2Model {
 		}	
 	}
 
+	@dom
+	def displayPassage(newUrn: CtsUrn):Unit = {
+		val tempCorpus: Corpus = O2Model.textRepo.value.get.corpus >= newUrn
+		g.console.log(s"updating currentlistofurns: ${tempCorpus}")
+		O2Model.updateCurrentListOfUrns(tempCorpus)
+		O2Model.updateCurrentListOfDseUrns(tempCorpus)
+		O2Model.updateCurrentCorpus(tempCorpus, newUrn)
+		g.console.log(s"updating currentNumberOfCitableNodes: ${tempCorpus.size}")
+		O2Model.currentNumberOfCitableNodes.value = tempCorpus.size
+	}
+
+/*
 	@dom
 	def displayPassage(newUrn: CtsUrn):Unit = {
 		val tempCorpus: Corpus = O2Model.textRepo.value.get.corpus >= newUrn
@@ -248,6 +316,7 @@ object O2Model {
 		js.Dynamic.global.document.getElementById("o2_xmlPassageContainer").appendChild(xmlPassage)
 
 	}
+*/
 
 def checkForRTL(s:String):Boolean = {
 		val sStart = s.take(10)
