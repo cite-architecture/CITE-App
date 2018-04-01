@@ -311,14 +311,14 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 
 	@dom
 	def mappedDsePassages = {
-		O2Model.currentCitableNodes.bind match {
+		O2Model.currentNumberOfCitableNodes.bind match {
 			case 0 => { <p>None</p> }
 			case _ => {  
 				val currentUrn:CtsUrn = O2Model.urn.bind
 				val uv:Vector[CtsUrn] = (O2Model.textRepo.value.get.corpus >= currentUrn).nodes.map(_.urn)
 				val dseUrns:Option[Vector[Cite2Urn]] = DSEModel.dseObjectsForCorpus(uv)
 				<ul>{ 
-					for (u <- O2Model.currentListOfDseUrns) yield {
+					for (u <- DSEModel.currentListOfDseUrns) yield {
 						{ DataModelView.objectLinkItem(None, u, true).bind }
 					}
 				} </ul>

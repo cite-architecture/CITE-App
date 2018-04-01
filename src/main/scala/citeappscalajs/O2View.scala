@@ -80,6 +80,8 @@ object O2View {
 	</div>
 }
 
+
+
 @dom
 def retrievePassageButton = {
 	<button
@@ -127,7 +129,14 @@ def passageContainer = {
 			{ prevButton.bind }
 			{ nextButton.bind }
 		</div>
-		<div id="o2_xmlPassageContainer"></div>
+		<div id="o2_xmlPassageContainer">
+			
+			{ 	for ( versionCorpus <- O2Model.currentCorpus) yield {
+					{ textVersionContainer(versionCorpus).bind }	
+				}
+			}	
+
+		</div>
 		<div id="o2_navButtonContainer_bottom">
 			{ prevButton.bind }
 			{ nextButton.bind }
@@ -135,6 +144,77 @@ def passageContainer = {
 
 	</div>
 
+}
+
+@dom
+def textVersionContainer(vCorp:O2Model.BoundCorpus) = {
+	<div class="o2_versionContainer">
+		<p class="o2_versionDescription ltr">
+			{ textVersionLabelAndLink(vCorp.versionUrn.value ,vCorp.versionLabel.value ).bind }
+		</p>
+		{ versionNodes(vCorp).bind }
+	</div>
+}
+
+@dom
+def versionNodes(vCorp:O2Model.BoundCorpus) = {
+	for (vn <- vCorp.versionNodes) yield {
+		<div class="o2_citationBlock">	
+			{
+				for ( n <- vn.nodes) yield {
+					val checkForLong:String = {
+						n.text.size match {
+							case s if (s > 20) => " long"
+							case _ => ""
+						}
+					}
+					val inDse = DSEModel.ctsInDse(n.urn)
+					val passageClass:String = {
+						O2Model.checkForRTL(n.text) match {
+							case true => s"o2_textPassage rtl ${checkForLong}"
+							case false => s"o2_textPassage ltr ${checkForLong}"
+						}	
+					}
+					<p class={ passageClass }>
+						<span 
+							class="o2_passage"
+							id={ s"node_${n.urn}"} >
+							{ nodeCitationSpan(n.urn).bind }
+							{ 
+								for (o <- inDse) yield {
+									<span 
+									class="o2_passageInDse"
+									onclick = { event: Event => {
+										val task = Task{ DataModelController.retrieveObject(None,o) }
+										val future = task.runAsync
+									}}>∞</span>									
+								}	
+							}
+							{ createXMLNode(n.text).bind }
+						</span>
+					</p>
+				}
+			}
+		</div>
+	}	
+}
+
+@dom
+def nodeCitationSpan(urn:CtsUrn) = {
+	<span class="o2_passageUrn">{ urn.passageComponent }</span>
+}
+
+@dom
+def createXMLNode(t:String) = {
+	val thisSpan = document.createElement("span").asInstanceOf[HTMLSpanElement]		
+	thisSpan.innerHTML = t
+	thisSpan
+}
+
+
+@dom
+def textVersionLabelAndLink(u:CtsUrn, label:String) = {
+	{ passageUrnSpan(u, label).bind }	
 }
 
 
@@ -195,10 +275,16 @@ def workUrnSpan(urn:CtsUrn, s:String) = {
 
 @dom
 def passageUrnSpan(urn:CtsUrn, s:String) = {
+	<span>
+	{ s }
+	</span>
 	<span
 	class="app_clickable"
-	onclick={ event: Event => println(s"Passage-click: ${urn}") }>
-	{ s }
+	onclick={ event: Event => {
+				O2Controller.changeUrn(urn)
+		}
+	}>
+	{ urn.toString}
 	</span>
 }
 

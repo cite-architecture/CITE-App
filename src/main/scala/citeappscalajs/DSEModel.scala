@@ -31,6 +31,8 @@ object DSEModel {
 	val dseTextProp:String = "passage"
 	val dseSurfaceProp:String = "surface"
 
+	val currentListOfDseUrns = Vars.empty[Cite2Urn]
+
  	def implementedByDSE_image(u:Cite2Urn):Option[Vector[Cite2Urn]] ={
  		val plainUrn = u.dropExtensions
 		DataModelModel.dataModels.value match {
@@ -95,34 +97,41 @@ object DSEModel {
  	}
 
  	def dseObjectsForCorpus(corp:Vector[CtsUrn]):Option[Vector[Cite2Urn]] = {
- 		val outerObjectVector:Vector[Vector[Option[Cite2Urn]]] = {
- 			corp.map(c => {
- 				val innerObjectVector:Vector[Option[Cite2Urn]] = {
- 					implementedByDSE_text(c) match {
-	 					case None => Vector(None)
-						case Some(objVec) => objVec.map(o => Some(o)).toVector
-	 				}
+ 		try {
+	 		val outerObjectVector:Vector[Vector[Option[Cite2Urn]]] = {
+	 			corp.map(c => {
+	 				val innerObjectVector:Vector[Option[Cite2Urn]] = {
+	 					implementedByDSE_text(c) match {
+		 					case None => Vector(None)
+							case Some(objVec) => objVec.map(o => Some(o)).toVector
+		 				}
+		 			}
+		 			innerObjectVector
+	 			})
+	 		}
+	 		val objectVector:Vector[Option[Cite2Urn]] = outerObjectVector.flatten
+	 		val returnVector:Option[Vector[Cite2Urn]] = {
+	 			val filteredObj: Vector[Cite2Urn] = objectVector.filter(obj => {
+	 				obj match {
+	 					case Some(o) => true
+	 					case None => false
+	 				}	
+	 			}).toVector.map( _.get )
+
+	 			val finalVector:Option[Vector[Cite2Urn]] = filteredObj.size match {
+	 				case s if (s == 0) => None
+	 				case _ => Some(filteredObj)
 	 			}
-	 			innerObjectVector
- 			})
- 		}
- 		val objectVector:Vector[Option[Cite2Urn]] = outerObjectVector.flatten
- 		val returnVector:Option[Vector[Cite2Urn]] = {
- 			val filteredObj: Vector[Cite2Urn] = objectVector.filter(obj => {
- 				obj match {
- 					case Some(o) => true
- 					case None => false
- 				}	
- 			}).toVector.map( _.get )
 
- 			val finalVector:Option[Vector[Cite2Urn]] = filteredObj.size match {
- 				case s if (s == 0) => None
- 				case _ => Some(filteredObj)
- 			}
-
- 			finalVector
- 		}
- 		returnVector
+	 			finalVector
+	 		}
+	 		returnVector
+	 	} catch {
+	 		case e:Exception => {
+	 			CiteMainController.updateUserMessage(s"DSE Model: dseObjectsForCorpus error: ${e}.",2)	
+	 			None
+	 		}
+	 	}
  	}
 
  	def roisForImage(urn:Cite2Urn, contextUrn:Option[Cite2Urn], dseUrns:Option[Vector[Cite2Urn]]):Option[Vector[ImageRoiModel.Roi]] = {
@@ -179,5 +188,52 @@ object DSEModel {
 		}
  	}
 
+ 	def ctsInDse(urn:CtsUrn):Vars[Cite2Urn] = {
+ 		ObjectModel.collRep.value match {
+ 			case None => Vars.empty[Cite2Urn]
+ 			case Some(cr) => {
+ 				val filterList:Vector[Cite2Urn] = {
+	 				DSEModel.currentListOfDseUrns.value.filter( du => {
+	 					val obj:CiteObject = cr.citableObject(du)
+	 					val prop:Cite2Urn = DataModelController.propertyUrnFromPropertyName(obj.urn,"passage")
+	 					obj.propertyValue(prop).asInstanceOf[CtsUrn] == urn
+	 				}).toVector
+	 			}
+	 			filterList.size match {
+	 				case 0 => Vars.empty[Cite2Urn]
+	 				case _ => {
+	 					val v = Vars.empty[Cite2Urn]
+	 					for (f <- filterList) {
+	 						v.value += f
+	 					}
+	 					v
+	 				}
+	 			}
+ 			}
+ 		}	
+ 	}
+
+	def updateCurrentListOfDseUrns(c:Corpus):Unit = {
+		DSEModel.currentListOfDseUrns.value.clear
+		O2Model.currentListOfUrns.value.size match {
+			case 0 => {
+			}
+			case _ =>{
+				val urnVec:Vector[CtsUrn] = {
+					var v:Vector[CtsUrn] = O2Model.currentListOfUrns.value.toVector
+					v
+				}
+				val dseUrns = DSEModel.dseObjectsForCorpus(urnVec)
+				dseUrns match {
+					case Some(v) => {
+						for (n <- v) DSEModel.currentListOfDseUrns.value += n
+					}
+					case None => {
+					}
+				}
+
+			}
+		}
+	}
 
 }
