@@ -21,21 +21,14 @@ object O2Model {
 
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 
-	//val passage = Vars.empty[CitableNode]
-	//var xmlPassage = new org.scalajs.dom.raw.DOMParser().parseFromString( "<cts:passage></cts:passage>", "text/xml" )
-	//var xmlPassage = js.Dynamic.global.document.createElement("div")
+	case class VersionNodeBlock(versionUrn:Var[CtsUrn],nodes:Vars[CitableNode])
 
-	/*  
-	Binding Variables for holding currently active corpus
-	*/
-
-	case class BoundCorpus(versionUrn:Var[CtsUrn], versionLabel:Var[String], nodes:Vars[CitableNode] )
+	case class BoundCorpus(versionUrn:Var[CtsUrn], versionLabel:Var[String], versionNodes:Vars[VersionNodeBlock] )
 
 	val currentCorpus = Vars.empty[BoundCorpus]
 
 	val currentNumberOfCitableNodes = Var(0)
 	val currentListOfUrns = Vars.empty[CtsUrn]
-	val currentListOfDseUrns = Vars.empty[Cite2Urn]
 	val isRtlPassage = Var(false)
 
 
@@ -115,13 +108,37 @@ object O2Model {
 					val versionUrn:CtsUrn = CtsUrn(s"${tc._1}${passageString}")
 					val boundVersionUrn = Var(versionUrn)
 
+					// Group node urns according to nodeBlocks
+					val nodeBlocks:Vector[(CtsUrn, Vector[CitableNode])] = {
+						tc._1.exemplarOption match {
+							case Some(eo) => {
+								val block:Vector[(CtsUrn,Vector[CitableNode])] = {
+									tc._2.groupBy(n => dropOneLevel(n.urn)).toVector	
+								}
+								block
+							}
+							case None => {
+								Vector( (tc._1,tc._2)	)
+							}
+						}	
+					}	
+					// Get this nodeBlock into a versionNodeBlock
+					val tempNodeBlockVec = Vars.empty[VersionNodeBlock]	
+					for (b <- nodeBlocks){
+						val tempBlockUrn = Var(b._1)
+						val tempNodesVec = Vars.empty[CitableNode]
+						for (n <- b._2) tempNodesVec.value += n
+						tempNodeBlockVec.value += VersionNodeBlock(tempBlockUrn, tempNodesVec)
+					}
+
+/*
 					val tempNodesBindingVector = Vars.empty[CitableNode]
 					for (n <- tc._2) {
 						tempNodesBindingVector.value += n
 					}
-					O2Model.currentCorpus.value += BoundCorpus(boundVersionUrn, boundVersionLabel, tempNodesBindingVector)
+*/
+					O2Model.currentCorpus.value += BoundCorpus(boundVersionUrn, boundVersionLabel, tempNodeBlockVec)
 				}	
-				g.console.log(s"Current Bound Corpus Size: ${O2Model.currentCorpus.value.size}")
 			}
 
 		} catch {
@@ -131,25 +148,21 @@ object O2Model {
 		}
 	}
 
-	def updateCurrentListOfDseUrns(c:Corpus):Unit = {
-		O2Model.currentListOfDseUrns.value.clear
-		O2Model.currentListOfUrns.value.size match {
-			case 0 => 
-			case _ =>{
-				val urnVec:Vector[CtsUrn] = {
-					var v:Vector[CtsUrn] = O2Model.currentListOfUrns.value.toVector
-					v
-				}
-				val dseUrns = DSEModel.dseObjectsForCorpus(urnVec)
-				dseUrns match {
-					case Some(v) => {
-						for (n <- v) O2Model.currentListOfDseUrns.value += n
-					}
-					case None =>
-				}
+	def dropOneLevel(u:CtsUrn):CtsUrn = { 
+		try {
+			val passage:String = u.passageComponent
+			val plainUrn:String = u.dropPassage.toString
+			val newPassage:String = passage.split('.').dropRight(1).mkString(".")
+			val droppedUrn:CtsUrn = CtsUrn(s"${plainUrn}${newPassage}") 
+			droppedUrn
+		} catch {
+			case e:Exception => {
+				O2Controller.updateUserMessage(s"Error dropping one level from ${u}: ${e}",2)
+				throw new Exception(s"${e}")
 			}
 		}
 	}
+
 
 	def displayNewPassage(urn:CtsUrn):Unit = {
 			O2Model.displayPassage(urn)
@@ -160,7 +173,8 @@ object O2Model {
 		//O2Model.xmlPassage.innerHTML = ""
 		O2Model.versionsForCurrentUrn.value = 0
 		O2Model.currentListOfUrns.value.clear
-		O2Model.currentListOfDseUrns.value.clear
+		DSEModel.currentListOfDseUrns.value.clear
+		O2Model.currentCorpus.value.clear
 	}
 
 	def passageLevel(u:CtsUrn):Int = {
@@ -197,126 +211,13 @@ object O2Model {
 	@dom
 	def displayPassage(newUrn: CtsUrn):Unit = {
 		val tempCorpus: Corpus = O2Model.textRepo.value.get.corpus >= newUrn
-		g.console.log(s"updating currentlistofurns: ${tempCorpus}")
 		O2Model.updateCurrentListOfUrns(tempCorpus)
-		O2Model.updateCurrentListOfDseUrns(tempCorpus)
+		DSEModel.updateCurrentListOfDseUrns(tempCorpus)
 		O2Model.updateCurrentCorpus(tempCorpus, newUrn)
-		g.console.log(s"updating currentNumberOfCitableNodes: ${tempCorpus.size}")
 		O2Model.currentNumberOfCitableNodes.value = tempCorpus.size
 	}
 
-/*
-	@dom
-	def displayPassage(newUrn: CtsUrn):Unit = {
-		val tempCorpus: Corpus = O2Model.textRepo.value.get.corpus >= newUrn
-		O2Model.updateCurrentListOfUrns(tempCorpus)
-		O2Model.updateCurrentListOfDseUrns(tempCorpus)
-		O2Model.currentCitableNodes.value = tempCorpus.size
-		//O2Model.passage.get.clear
-		O2Model.xmlPassage.innerHTML = ""
 
-		var wholePassageElement:String = ""
-
-		var currentVersionUrnStr = ""
-
-
-		if (tempCorpus.size > 0){
-			// set up columns
-			val groupedBy:Map[CtsUrn,Vector[CitableNode]] = tempCorpus.nodes.groupBy(_.urn.dropPassage)
-			val justPassage:String = newUrn.passageComponent
-			val sortedUrns:Vector[CtsUrn] = tempCorpus.nodes.map(_.urn.dropPassage).distinct
-			for ( u <- sortedUrns) {
-				val desc:String = O2Model.textRepo.value.get.catalog.label(u)
-				val descElementOpen = s"""<div class="o2_versionContainer"><p class="o2_versionDescription ltr">${desc} : ${u.toString}${justPassage}</p>"""
-				wholePassageElement += descElementOpen
-
-				for ( (n, i) <- groupedBy(u).zipWithIndex ){
-					val prevUrn:Option[CtsUrn] = {
-						i match {
-							case i if (i > 0) => Some(groupedBy(u)(i-1).urn)
-							case _ => None
-						}
-					}
-
-					// For exemplars, group by the penultimate citation value
-					val citationBlockOpen:String = {
-						n.urn.exemplarOption match {
-							case Some(eo) => {
-								val pl:Int = passageLevel(n.urn)
-								val testVal:String = valueForLevel(n.urn, (pl-1))
-								prevUrn match {
-									case Some(pu) => {
-										val prevVal:String = valueForLevel(pu, (pl-1))
-										(prevVal == testVal) match {
-											case true => ""
-											case _ => {
-												// For long "tokenizations" make them display as blocks
-												n.text.size match {
-													case textSize if (textSize < 50) => {
-														"""</div><div class="o2_citationBlock">"""
-													}
-													case _ => {
-														"""</div><div class="o2_citationBlockLong">"""
-													}	
-												}
-											}
-										}
-									}
-									case None => {
-										n.text.size match {
-											case textSize if (textSize < 50) => {
-												"""<div class="o2_citationBlock">"""
-											}
-											case _ => {
-												"""<div class="o2_citationBlockLong">"""
-											}	
-										}
-									}
-								}	
-							}
-							case None => ""
-						}	
-					}
-					wholePassageElement += citationBlockOpen
-
-
-					val citString:String = s"""<span class="o2_passageUrn">${n.urn.passageComponent}</span>"""
-
-					val txtString:String = """<span class="o2_passage">""" + citString + n.text + "</span>"
-					O2Model.isRtlPassage.value = O2Model.checkForRTL(n.text)
-
-					val divClass =	if (O2Model.isRtlPassage.value){ "rtl" } else { "ltr" }
-					val elString:String = s"""<p class="o2_textPassage ${divClass}">""" + txtString + "</p>"
-					wholePassageElement += elString
-				}	
-				val citationBlockClose:String = {
-						u.exemplarOption match {
-							case Some(eo) => "</div>"
-							case None => ""
-						}
-				}	
-				wholePassageElement += citationBlockClose
-				val descElementClose:String = "</div>"
-				wholePassageElement += descElementClose
-
-			}
-		} else {
-			// Display notice that there was no text found
-			var elString = ""
-			elString = s"""<div class="ltr o2_warnNoText">${newUrn} is not represented in the current library."""
-			if (O2Model.versionsForCurrentUrn.value > 0){
-				val s  = s"urn:cts:${newUrn.namespace}:${newUrn.textGroup}.${newUrn.work}:"
-				elString += s""" However, there are versions of ${s} in the library. “See all versions of passage” will show the requested passage, if it is present in any other version of this work."""
-			}
-			elString += "</div>"
-			wholePassageElement += elString
-
-		}
-		O2Model.xmlPassage.innerHTML = wholePassageElement
-		js.Dynamic.global.document.getElementById("o2_xmlPassageContainer").appendChild(xmlPassage)
-
-	}
-*/
 
 def checkForRTL(s:String):Boolean = {
 		val sStart = s.take(10)

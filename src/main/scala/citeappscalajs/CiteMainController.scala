@@ -208,6 +208,7 @@ object CiteMainController {
 			//g.console.log(s"hasBinaryImages = ${CiteBinaryImageModel.hasBinaryImages.value}")
 			timeEnd = new js.Date().getTime()
 			g.console.log(s"Initialized DataModels in ${(timeEnd - timeStart)/1000} seconds.")
+			g.console.log(s"=====================")
 
 			checkDefaultTab
 

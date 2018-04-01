@@ -318,7 +318,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 				val uv:Vector[CtsUrn] = (O2Model.textRepo.value.get.corpus >= currentUrn).nodes.map(_.urn)
 				val dseUrns:Option[Vector[Cite2Urn]] = DSEModel.dseObjectsForCorpus(uv)
 				<ul>{ 
-					for (u <- O2Model.currentListOfDseUrns) yield {
+					for (u <- DSEModel.currentListOfDseUrns) yield {
 						{ DataModelView.objectLinkItem(None, u, true).bind }
 					}
 				} </ul>

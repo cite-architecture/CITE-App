@@ -28,10 +28,8 @@ object O2Controller {
 
 	/* A lot of work gets done here */
 	def changePassage: Unit = {
-		g.console.log("Doing changePassage")
 		val timeStart = new js.Date().getTime()
 		val newUrn: CtsUrn = O2Model.urn.value
-		g.console.log(s"new Urn: ${newUrn}")
 		val task1 = Task{
 				O2Model.versionsForCurrentUrn.value = O2Model.versionsForUrn(newUrn)
 				O2Model.displayPassage(newUrn)
