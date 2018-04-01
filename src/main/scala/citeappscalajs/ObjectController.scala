@@ -109,7 +109,6 @@ object ObjectController {
 	//    - changeObject
 	def changeObject:Unit = {
 		val tempUrn:Cite2Urn = ObjectModel.urn.value.get
-		//g.console.log(s"changeObject got: ${tempUrn}")
 		ObjectModel.clearObject
 		QueryObjectModel.clearAll
 		ObjectModel.urn.value = Some(tempUrn)
@@ -129,21 +128,15 @@ object ObjectController {
 
 			ObjectModel.objectOrCollection.value match {
 					case "object" => {
-						//g.console.log(s"Doing get [object]… ${ObjectModel.urn.value} =? ${tempUrn}")
 						ObjectModel.getObjects(tempUrn)
 					}
 					case "collection" =>{
-						//g.console.log(s"Doing get [collection]… ${ObjectModel.urn.value} =? ${tempUrn}")
-						//g.console.log(s"current urn: ${ObjectModel.urn.value}")
-						//g.console.log(s"current display-urn: ${ObjectModel.displayUrn.value}")
 						ObjectModel.getObjects(tempUrn)
 					}
 					case "range" =>{
-						//g.console.log(s"Doing get [range]… ${ObjectModel.urn.value} =? ${tempUrn}")
 						ObjectModel.getObjects(tempUrn)
 					}
 					case _ => {
-						//g.console.log("Nothing to change.")
 					}
 			}
 		ObjectController.setDisplay
@@ -216,7 +209,6 @@ object ObjectController {
 			} else {
 
 			}
-			//g.console.log("preloading URN")
 	}
 
 	@dom
@@ -242,7 +234,6 @@ object ObjectController {
 
 	@dom
 	def getNext:Unit = {
-		//g.console.log(s"currentNext: ${ObjectModel.currentNext.value.toString}")
 		ObjectModel.currentNext.value match {
 			case Some(u) => {
 				val no:Int = u._2
@@ -273,7 +264,6 @@ object ObjectController {
 
 	@dom
 	def getPrev:Unit = {
-		//g.console.log(s"currentPrev: ${ObjectModel.currentPrev.value.toString}")
 		ObjectModel.currentPrev.value match {
 			case Some(u) => {
 				val no:Int = u._2
@@ -333,15 +323,20 @@ object ObjectController {
 			}
 			case _ => {
 				try {
-							val collUrn:Cite2Urn = ObjectModel.urn.value.get.dropSelector
-							if (tOff > numObj){
-								ObjectController.updateUserMessage(s"There are ${numObj} objects in the requested ${ObjectModel.objectOrCollection.value}, so an offset of ${tOff} is invalid.",2)
-							} else {
-								ObjectModel.boundDisplayObjects.value.clear
-								for (i <- startIndex to endIndex){
-									ObjectModel.boundDisplayObjects.value += ObjectModel.constructBoundDisplayObject(ObjectModel.collRep.value.get.objectsForCollection(collUrn)(i))
-								}
-								ObjectModel.updatePrevNext
+							ObjectModel.urn.value match {
+								case Some(cu) => {
+									val collUrn:Cite2Urn = cu.dropSelector
+									if (tOff > numObj){
+										ObjectController.updateUserMessage(s"There are ${numObj} objects in the requested ${ObjectModel.objectOrCollection.value}, so an offset of ${tOff} is invalid.",2)
+									} else {
+										ObjectModel.boundDisplayObjects.value.clear
+										for (i <- startIndex to endIndex){
+											ObjectModel.boundDisplayObjects.value += ObjectModel.constructBoundDisplayObject(ObjectModel.collRep.value.get.objectsForCollection(collUrn)(i))
+										}
+										ObjectModel.updatePrevNext
+									}
+								} 
+								case None => ObjectController.updateUserMessage(s"Value 'urn' for ObjectModel is not set: ${ObjectModel.urn.value}.",1)
 							}
 				} catch {
 					case e: Exception => {

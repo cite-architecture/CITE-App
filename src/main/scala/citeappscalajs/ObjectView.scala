@@ -221,7 +221,7 @@ def renderObjects = {
 							{ ObjectView.renderCiteUrnProperty(Some(obj.urn.value), obj.urn.value).bind }
 							</td>
 						</tr>
-						<tr>
+						<tr class="object_view_table_value">
 							<td>Label</td>
 							<td>StringType</td>
 							<td>{ 

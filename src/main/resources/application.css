@@ -104,12 +104,19 @@ div#object_objectContainer table tr:nth-child(odd) {
 }
 
 div#object_objectContainer table th, div#object_objectContainer table td {
-	word-break: break-all;
+	word-break: normal;
 	vertical-align: top;
 	line-height: 1.2em;
 	padding-right: 1em;
 }
 
+div#object_objectContainer table td:nth-child(3){
+	word-break:break-all;
+}
+
+select#objectQuery_collectionList {
+	max-width: 80%;
+}
 
 #object_browseControls {
 	font-size: 80%;

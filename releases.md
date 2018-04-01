@@ -1,5 +1,7 @@
 # Release notes
 
+**1.7.1**: Even more rigorous checking for `Option[T]` throughout. Fixed a loophole where bad Cite2Urn values cased a `.get` operation on a `None` value when doing DSE records. Improved CSS for object views.
+
 **1.7.0**: Rebuilt text-display code following more sound binding principles, giving more flexibility to expand text presentation with datamodels. Better integration of text-view with DSE models. More rigorous checking for `Option[T]` throughout.
 
 **1.6.1**: Update OHCO2 library to 10.7.0, xCite library to 3.3.0; links to rull-rez image-downloads when viewing remote images.

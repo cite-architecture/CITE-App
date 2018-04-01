@@ -152,14 +152,20 @@ object DSEModel {
 					dseUrns match {
 						case None => None
 						case Some(dus) => {
-							val roiVec:Vector[ImageRoiModel.Roi] = dus.map(du => {
+							val optionRoiVec:Vector[Option[ImageRoiModel.Roi]] = dus.map(du => {
 								// Get Object for CiteUrn du
 								val thisObject:CiteObject = ObjectModel.collRep.value.get.citableObject(du)
 								val roiUrn:Cite2Urn = thisObject.propertyValue(DataModelController.propertyUrnFromPropertyName(du, dseImageProp )).asInstanceOf[Cite2Urn]
 								val textUrn:CtsUrn = thisObject.propertyValue(DataModelController.propertyUrnFromPropertyName(du, dseTextProp )).asInstanceOf[CtsUrn]
 								val thisRoiObject:Option[ImageRoiModel.Roi] = ImageRoiModel.roiFromUrn(roiUrn,data = Some(textUrn), context = Some(thisObject.urn))
-								thisRoiObject.get	
+								thisRoiObject match {
+									case Some(tro) => tro
+									case None =>
+								}
+								thisRoiObject
 							}).toVector
+							val filteredOptionRoiVec:Vector[Option[ImageRoiModel.Roi]] = optionRoiVec.filter(_ != None).toVector
+							val roiVec:Vector[ImageRoiModel.Roi] = filteredOptionRoiVec.map(_.get)
 							Some(roiVec)
 						}
 					}	
