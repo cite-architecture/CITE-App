@@ -197,8 +197,8 @@ object CiteBinaryImageView {
 				val curn:Option[Cite2Urn] = CiteBinaryImageModel.urn.value
 				roi._2.dataUrn match {
 					case Some(du) => {
-						du.toString.take(7) match {
-							case s if (s == "urn:cts") => {
+						du.getClass.getName match {
+							case s if (s == "edu.holycross.shot.cite.CtsUrn") => {
 							   val groupId:String = {
 							   	CiteBinaryImageModel.imageRoiGroups.bind match {
 							   		case Some(irg) => {

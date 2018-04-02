@@ -603,8 +603,8 @@ object CiteBinaryImageController {
 				vo.dataUrn match {
 					case None => "None"
 					case Some(u) => {
-						u.toString.take(8) match {
-							case "urn:cts:" => u.asInstanceOf[CtsUrn].dropPassage.toString
+						u.getClass.getName match {
+							case "edu.holycross.shot.cite.CtsUrn" => u.asInstanceOf[CtsUrn].dropPassage.toString
 							case _ => u.asInstanceOf[Cite2Urn].dropSelector.toString
 						}
 					}
@@ -646,8 +646,8 @@ object CiteBinaryImageController {
 								roi._2.dataUrn match {
 									case Some(u) => {
 										u match {
-											case ctsUrn if (ctsUrn.toString.take(8) == "urn:cts:") => irg(ctsUrn.asInstanceOf[CtsUrn].dropPassage.toString).toString
-											case cite2Urn if (cite2Urn.toString.take(10) == "urn:cite2:") => irg(cite2Urn.asInstanceOf[Cite2Urn].dropSelector.toString).toString
+											case ctsUrn if (ctsUrn.getClass.getName == "edu.holycross.shot.cite.CtsUrn") => irg(ctsUrn.asInstanceOf[CtsUrn].dropPassage.toString).toString
+											case cite2Urn if (cite2Urn.getClass.getName == "edu.holycross.shot.cite.Cite2Urn") => irg(cite2Urn.asInstanceOf[Cite2Urn].dropSelector.toString).toString
 											case _ => {
 												irg("None").toString
 											}
