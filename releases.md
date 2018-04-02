@@ -1,5 +1,7 @@
 # Release notes
 
+**1.8.0**: Take advantage of limited reflection in the form of `object.getClass.getName`. 
+
 **1.7.1**: Even more rigorous checking for `Option[T]` throughout. Fixed a loophole where bad Cite2Urn values cased a `.get` operation on a `None` value when doing DSE records. Improved CSS for object views.
 
 **1.7.0**: Rebuilt text-display code following more sound binding principles, giving more flexibility to expand text presentation with datamodels. Better integration of text-view with DSE models. More rigorous checking for `Option[T]` throughout.
