@@ -13,6 +13,7 @@ import scala.concurrent
 
 import scala.scalajs.js
 import scala.scalajs.js._
+import edu.holycross.shot.cite._
 import js.annotation._
 import edu.holycross.shot.scm._
 
@@ -22,7 +23,9 @@ object CiteMainModel {
 
 		val userMessage = Var("Main loaded.")
 		val userAlert = Var("default")
-	    val userMessageVisibility = Var("app_hidden")
+	   val userMessageVisibility = Var("app_hidden")
+
+	   val requestParameterUrn = Var[Option[Urn]](None)
 
 		var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 
