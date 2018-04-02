@@ -301,7 +301,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 			}
 			case _ => {
 				<div id="o2_mappedDseContainer">
-					<h2>Mapped Passages</h2>
+					<h2>DSE Mapped Passages</h2>
 					{ mappedDsePassages.bind }
 				</div>
 			}
