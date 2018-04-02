@@ -108,38 +108,40 @@ object ObjectController {
 	//    - changeUrn
 	//    - changeObject
 	def changeObject:Unit = {
-		val tempUrn:Cite2Urn = ObjectModel.urn.value.get
-		ObjectModel.clearObject
-		QueryObjectModel.clearAll
-		ObjectModel.urn.value = Some(tempUrn)
-		val collUrn = ObjectModel.urn.value.get.dropSelector
+		if (ObjectModel.collRep.value != None) {
+			val tempUrn:Cite2Urn = ObjectModel.urn.value.get
+			ObjectModel.clearObject
+			QueryObjectModel.clearAll
+			ObjectModel.urn.value = Some(tempUrn)
+			val collUrn = ObjectModel.urn.value.get.dropSelector
 
-		// Based on the new URN, set image, ordered, browsable flags
-		ObjectModel.isOrdered.value = ObjectModel.collRep.value.get.isOrdered(collUrn)
+			// Based on the new URN, set image, ordered, browsable flags
+			ObjectModel.isOrdered.value = ObjectModel.collRep.value.get.isOrdered(collUrn)
 
-		if (
-				(ObjectModel.objectOrCollection.value == "collection") ||
-				(ObjectModel.urn.value.get.isRange == true) ||
-				(ObjectModel.isOrdered.value == true) ||
-				(ObjectModel.urn.value.get.objectOption == None)
-			){
-			  	ObjectModel.browsable.value = true
-			} else { ObjectModel.browsable.value = false }
+			if (
+					(ObjectModel.objectOrCollection.value == "collection") ||
+					(ObjectModel.urn.value.get.isRange == true) ||
+					(ObjectModel.isOrdered.value == true) ||
+					(ObjectModel.urn.value.get.objectOption == None)
+				){
+				  	ObjectModel.browsable.value = true
+				} else { ObjectModel.browsable.value = false }
 
-			ObjectModel.objectOrCollection.value match {
-					case "object" => {
-						ObjectModel.getObjects(tempUrn)
-					}
-					case "collection" =>{
-						ObjectModel.getObjects(tempUrn)
-					}
-					case "range" =>{
-						ObjectModel.getObjects(tempUrn)
-					}
-					case _ => {
-					}
-			}
-		ObjectController.setDisplay
+				ObjectModel.objectOrCollection.value match {
+						case "object" => {
+							ObjectModel.getObjects(tempUrn)
+						}
+						case "collection" =>{
+							ObjectModel.getObjects(tempUrn)
+						}
+						case "range" =>{
+							ObjectModel.getObjects(tempUrn)
+						}
+						case _ => {
+						}
+				}
+			ObjectController.setDisplay
+		}
 	}
 
 	def changeUrn(urnString: String): Unit = {
@@ -148,55 +150,57 @@ object ObjectController {
 
 	def changeUrn(urn: Cite2Urn): Unit = {
 		try {
-			ObjectModel.urn.value = Some(urn)
-			val collUrn = urn.dropSelector
-			ObjectModel.displayUrn.value = Some(urn)
-			ObjectModel.urn.value.get.objectComponentOption match {
-				case Some(o) => {
-					// test for range
-					ObjectModel.urn.value.get.rangeBeginOption match {
-						case Some(rb) => {
-							ObjectModel.urn.value.get.rangeEndOption match {
-								case Some(re) => {
-									ObjectModel.objectOrCollection.value = "range"
-									ObjectModel.isOrdered.value = ObjectModel.collRep.value.get.isOrdered(collUrn)
-									ObjectController.updateUserMessage("Retrieving range…",1)
-								}
-								case _ => {
-									ObjectModel.objectOrCollection.value = "none"
-									ObjectModel.isOrdered.value = false
+			if (ObjectModel.collRep.value != None ){
+				ObjectModel.urn.value = Some(urn)
+				val collUrn = urn.dropSelector
+				ObjectModel.displayUrn.value = Some(urn)
+				ObjectModel.urn.value.get.objectComponentOption match {
+					case Some(o) => {
+						// test for range
+						ObjectModel.urn.value.get.rangeBeginOption match {
+							case Some(rb) => {
+								ObjectModel.urn.value.get.rangeEndOption match {
+									case Some(re) => {
+										ObjectModel.objectOrCollection.value = "range"
+										ObjectModel.isOrdered.value = ObjectModel.collRep.value.get.isOrdered(collUrn)
+										ObjectController.updateUserMessage("Retrieving range…",1)
+									}
+									case _ => {
+										ObjectModel.objectOrCollection.value = "none"
+										ObjectModel.isOrdered.value = false
+									}
 								}
 							}
-						}
-						// if not a range, it is an object
-						case _ =>{
-							ObjectModel.objectOrCollection.value = "object"
-							ObjectModel.isOrdered.value = ObjectModel.collRep.value.get.isOrdered(collUrn)
-							ObjectController.updateUserMessage("Retrieving object…",1)
+							// if not a range, it is an object
+							case _ =>{
+								ObjectModel.objectOrCollection.value = "object"
+								ObjectModel.isOrdered.value = ObjectModel.collRep.value.get.isOrdered(collUrn)
+								ObjectController.updateUserMessage("Retrieving object…",1)
+							}
 						}
 					}
+					// otherwise, this is a collection
+					case _ => {
+						ObjectModel.objectOrCollection.value = "collection"
+						ObjectModel.isOrdered.value = ObjectModel.collRep.value.get.isOrdered(collUrn)
+						ObjectController.updateUserMessage("Retrieving collection…",1)
+					}
 				}
-				// otherwise, this is a collection
-				case _ => {
-					ObjectModel.objectOrCollection.value = "collection"
-					ObjectModel.isOrdered.value = ObjectModel.collRep.value.get.isOrdered(collUrn)
-					ObjectController.updateUserMessage("Retrieving collection…",1)
+				if (ObjectModel.objectOrCollection.value != "none") {
+					val task = Task{ ObjectController.changeObject }
+					val future = task.runAsync
+					/*
+					js.timers.setTimeout(200){
+						Future{ ObjectController.changeObject }
+					}
+					*/
 				}
-			}
-			if (ObjectModel.objectOrCollection.value != "none") {
-				val task = Task{ ObjectController.changeObject }
-				val future = task.runAsync
-				/*
-				js.timers.setTimeout(200){
-					Future{ ObjectController.changeObject }
-				}
-				*/
 			}
 		} catch {
 			case e: Exception => {
 				ObjectModel.objectOrCollection.value = "none"
 				ObjectModel.isOrdered.value = false
-				updateUserMessage("Invalid URN. Current URN not changed.",2)
+				updateUserMessage(s"Invalid URN. Current URN not changed. ${e}",2)
 			}
 		}
 	}

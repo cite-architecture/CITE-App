@@ -1,6 +1,6 @@
 # Release notes
 
-**1.8.0**: Take advantage of limited reflection in the form of `object.getClass.getName`. 
+**1.8.0**: Take advantage of limited reflection. Accepting CTS or Cite2 request-parameters for auto-loading (and sharing views).
 
 **1.7.1**: Even more rigorous checking for `Option[T]` throughout. Fixed a loophole where bad Cite2Urn values cased a `.get` operation on a `None` value when doing DSE records. Improved CSS for object views.
 
