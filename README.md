@@ -36,6 +36,8 @@ If `sbt fullOptJS` completes successfully, run the app by opening `CITE-App/targ
 
 Documentation for configuring collections of images for CiteApp is underway at <https://github.com/cite-architecture/CITE-image-configurations>.
 
+The `downloads/image_archive` directory contains a one-image sample setup showing how to implement URN-aware DeepZoom images.
+
 ## Python SimpleServer
 
 Running CiteApp locally, and attempting to access images, can run afoul of the Cross-Origin-Restrictions (CORS). It may be possible to tell your browser to ignore that security precaution. Or, a safer alternative, is to serve CiteApp locally. If Python is installed, navigate to the directory that contains `cite-VERSION.html`, and execute:
