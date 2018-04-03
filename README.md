@@ -2,7 +2,7 @@
 
 A single-page browser application for exploring citable resources, written in [Scala.js](http://www.scala-js.org/).
 
-## Current version: 1.7.1
+## Current version: 1.7.2
 
 See [release notes](releases.md).
 
@@ -35,6 +35,8 @@ If `sbt fullOptJS` completes successfully, run the app by opening `CITE-App/targ
 ## Images for CiteApp
 
 Documentation for configuring collections of images for CiteApp is underway at <https://github.com/cite-architecture/CITE-image-configurations>.
+
+The `downloads/image_archive` directory contains a one-image sample setup showing how to implement URN-aware DeepZoom images.
 
 ## Python SimpleServer
 

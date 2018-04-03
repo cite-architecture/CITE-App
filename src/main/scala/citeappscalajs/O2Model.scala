@@ -5,6 +5,7 @@ import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
 import scala.scalajs.js
 import scala.scalajs.js._
 import scala.scalajs.js.Dynamic.{ global => g }
+import scala.collection.mutable.LinkedHashMap
 import org.scalajs.dom._
 import org.scalajs.dom.ext._
 import org.scalajs.dom.raw._
@@ -92,9 +93,15 @@ object O2Model {
 		try {
 			O2Model.currentCorpus.value.clear
 			if (O2Model.textRepo.value != None) {
+				// Since GroupBy doesn't preserve order, let's preserve our own order
+				g.console.log(s"before: ${c.urns}")
+				val versionLevelOrder:Vector[CtsUrn] = {
+					c.urns.map(u => dropOneLevel(u)).distinct.toVector
+				}
+				g.console.log(s"after: ${versionLevelOrder}")
 				// Get Corpus into a Vector of tuples: (version-level-urn, vector[CitableNode])
 				val tempCorpusVector:Vector[(CtsUrn, Vector[CitableNode])] = c.nodes.groupBy(_.urn.dropPassage).toVector
-				
+// in correct order to this point				
 				for (tc <- tempCorpusVector) {
 					val versionLabel:String = O2Model.textRepo.value.get.catalog.label(tc._1)		
 					val passageString:String = {
@@ -103,6 +110,7 @@ object O2Model {
 							case None => ""
 						}
 					}
+// in correct order to this point				
 					val boundVersionLabel = Var(versionLabel)
 
 					val versionUrn:CtsUrn = CtsUrn(s"${tc._1}${passageString}")
@@ -115,7 +123,11 @@ object O2Model {
 								val block:Vector[(CtsUrn,Vector[CitableNode])] = {
 									tc._2.groupBy(n => dropOneLevel(n.urn)).toVector	
 								}
-								block
+								val block2 = tc._2.zipWithIndex.groupBy(n => dropOneLevel(n._1.urn))
+								val lhm = LinkedHashMap(block2.toSeq sortBy (_._2.head._2): _*)
+								val block3 = lhm mapValues (_ map (_._1))
+								val sortedBlock = block3.toVector
+								sortedBlock
 							}
 							case None => {
 								Vector( (tc._1,tc._2)	)
@@ -126,6 +138,8 @@ object O2Model {
 					val tempNodeBlockVec = Vars.empty[VersionNodeBlock]	
 					for (b <- nodeBlocks){
 						val tempBlockUrn = Var(b._1)
+						g.console.log(s"tempBlockUrn = ${tempBlockUrn.value}")
+// !!!! Out of order at this point !!!!
 						val tempNodesVec = Vars.empty[CitableNode]
 						for (n <- b._2) tempNodesVec.value += n
 						tempNodeBlockVec.value += VersionNodeBlock(tempBlockUrn, tempNodesVec)

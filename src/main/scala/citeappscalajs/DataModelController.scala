@@ -116,6 +116,20 @@ object DataModelController {
 		}
 	}	
 
+	/* Check to see if the Commentary datamodel is present */
+	def hasCommentaryModel:Boolean = {
+		val commUrn:Cite2Urn = CommentaryModel.commentaryVerb	
+		DataModelModel.dataModels.value match {
+			case None => false
+			case Some(dms) => {
+				val implementations:Vector[DataModel] = dms.filter(_.model == commUrn).toVector
+				implementations.size match {
+					case 0 => false
+					case _ => true
+				}	
+			}
+		}
+	}
 
 
  	/*

@@ -33,7 +33,6 @@ object CiteMainController {
 	def main(libUrl: String, localImagePath:String): Unit = {
 
 		CiteBinaryImageModel.imgArchivePath.value = localImagePath
-
 		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
 		val task = Task{ CiteMainController.loadRemoteLibrary(libUrl) }
 		val future = task.runAsync
@@ -51,6 +50,7 @@ object CiteMainController {
 		xhr.onload = { (e: Event) =>
 			if (xhr.status == 200) {
 				val contents:String = xhr.responseText
+				CiteMainModel.requestParameterUrn.value = CiteMainController.getRequestUrn
 				CiteMainController.updateRepository(contents)
 			} else {
 				CiteMainController.updateUserMessage(s"Request for remote library failed with code ${xhr.status}",2)
@@ -83,6 +83,7 @@ object CiteMainController {
 		reader.readAsText(e.target.asInstanceOf[org.scalajs.dom.raw.HTMLInputElement].files(0))
 		reader.onload = (e: Event) => {
 			val contents = reader.result.asInstanceOf[String]
+			CiteMainModel.requestParameterUrn.value = CiteMainController.getRequestUrn
 			CiteMainController.updateRepository(contents)
 		}
 	}
@@ -130,6 +131,8 @@ object CiteMainController {
 
 		hideTabs
 		clearRepositories
+
+		
 
 		try {
 			// Set up repo 
@@ -208,11 +211,41 @@ object CiteMainController {
 			//g.console.log(s"hasBinaryImages = ${CiteBinaryImageModel.hasBinaryImages.value}")
 			timeEnd = new js.Date().getTime()
 			g.console.log(s"Initialized DataModels in ${(timeEnd - timeStart)/1000} seconds.")
+
+			// Relations stuff
+			timeStart = new js.Date().getTime()
+			repo.relationSet match {
+				case Some(rs) => {
+					RelationsModel.citeRelations.value = Some(rs)
+					g.console.log(s"${RelationsModel.citeRelations.value.get.relations.size} Relations.")
+				}
+				case None => RelationsModel.citeRelations.value = None
+			}
+			timeEnd = new js.Date().getTime()
+			g.console.log(s"Initialized CiteRelations in ${(timeEnd - timeStart)/1000} seconds.")
+
+
 			g.console.log(s"=====================")
 
 			checkDefaultTab
 
 			CiteMainController.updateUserMessage(loadMessage,0)
+
+			// Load request parameter
+			CiteMainModel.requestParameterUrn.value match {
+				case Some(u) => {
+					u match {
+						case CtsUrn(ctsurn) => {
+							DataModelController.retrieveTextPassage(None, CtsUrn(ctsurn))
+						}
+						case Cite2Urn(cite2urn) => {
+							DataModelController.retrieveObject(None, Cite2Urn(cite2urn))
+						}
+						case _ => // do nothing
+					}
+				}	
+				case None => // do nothing
+			}
 
 		} catch  {
 			case e: Exception => {
@@ -220,6 +253,46 @@ object CiteMainController {
 			}
 		}
 
+	}
+
+	def getRequestUrn:Option[Urn] = {
+	val currentUrl = 	js.Dynamic.global.location.href
+		val requestParamUrnString = currentUrl.toString.split('?')
+		val requestUrn:Option[Urn] = requestParamUrnString.size match {
+			case s if (s > 1) => {
+				try {
+					val parts = requestParamUrnString(1).split("=")
+					if ( parts.size > 1) {
+						if ( parts(0) == "urn" ) {
+							val decryptedString:String = js.URIUtils.decodeURIComponent(parts(1))
+							val decryptedUrn:Option[Urn] = {
+								parts(1).take(8) match {
+									case ("urn:cts:") => Some(CtsUrn(decryptedString))
+									case ("urn:cite") => Some(Cite2Urn(decryptedString))
+									case _ => {
+										None
+									}
+								}
+							}
+							decryptedUrn
+						} else {
+							None
+						}
+					} else {
+						None
+					}
+				} catch {
+					case e:Exception => {
+						CiteMainController.updateUserMessage(s"Failed to load request-parameter URN: ${e}",1)
+						None
+					}
+				}
+			}
+			case _  => {
+				None
+			}
+		}
+		requestUrn
 	}
 
 

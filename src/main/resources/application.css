@@ -111,7 +111,7 @@ div#object_objectContainer table th, div#object_objectContainer table td {
 }
 
 div#object_objectContainer table td:nth-child(3){
-	word-break:break-all;
+	word-break:break-word;
 }
 
 select#objectQuery_collectionList {
@@ -610,7 +610,7 @@ div.o2_citationBlock {
 
 div.o2_citationBlock .o2_textPassage {
 	display: inline-block;
-	margin-right: 0.5em;
+	margin-right: 0em;
 }
 
 div.o2_citationBlock p.long {
@@ -788,8 +788,8 @@ div#o2_navButtonContainer_top{
 	color: rgb(171, 0, 0);
 	font-size: 80%;
 	padding-bottom: 3px;
-	margin-right: 4px;
-	margin-left: 4px;
+	margin-right: -0.1em;
+	margin-left: 0.25em;
 	vertical-align: baseline;
   position: relative;
   top: -0.4em;
