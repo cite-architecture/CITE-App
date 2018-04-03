@@ -94,11 +94,9 @@ object O2Model {
 			O2Model.currentCorpus.value.clear
 			if (O2Model.textRepo.value != None) {
 				// Since GroupBy doesn't preserve order, let's preserve our own order
-				g.console.log(s"before: ${c.urns}")
 				val versionLevelOrder:Vector[CtsUrn] = {
 					c.urns.map(u => dropOneLevel(u)).distinct.toVector
 				}
-				g.console.log(s"after: ${versionLevelOrder}")
 				// Get Corpus into a Vector of tuples: (version-level-urn, vector[CitableNode])
 				val tempCorpusVector:Vector[(CtsUrn, Vector[CitableNode])] = c.nodes.groupBy(_.urn.dropPassage).toVector
 // in correct order to this point				
@@ -138,8 +136,6 @@ object O2Model {
 					val tempNodeBlockVec = Vars.empty[VersionNodeBlock]	
 					for (b <- nodeBlocks){
 						val tempBlockUrn = Var(b._1)
-						g.console.log(s"tempBlockUrn = ${tempBlockUrn.value}")
-// !!!! Out of order at this point !!!!
 						val tempNodesVec = Vars.empty[CitableNode]
 						for (n <- b._2) tempNodesVec.value += n
 						tempNodeBlockVec.value += VersionNodeBlock(tempBlockUrn, tempNodesVec)
@@ -227,6 +223,7 @@ object O2Model {
 		val tempCorpus: Corpus = O2Model.textRepo.value.get.corpus >= newUrn
 		O2Model.updateCurrentListOfUrns(tempCorpus)
 		DSEModel.updateCurrentListOfDseUrns(tempCorpus)
+		CommentaryModel.updateCurrentListOfComments(tempCorpus)
 		O2Model.updateCurrentCorpus(tempCorpus, newUrn)
 		O2Model.currentNumberOfCitableNodes.value = tempCorpus.size
 	}

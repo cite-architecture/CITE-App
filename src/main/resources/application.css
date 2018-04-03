@@ -630,7 +630,7 @@ div.o2_versionContainer {
 	padding: 0;
 }
 
-.o2_passageInDse {
+.o2_passageInDse, .o2_commentary {
 	background-color: rgba(255, 255, 0, 0.25);
 	margin-left: 0em;
 	vertical-align: baseline;
@@ -638,16 +638,16 @@ div.o2_versionContainer {
 	top: -0.5em;
 }
 
-.o2_passageInDse + .o2_passageInDse {
+.o2_passageInDse + .o2_passageInDse, .o2_commentary + .o2_commentary {
 	margin-left: 0.3em;
 }
 
-.o2_passageInDse:hover {
+.o2_passageInDse:hover, .o2_commentary:hover {
 	text-decoration:underline;
 	background-color: rgba(255, 255, 0, 0.99);
 }
 
-.o2_passageInDse:active {
+.o2_passageInDse:active, .o2_commentary:active {
 	color: #af6460;
 	text-decoration: none;
 	background-color: white;
@@ -785,7 +785,7 @@ div#o2_navButtonContainer_top{
 }
 
 .o2_passageUrn {
-	color: rgb(171, 0, 0);
+	color: rgb(207, 205, 209);	
 	font-size: 80%;
 	padding-bottom: 3px;
 	margin-right: -0.1em;

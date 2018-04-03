@@ -169,6 +169,7 @@ def versionNodes(vCorp:O2Model.BoundCorpus) = {
 						}
 					}
 					val inDse = DSEModel.ctsInDse(n.urn)
+					val hasComment = CommentaryModel.ctsHasCommentary(n.urn)
 					val passageClass:String = {
 						O2Model.checkForRTL(n.text) match {
 							case true => s"o2_textPassage rtl ${checkForLong}"
@@ -190,7 +191,18 @@ def versionNodes(vCorp:O2Model.BoundCorpus) = {
 									}}>∞</span>									
 								}	
 							}
+							{
+								for (c <- hasComment) yield {
+								<span 
+									class="o2_commentary"
+									onclick = { event: Event => {
+										val task = Task{ DataModelController.retrieveUrn(c) }
+										val future = task.runAsync
+									}}>*</span>
+								}
+							}
 							{ createXMLNode(n.text).bind }
+
 						</span>
 					</p>
 				}

@@ -28,5 +28,103 @@ import scala.scalajs.js.annotation.JSExport
 object CommentaryModel {
 
 	val commentaryVerb:Cite2Urn = Cite2Urn("urn:cite2:cite:verbs.v1:commentsOn")
+	val commentaryModel:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:commentary")
+	// commentsOn not used yet…
+	val commentsOn = Var[Boolean](true)
+
+	case class CiteComment(comment:Urn, text:Urn)
+
+	val commentList = Vars.empty[CiteComment]
+	val currentComments = Vars.empty[CiteComment]
+
+	def ctsHasCommentary(urn:CtsUrn):Vars[Urn] = {
+		DataModelController.hasCommentaryModel match {
+			case false => Vars.empty[Urn]	
+			case _ => {
+				val relevantComments:Vector[CiteComment] = currentComments.value.filter(_.text.asInstanceOf[CtsUrn] == urn).toVector
+				val v = Vars.empty[Urn]	
+				for (c <- relevantComments) {
+					v.value += c.comment
+				}
+				v
+			}
+		}
+	}
+
+
+	def clearComments:Unit = {
+		currentComments.value.clear
+	}
+
+	def updateCurrentListOfComments(corp:Corpus):Unit = {
+		currentComments.value.clear	
+		//val corpUrns:Vector[CtsUrn] = corp.urns
+		commentList.value.size match {
+			case s if (s > 0) => {
+				val twiddledComments:Vector[CiteComment] = {
+					commentList.value.filter( c => {
+						c.text match {
+							case CtsUrn(_) => {
+								((corp >= c.text.asInstanceOf[CtsUrn]).size > 0)	
+							}
+							case _ => false
+						}
+					}).toVector
+				}
+				// If any of the twiddledComments were ranges, let's expand those…
+				val rangeComments:Vector[CiteComment] = {
+					twiddledComments.filter( c => {
+						c.text.asInstanceOf[CtsUrn].isRange
+					}).toVector
+				}
+				val expandedRangeComments:Vector[CiteComment] = {
+					(
+					for (rc <- rangeComments) yield {
+						val urns:Vector[CtsUrn] = (corp ~~ rc.text.asInstanceOf[CtsUrn]).urns	
+						urns.map( u => { CiteComment(rc.comment,u)})
+					}
+					).flatten
+				}
+				// And then we need to ditch the range comments from the original
+				val nonRangeComments:Vector[CiteComment] = {
+					twiddledComments.filter( c => {
+						c.text.asInstanceOf[CtsUrn].isRange == false
+					}).toVector
+				}
+				// And we concatenate those, and eliminate dups
+				val finalCurrentComments:Vector[CiteComment] = {
+						(nonRangeComments ++ expandedRangeComments).distinct.toVector
+				}
+				for (c <- finalCurrentComments){
+					currentComments.value += c
+				}
+			}
+			case _ => //do nothing
+		}
+	}
+
+	def loadAllComments:Unit = {
+		commentList.value.clear
+		if (DataModelController.hasCommentaryModel) {	
+			val tempComments:Option[CiteRelationSet] = {
+				RelationsModel.citeRelations.value match {
+					case Some(cr) => {
+						val cv:CiteRelationSet = cr.verb(commentaryVerb)
+						cv.size match {
+							case s if (s > 0) => Some(cv)
+							case _ => None
+						}
+					}
+					case None => None
+				}
+			}
+			if (tempComments != None) {
+				for (c <- tempComments.get.relations ){
+					commentList.value += CiteComment(comment = c.urn1, text = c.urn2)
+				}
+			}
+		}
+	}
+
 
 }
