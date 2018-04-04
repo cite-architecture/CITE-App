@@ -325,7 +325,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 	@dom
 	def mappedCommentaryToTextContainer = {
 		<div id="o2_mappedCommentContainer" class={
-				CommentaryModel.currentComments.bind.size match {
+				CommentaryModel.currentCommentsAll.bind.size match {
 					case s if (s > 0) => "app_visible"
 					case _ => "app_hidden"
 				}	
@@ -341,7 +341,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 			case 0 => { <p>None</p> }
 			case _ => {  
 				<ul>{ 
-					for (c <- CommentaryModel.currentComments) yield {
+					for (c <- CommentaryModel.currentCommentsDistinctComments) yield {
 						c.comment match {
 							case CtsUrn(_) =>{
 								{ DataModelView.textLinkItem(None, c.comment.asInstanceOf[CtsUrn] ).bind }

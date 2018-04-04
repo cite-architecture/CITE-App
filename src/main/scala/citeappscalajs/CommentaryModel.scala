@@ -35,13 +35,14 @@ object CommentaryModel {
 	case class CiteComment(comment:Urn, text:Urn)
 
 	val commentList = Vars.empty[CiteComment]
-	val currentComments = Vars.empty[CiteComment]
+	val currentCommentsAll = Vars.empty[CiteComment]
+	val currentCommentsDistinctComments = Vars.empty[CiteComment]
 
 	def ctsHasCommentary(urn:CtsUrn):Vars[Urn] = {
 		DataModelController.hasCommentaryModel match {
 			case false => Vars.empty[Urn]	
 			case _ => {
-				val relevantComments:Vector[CiteComment] = currentComments.value.filter(_.text.asInstanceOf[CtsUrn] == urn).toVector
+				val relevantComments:Vector[CiteComment] = currentCommentsAll.value.filter(_.text.asInstanceOf[CtsUrn] == urn).toVector
 				val v = Vars.empty[Urn]	
 				for (c <- relevantComments) {
 					v.value += c.comment
@@ -53,11 +54,12 @@ object CommentaryModel {
 
 
 	def clearComments:Unit = {
-		currentComments.value.clear
+		currentCommentsAll.value.clear
+		currentCommentsDistinctComments.value.clear
 	}
 
 	def updateCurrentListOfComments(corp:Corpus):Unit = {
-		currentComments.value.clear	
+		clearComments	
 		//val corpUrns:Vector[CtsUrn] = corp.urns
 		commentList.value.size match {
 			case s if (s > 0) => {
@@ -96,8 +98,29 @@ object CommentaryModel {
 						(nonRangeComments ++ expandedRangeComments).distinct.toVector
 				}
 				for (c <- finalCurrentComments){
-					currentComments.value += c
+					currentCommentsAll.value += c
 				}
+
+				// And let's get a version that just has unique comments, for the sidebar
+				val uniquedComments:Vector[CiteComment] = finalCurrentComments.groupBy(_.comment).map(_._2.head).toVector
+				// And why not group by work/collection, while we're at it… the list isn't going to be long
+				val map1:Vector[Tuple2[String,CiteComment]] = uniquedComments.map(c => {
+					val mapString:String = {
+						c.comment match {
+							case CtsUrn(_) => c.comment.asInstanceOf[CtsUrn].dropPassage.toString
+							case _ => c.comment.asInstanceOf[Cite2Urn].dropSelector.toString
+						}
+					}
+					Tuple2(mapString,c)
+				})
+				val map2:Vector[(String,Vector[Tuple2[String,CiteComment]])] = map1.groupBy(_._1).toVector
+				val map3:Vector[Tuple2[String,CiteComment]] = map2.map(_._2).flatten
+				val map4:Vector[CiteComment] = map3.map(_._2)
+
+				for (c <- map4){
+					currentCommentsDistinctComments.value += c
+				}
+
 			}
 			case _ => //do nothing
 		}
