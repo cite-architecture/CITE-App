@@ -118,7 +118,7 @@ object DataModelController {
 
 	/* Check to see if the Commentary datamodel is present */
 	def hasCommentaryModel:Boolean = {
-		val commUrn:Cite2Urn = CommentaryModel.commentaryVerb	
+		val commUrn:Cite2Urn = CommentaryModel.commentaryModel	
 		DataModelModel.dataModels.value match {
 			case None => false
 			case Some(dms) => {
@@ -135,6 +135,15 @@ object DataModelController {
  	/*
 	Methods for switching tabs and loading text and objects
  	*/
+
+ 	def retrieveUrn(u:Urn):Unit = {
+ 		u match {
+ 			case CtsUrn(_) => retrieveTextPassage(None, u.asInstanceOf[CtsUrn])
+ 			case Cite2Urn(_) => retrieveObject(None, u.asInstanceOf[Cite2Urn])
+ 			case _ => 	CiteMainController.updateUserMessage(s"Could not resolve ${u} to either CtsUrn or Cite2Urn",2)
+
+ 		}
+ 	}
 
 	def retrieveTextPassage(contextUrn:Option[Cite2Urn] = None, urn:CtsUrn):Unit = {
 			O2Controller.changeUrn(urn)

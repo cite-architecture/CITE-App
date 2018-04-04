@@ -294,20 +294,69 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 	}
 	
 	@dom
-	def mappedDseTextContainer = {
+	def mappedDataToTextContainer = {
 		O2Model.textRepo.bind match {
 			case None => {
 				<!-- empty content -->	
 			}
 			case _ => {
-				<div id="o2_mappedDseContainer">
-					<h2>DSE Mapped Passages</h2>
-					{ mappedDsePassages.bind }
+				<div>
+				{ mappedDseToTextContainer.bind }
+				{ mappedCommentaryToTextContainer.bind }
 				</div>
 			}
 		}
 
 	}
+
+	@dom
+	def mappedDseToTextContainer = {
+		<div id="o2_mappedDseContainer" class={
+				DSEModel.currentListOfDseUrns.bind.size match {
+					case s if (s > 0) => "app_visible"
+					case _ => "app_hidden"
+				}	
+			}>
+			<h2>DSE Mapped Passages</h2>
+			{ mappedDsePassages.bind }
+		</div>
+	}
+
+	@dom
+	def mappedCommentaryToTextContainer = {
+		<div id="o2_mappedCommentContainer" class={
+				CommentaryModel.currentCommentsAll.bind.size match {
+					case s if (s > 0) => "app_visible"
+					case _ => "app_hidden"
+				}	
+			}>
+			<h2>Commentaries</h2>
+			{ commentaryPassages.bind}
+		</div>	
+	}
+
+	@dom
+	def commentaryPassages = {
+		O2Model.currentNumberOfCitableNodes.bind match {
+			case 0 => { <p>None</p> }
+			case _ => {  
+				<ul>{ 
+					for (c <- CommentaryModel.currentCommentsDistinctComments) yield {
+						c.comment match {
+							case CtsUrn(_) =>{
+								{ DataModelView.textLinkItem(None, c.comment.asInstanceOf[CtsUrn] ).bind }
+							}
+							case _ => {
+								{ DataModelView.objectLinkItem(None, c.comment.asInstanceOf[Cite2Urn], true).bind }
+							}
+
+						}
+					}
+				} </ul>
+			}
+		}	
+	}
+
 
 	@dom
 	def mappedDsePassages = {

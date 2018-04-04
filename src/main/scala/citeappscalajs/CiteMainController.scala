@@ -121,6 +121,7 @@ object CiteMainController {
 		O2Model.textRepo.value = None
 		ObjectModel.collRep.value = None
 		CiteMainModel.mainLibrary.value = None
+		CommentaryModel.clearComments
 	}
 
 
@@ -137,6 +138,7 @@ object CiteMainController {
 		try {
 			// Set up repo 
 			var timeStart = new js.Date().getTime()
+			val wholeTimeStart = timeStart
 			val repo:CiteLibrary = CiteLibrary(cexString, CiteMainModel.cexMainDelimiter, CiteMainModel.cexSecondaryDelimiter)
 			var timeEnd = new js.Date().getTime()
 			g.console.log("==========================")
@@ -191,6 +193,18 @@ object CiteMainController {
 			timeEnd = new js.Date().getTime()
 			g.console.log(s"Initialized collectionRepository in ${(timeEnd - timeStart)/1000} seconds.")
 
+			// Relations stuff
+			timeStart = new js.Date().getTime()
+			repo.relationSet match {
+				case Some(rs) => {
+					RelationsModel.citeRelations.value = Some(rs)
+				}
+				case None => RelationsModel.citeRelations.value = None
+			}
+			timeEnd = new js.Date().getTime()
+			g.console.log(s"Initialized CiteRelations in ${(timeEnd - timeStart)/1000} seconds.")
+
+
 			// Data Model Stuff
 			timeStart = new js.Date().getTime()
 			repo.dataModels match {
@@ -203,6 +217,7 @@ object CiteMainController {
 						case _ => CiteMainModel.showImages.value = false
 					}
 					CiteBinaryImageController.setBinaryImageCollections
+					CommentaryModel.loadAllComments
 				}
 				case None => { 
 					DataModelController.clearDataModels
@@ -211,21 +226,11 @@ object CiteMainController {
 			//g.console.log(s"hasBinaryImages = ${CiteBinaryImageModel.hasBinaryImages.value}")
 			timeEnd = new js.Date().getTime()
 			g.console.log(s"Initialized DataModels in ${(timeEnd - timeStart)/1000} seconds.")
-
-			// Relations stuff
-			timeStart = new js.Date().getTime()
-			repo.relationSet match {
-				case Some(rs) => {
-					RelationsModel.citeRelations.value = Some(rs)
-					g.console.log(s"${RelationsModel.citeRelations.value.get.relations.size} Relations.")
-				}
-				case None => RelationsModel.citeRelations.value = None
-			}
-			timeEnd = new js.Date().getTime()
-			g.console.log(s"Initialized CiteRelations in ${(timeEnd - timeStart)/1000} seconds.")
-
-
 			g.console.log(s"=====================")
+			g.console.log(s"Whole initialization in ${(timeEnd - wholeTimeStart)/1000} seconds.")
+			g.console.log(s"=====================")
+
+
 
 			checkDefaultTab
 

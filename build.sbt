@@ -2,7 +2,7 @@ enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
 name := "citeapp"
 
-version := "1.7.2"
+version := "1.8.0"
 
 scalaVersion := "2.12.3"
 
@@ -12,7 +12,7 @@ resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases")
 
 libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
-  "org.scala-js" %%% "scalajs-dom" % "0.9.2",
+  "org.scala-js" %%% "scalajs-dom" % "0.9.5",
   "io.monix" %%% "monix" % "2.3.0",
   "edu.holycross.shot.cite" %%% "xcite" % "3.3.0",
   "edu.holycross.shot" %%% "ohco2" % "10.7.0",

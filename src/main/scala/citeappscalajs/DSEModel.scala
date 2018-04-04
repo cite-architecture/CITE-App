@@ -31,6 +31,9 @@ object DSEModel {
 	val dseTextProp:String = "passage"
 	val dseSurfaceProp:String = "surface"
 
+	// dseOn not used yet…
+	val dseOn = Var[Boolean](true)
+
 	val currentListOfDseUrns = Vars.empty[Cite2Urn]
 
  	def implementedByDSE_image(u:Cite2Urn):Option[Vector[Cite2Urn]] ={
