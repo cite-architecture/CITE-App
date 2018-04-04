@@ -694,13 +694,13 @@ div#ngram_urns ol.cols, div#search_urns ol.cols {
 		color: green;
 }
 
-#o2_citedWorksContainer ul, #ngram_citedWorksContainer ul, #image_imageCollectionsContainer ul, #image_mappedData ul, #object_objectCollectionsContainer ul, #o2_mappedDseContainer ul {
+#o2_citedWorksContainer ul, #ngram_citedWorksContainer ul, #image_imageCollectionsContainer ul, #image_mappedData ul, #object_objectCollectionsContainer ul, #o2_mappedDseContainer ul, #o2_mappedCommentContainer ul {
 	list-style-type: decimal;
 	padding-left: 0;
 }
 
 
-#o2_citedWorksContainer ul li, #ngram_citedWorksContainer ul li, #image_imageCollectionsContainer ul li, #image_mappedData ul li, #object_objectCollectionsContainer ul li, #o2_mappedDseContainer ul li.citeLinks_linkItem {
+#o2_citedWorksContainer ul li, #o2_mappedCommentContainer ul li.citeLinks_linkItem, #ngram_citedWorksContainer ul li, #image_imageCollectionsContainer ul li, #image_mappedData ul li, #object_objectCollectionsContainer ul li, #o2_mappedDseContainer ul li.citeLinks_linkItem {
 	line-height: 1.2em;
 	/* max-height: 2.4em; */
 	/* white-space: nowrap; */
@@ -765,12 +765,34 @@ div.o2_1_cols{
 
 }
 
+div#o2_urnHistoryMenu.dropdown {
+	font-size: 85%;
+	max-width: 20em;
+	margin-top: 0.5em;
+}
+
+div#o2_urnHistoryButton {
+	font-size: 65%;
+	color: #333;
+	float: right;
+}
+
+p#o2_urnInputP {
+	margin: 0;	
+}
+
 div#o2_navButtonContainer_bottom{
 	margin-top: 1.5em;
 	clear: both;
+	font-size: 85%;
+	color: #333;
 }
+
 div#o2_navButtonContainer_top{
 	padding-bottom: 15px;
+	font-size: 85%;
+	color: #333;
+	float:right;
 }
 
 

@@ -51,7 +51,7 @@ object O2View {
 
 		<div id="02_sidebar" class="app_sidebarDiv">
 		{ citedWorksContainer.bind }
-		{ DataModelView.mappedDseTextContainer.bind }
+		{ DataModelView.mappedDataToTextContainer.bind }
 		</div>
 
 		{ o2messageDiv.bind }
@@ -63,7 +63,7 @@ object O2View {
 		<input
 		class={ s"${O2Controller.validUrnInField.bind}" }
 		id="o2_urnInput"
-		size={ 40 }
+		size={ 50 }
 		type="text"
 		value={ O2Model.urn.bind.toString }
 		onkeyup={ urnValidatingKeyUpHandler }>
@@ -125,7 +125,11 @@ def seeAllVersionsButton = {
 @dom
 def passageContainer = {
 	<div id="o2_passageContainer">
+
+		{ previousUrnsMenu.bind }
+
 		<div id="o2_navButtonContainer_top">
+			Navigate text 
 			{ prevButton.bind }
 			{ nextButton.bind }
 		</div>
@@ -144,6 +148,39 @@ def passageContainer = {
 
 	</div>
 
+}
+
+@dom
+def previousUrnsMenu = {
+	<div id="o2_urnHistoryMenu"
+	class={
+			if (O2Model.urnHistory.bind.size < 1) {
+				"dropdown empty" 
+			} else {
+				"dropdown"
+			} 
+	} >
+	<span>Text Passage History</span>
+	{ O2View.previousUrnsMenuItems.bind }
+	</div>
+}
+
+@dom
+def previousUrnsMenuItems = {
+	<div class="dropdown-content">
+		{ O2View.loadPreviousUrns.bind }
+	</div>
+}
+
+@dom
+def loadPreviousUrns = {
+	for (citationLabel <- O2Model.urnHistory) yield {
+		<p onclick={ 
+			event: Event => {
+				O2Controller.changeUrn(citationLabel._2)
+			}
+		}>{ s"${citationLabel._1}: ${citationLabel._3}" }</p>
+	}	
 }
 
 @dom

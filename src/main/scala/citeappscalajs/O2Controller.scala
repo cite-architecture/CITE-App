@@ -30,6 +30,7 @@ object O2Controller {
 	def changePassage: Unit = {
 		val timeStart = new js.Date().getTime()
 		val newUrn: CtsUrn = O2Model.urn.value
+		O2Model.updateUrnHistory(newUrn)
 		val task1 = Task{
 				O2Model.versionsForCurrentUrn.value = O2Model.versionsForUrn(newUrn)
 				O2Model.displayPassage(newUrn)

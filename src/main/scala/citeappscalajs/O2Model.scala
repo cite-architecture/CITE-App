@@ -32,6 +32,28 @@ object O2Model {
 	val currentListOfUrns = Vars.empty[CtsUrn]
 	val isRtlPassage = Var(false)
 
+	// for navigation
+	val urnHistory = Vars.empty[(Int,CtsUrn,String)]
+
+
+	// Add an entry to the citation-history
+	def updateUrnHistory(u:CtsUrn):Unit = {
+		try {
+			if (textRepo.value != None) {
+
+				val tempList:List[Tuple2[CtsUrn,String]] = urnHistory.value.toList.reverse.map(t => { Tuple2(t._2, t._3)})
+				val newTempList:List[Tuple2[CtsUrn,String]] = tempList ++ List(Tuple2(u,textRepo.value.get.label(u)))
+				val indexedTempList:List[Tuple3[Int,CtsUrn,String]] = newTempList.zipWithIndex.map( t => {
+					Tuple3((t._2 + 1),t._1._1,t._1._2)
+				})
+				val reversedList = indexedTempList.reverse
+				urnHistory.value.clear
+				for (t <- reversedList) { urnHistory.value += t }
+			}
+		} catch{
+			case e:Exception => O2Controller.updateUserMessage(s"Unable to make label for ${u}: ${e}",2)
+		}
+	}
 
 
 	// urn is what the user requested
