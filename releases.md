@@ -1,5 +1,7 @@
 # Release notes
 
+**1.8.0**: Implemented CiteRelations and the Commentary Datamodel for texts.
+
 **1.7.3**: Using scala-js-dom 0.9.5.
 
 **1.7.2**: Fixed a terrible bug where exemplar text nodes would show out of order.
