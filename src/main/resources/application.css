@@ -790,6 +790,7 @@ div#o2_navButtonContainer_bottom{
 
 div#o2_navButtonContainer_top{
 	padding-bottom: 15px;
+	margin-top: 5px;
 	font-size: 85%;
 	color: #333;
 	float:right;

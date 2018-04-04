@@ -28,7 +28,7 @@ import scala.scalajs.js.annotation.JSExport
 object CommentaryModel {
 
 	val commentaryVerb:Cite2Urn = Cite2Urn("urn:cite2:cite:verbs.v1:commentsOn")
-	val commentaryModel:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:commentary")
+	val commentaryModel:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:commentarymodel")
 	// commentsOn not used yet…
 	val commentsOn = Var[Boolean](true)
 
