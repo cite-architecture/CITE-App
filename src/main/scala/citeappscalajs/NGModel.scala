@@ -20,6 +20,7 @@ object NGModel {
 
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
 
+	var corpusOrUrn = Var[Option[CtsUrn]](None)
 
 	val urn = Var(CtsUrn("urn:cts:ns:group.work.version.exemplar:passage"))
 

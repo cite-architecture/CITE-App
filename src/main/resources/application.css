@@ -765,6 +765,20 @@ div.o2_1_cols{
 
 }
 
+div#ngram_citedWorksMenu.dropdown {
+	margin-top: 1em;
+}
+
+div#o2_citedWorksMenu.dropdown, div#ngram_citedWorksMenu.dropdown, div#ngram_previousSearchMenu.dropdown {
+	width: 100%;
+	min-width: 17em;
+}
+
+span#o2_citedWorksMenuTitle, span#ngram_citedWorksMenuTitle {
+	font-size: 100%;
+	font-weight: bold;
+}
+
 div#o2_urnHistoryMenu.dropdown {
 	font-size: 85%;
 	max-width: 20em;
