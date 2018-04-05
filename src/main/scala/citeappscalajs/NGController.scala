@@ -18,28 +18,10 @@ import js.annotation._
 @JSExportTopLevel("citeapp.NGController")
 object NGController {
 
-	def returnCorpusScope: Option[CtsUrn] = {
-		val corpusOrUrn:Option[CtsUrn] = js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value.toString match {
-			case "current" => { Some(NGModel.urn.value.dropPassage) }
-			case _ => { None }
-		}
-		corpusOrUrn
-	}
-
-	def setCorpusScope(qurn:Option[CtsUrn]):Unit = {
-		qurn match {
-				case Some(urn) => {
-					NGModel.urn.value = urn.dropPassage
-					js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "current"
-				}
-				case None => js.Dynamic.global.document.getElementById("ngram_nGramScopeOption").value = "corpus"
-		}
-	}
 
 	def constructStringSearchObject:NGModel.StringSearch = {
 		val s: String = js.Dynamic.global.document.getElementById("stringSearch_Input").value.toString
-		val corpusOrUrn:Option[CtsUrn] = NGController.returnCorpusScope
-		val ssq = NGModel.StringSearch(s, corpusOrUrn)
+		val ssq = NGModel.StringSearch(s, NGModel.corpusOrUrn.value)
 		ssq
 	}
 
@@ -47,8 +29,7 @@ object NGController {
 		val s: String = js.Dynamic.global.document.getElementById("tokenSearch_Input").value.toString
 		val prox = NGModel.tokenSearchProximity.value
 		val searchVector:Vector[String] = s.split(" ").toVector
-		val corpusOrUrn:Option[CtsUrn] = NGController.returnCorpusScope
-		val tsq = NGModel.TokenSearch(searchVector, prox, corpusOrUrn)
+		val tsq = NGModel.TokenSearch(searchVector, prox, NGModel.corpusOrUrn.value)
 		tsq
 	}
 
@@ -59,9 +40,8 @@ object NGController {
 		val ignorePuncString: String = js.Dynamic.global.document.getElementById("ngram_ignorePuncBox").checked.toString
 		val ignorePunc: Boolean = (ignorePuncString == "true")
 		val filterString: String = js.Dynamic.global.document.getElementById("ngram_filterStringField").value.toString
-		val corpusOrUrn:Option[CtsUrn] = NGController.returnCorpusScope
 
-		val ngq = NGModel.NGramQuery(n, occ, filterString, ignorePunc, corpusOrUrn )
+		val ngq = NGModel.NGramQuery(n, occ, filterString, ignorePunc, NGModel.corpusOrUrn.value )
 		ngq
 
 	}
@@ -70,7 +50,7 @@ object NGController {
 		NGController.clearInputs
 		NGController.clearResults
 		js.Dynamic.global.document.getElementById("stringSearch_Input").value = q.fs
-		NGController.setCorpusScope(q.urn)
+		NGModel.corpusOrUrn.value = q.urn
 	}
 
 	def loadQuery(q:NGModel.TokenSearch) = {
@@ -78,7 +58,7 @@ object NGController {
 		NGController.clearResults
 		js.Dynamic.global.document.getElementById("tokenSearch_Input").value = q.tt.mkString(" ")
 		NGModel.tokenSearchProximity.value = q.p
-		NGController.setCorpusScope(q.urn)
+		NGModel.corpusOrUrn.value = q.urn
 	}
 
 	def loadQuery(q:NGModel.NGramQuery) = {
@@ -88,7 +68,7 @@ object NGController {
 		js.Dynamic.global.document.getElementById("ngram_minOccurrances").value = q.t.toString
 		js.Dynamic.global.document.getElementById("ngram_ignorePuncBox").checked = q.ip.toString
 		js.Dynamic.global.document.getElementById("ngram_filterStringField").value = q.fs
-		NGController.setCorpusScope(q.urn)
+		NGModel.corpusOrUrn.value = q.urn
 	}
 
 def executeQuery(q:NGModel.StringSearch) = {
@@ -293,16 +273,13 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 		val occ:Int = js.Dynamic.global.document.getElementById("ngram_minOccurrances").value.toString.toInt
 		val ignorePuncString: String = js.Dynamic.global.document.getElementById("ngram_ignorePuncBox").checked.toString
 		val ignorePunc: Boolean = (ignorePuncString == "true")
-		var corpusOrUrn:String = ""
 		NGController.updateUserMessage("Getting N-Grams. Please be patient…",0)
 
 		if (O2Model.textRepo.value == None){
 			NGController.updateUserMessage("No library loaded.",2)
 		} else {
 			NGModel.citationResults.value.clear
-			// begin
-			//val corpusOrUrn:Option[CtsUrn] = NGController.returnCorpusScope
-			NGController.returnCorpusScope match {
+			NGModel.corpusOrUrn.value match {
 					case Some(urn:CtsUrn) => {
 						val tempVector = NGModel.getUrnsForNGram(urn, s,ignorePunc)
 
@@ -331,7 +308,7 @@ def executeQuery(q:NGModel.TokenSearch):Unit = {
 
 		val timeEnd = new js.Date().getTime()
 
-		NGModel.otherQueryReport.value = s"""Fetched ${NGModel.citationResults.value.size} passages in ${(timeEnd - timeStart)/1000} seconds: threshold = ${occ}; ignore-punctuation = ${ignorePunc}; queried on '${ NGController.returnCorpusScope match { case Some(urn:CtsUrn) => urn.toString; case _ => "Whole Corpus" }}'."""
+		NGModel.otherQueryReport.value = s"""Fetched ${NGModel.citationResults.value.size} passages in ${(timeEnd - timeStart)/1000} seconds: threshold = ${occ}; ignore-punctuation = ${ignorePunc}; queried on '${ NGModel.corpusOrUrn.value match { case Some(urn:CtsUrn) => urn.toString; case _ => "Whole Corpus" }}'."""
 
 		NGController.updateUserMessage(s"Fetched ${NGModel.citationResults.value.size} passages  in ${(timeEnd - timeStart)/1000} seconds.",0)
 

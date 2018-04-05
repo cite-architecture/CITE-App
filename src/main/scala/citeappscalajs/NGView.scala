@@ -41,7 +41,7 @@ object NGView {
 /* Previous Searches */
 @dom
 def previousSearchMenu = {
-	<div
+	<div id="ngram_previousSearchMenu"
 		class={
 			{ if (NGModel.pastQueries.bind.size < 1) { 
 				"dropdown empty" 
@@ -67,14 +67,7 @@ def previousSearches = {
 								NGController.loadQuery(q)
 								val task = Task { NGController.executeQuery(q) }
 								val future = task.runAsync
-								/*
-								js.timers.setTimeout(200){
-									Future {
-										NGController.loadQuery(q)
-										NGController.executeQuery(q)
-									}
-								}
-								*/
+								
 							}
 							}
 					>
@@ -85,22 +78,60 @@ def previousSearches = {
 	</div>
 }
 
-/* Cited Works List */
 @dom
-def citedWorksContainer = {
-	<div id="ngram_citedWorksContainer">
-	<h2>Works in this Corpus</h2>
-	<p>(Click text to select it for exploring.)</p>
-	<ul>
-	{
-		for (urn <- NGModel.citedWorks) yield {
-			<li>
-			{ workUrnSpan( urn, O2Model.textRepo.value.get.catalog.label(urn) ).bind }
-			</li>
-		}
-	}
-	</ul>
+def citedWorksMenu = {
+	<div id="ngram_citedWorksMenu"
+	class={
+			if (O2Model.citedWorks.bind.size < 1) {
+				"dropdown empty" 
+			} else {
+				"dropdown"
+			} 
+	} >
+	<span id="ngram_citedWorksMenuTitle">Scope for Exploration</span>
+	<br/>
+	<span id="ngram_currentScope">{ corpusOrUrnLabel.bind }</span>
+	{ NGView.citedWorksMenuItems.bind }
 	</div>
+}
+
+@dom
+def citedWorksMenuItems = {
+	<div class="dropdown-content"> 
+		{ NGView.putWholeCorpusFirst.bind }
+		{ NGView.loadCitedWorks.bind }
+
+	</div>
+}
+
+@dom
+def putWholeCorpusFirst = {
+	<p> { wholeCorpusSpan.bind }</p>
+}
+
+@dom
+def loadCitedWorks = {
+	for (urn <- O2Model.citedWorks) yield {
+		<p>
+			{ workUrnSpan( urn, O2Model.textRepo.value.get.catalog.label(urn) ).bind }
+			<br/>( { O2Model.textRepo.value.get.catalog.entriesForUrn(urn)(0).citationScheme  } )
+		</p>
+	}	
+}
+
+@dom
+def wholeCorpusSpan = {
+	<span
+	class="app_clickable"
+	onclick={ event: Event => {
+		NGModel.corpusOrUrn.value = None
+		NGModel.updateShortWorkLabel
+		NGController.clearResults
+
+	}
+}>
+	{ "Whole Corpus" }
+	</span>
 }
 
 /* General-use functions for making clickable URNs */
@@ -110,6 +141,7 @@ def workUrnSpan(urn:CtsUrn, s:String) = {
 	class="app_clickable"
 	onclick={ event: Event => {
 		NGModel.urn.value = urn.dropPassage
+		NGModel.corpusOrUrn.value = Some(urn)
 		NGModel.updateShortWorkLabel
 		NGController.clearResults
 
@@ -139,7 +171,7 @@ def passageUrnSpan(urn:CtsUrn, s:String) = {
 
 		<div id="ngram_sidebar" class="app_sidebarDiv">
 		{ NGView.previousSearchMenu.bind }
-		{ NGView.citedWorksContainer.bind }
+		{ NGView.citedWorksMenu.bind }
 		{ NGView.toolsContainer.bind }
 		</div>
 
@@ -159,12 +191,6 @@ def passageUrnSpan(urn:CtsUrn, s:String) = {
 def  toolsContainer = {
 	<div id="ngram_toolsContainer">
 
-	<h2>Scope for Exploration</h2>
-	<select id="ngram_nGramScopeOption">
-			<option value="current"> { NGModel.shortWorkLabel.bind }</option>
-			<option value="corpus">Whole Corpus</option>
-	</select>
-
 	<br/>
 	<h2>N-Gram Tools</h2>
 	{ nGramForm.bind }
@@ -173,6 +199,17 @@ def  toolsContainer = {
 	<h2>Token Search</h2>
 	{ tokenSearchForm.bind }
 	</div>
+}
+
+@dom
+def corpusOrUrnLabel = {
+	NGModel.corpusOrUrn.bind match {
+		case Some(u) => {
+			s"${O2Model.textRepo.value.get.catalog.label(u.dropPassage)}"
+		}
+	case None => { "Whole Corpus" }
+
+	}
 }
 
 /* NGram Form */
@@ -222,11 +259,7 @@ def nGramForm = {
 					NGController.updateUserMessage("Getting N-Grams. Please be patient…",1)
 					val task = Task{ NGController.nGramQuery}
 					val future = task.runAsync
-					/*
-					js.timers.setTimeout(200){
-						Future{ NGController.nGramQuery }
-					}
-					*/
+					
 				}
 			}
 		>Query for N-Grams</button>
@@ -247,11 +280,6 @@ def stringSearchForm = {
 					NGController.updateUserMessage("Searching for string. Please be patient…",1)
 					val task = Task{ NGController.stringSearchQuery }
 					val future = task.runAsync
-					/*
-					js.timers.setTimeout(200){
-						Future{ NGController.stringSearchQuery }
-					}
-					*/
 				}
 			}
 		>Search</button>
@@ -282,11 +310,6 @@ def tokenSearchForm = {
 					NGController.updateUserMessage("Conducting token search. Please be patient…",1)
 					val task = Task{NGController.tokenSearchQuery}
 					val future = task.runAsync
-					/*
-					js.timers.setTimeout(200){
-						Future{ NGController.tokenSearchQuery }
-					}
-					*/
 				}
 			}
 		>Search</button>
@@ -318,11 +341,6 @@ def nGramSpace = {
 					NGController.updateUserMessage(s"Getting URNs for '${ng.s}'. Please be patient…",1)
 					val task = Task{ NGController.getUrnsForNGram( ng.s ) }
 					val future = task.runAsync
-					/*
-					js.timers.setTimeout(200){
-						Future{ NGController.getUrnsForNGram( ng.s ) }
-					}
-					*/
 				} }
 				>
 				{ ng.s }

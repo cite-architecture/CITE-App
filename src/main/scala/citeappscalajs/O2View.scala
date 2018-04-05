@@ -50,7 +50,7 @@ object O2View {
 		<div id="o2_Container">
 
 		<div id="02_sidebar" class="app_sidebarDiv">
-		{ citedWorksContainer.bind }
+		{ citedWorksMenu.bind }
 		{ DataModelView.mappedDataToTextContainer.bind }
 		</div>
 
@@ -290,23 +290,39 @@ def prevButton = {
 	> ← </button>
 }
 
-/* Cited Works List */
 @dom
-def citedWorksContainer = {
-	<div id="o2_citedWorksContainer">
-	<h2>Works in this Corpus</h2>
-	<ul>
-	{
-		for (urn <- O2Model.citedWorks) yield {
-			<li>
-			{ workUrnSpan( urn, O2Model.textRepo.value.get.catalog.label(urn) ).bind }
-			<br/>( { O2Model.textRepo.value.get.catalog.entriesForUrn(urn)(0).citationScheme  } )
-			</li>
-		}
-	}
-	</ul>
+def citedWorksMenu = {
+	<div id="o2_citedWorksMenu"
+	class={
+			if (O2Model.citedWorks.bind.size < 1) {
+				"dropdown empty" 
+			} else {
+				"dropdown"
+			} 
+	} >
+	<span id="o2_citedWorksMenuTitle">Cited Works</span>
+	{ O2View.citedWorksMenuItems.bind }
 	</div>
 }
+
+@dom
+def citedWorksMenuItems = {
+	<div class="dropdown-content">
+		{ O2View.loadCitedWorks.bind }
+	</div>
+}
+
+@dom
+def loadCitedWorks = {
+	for (urn <- O2Model.citedWorks) yield {
+		<p>
+			{ workUrnSpan( urn, O2Model.textRepo.value.get.catalog.label(urn) ).bind }
+			<br/>( { O2Model.textRepo.value.get.catalog.entriesForUrn(urn)(0).citationScheme  } )
+		</p>
+	}	
+}
+
+
 
 /* General-use functions for making clickable URNs */
 @dom
