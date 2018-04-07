@@ -30,6 +30,33 @@ li.citeLinks_linkItem:nth-child(1){
 	/* padding-left: 0; */
 }
 
+/* Relations List Items */
+
+ul#relations_relationsList {
+	list-style-type: decimal;
+}
+
+li.relations_listItem {
+	font-size: 85%;
+	margin-bottom: 1.5em;
+}
+
+li.relations_listItem:nth-child(even) {
+	background-color: #efefef;
+	padding-top:3px;
+	padding-bottom:3px;
+}
+
+ul.relation_listItemList {
+	list-style: none;
+}
+
+ul.relation_listItemList li.citeLinks_linkItem {
+	margin: 0;	
+	border: 0;
+	padding: 0;
+}
+
 
 /* Object Formatting */
 
@@ -471,7 +498,7 @@ a:hover {
 
 .app_message {
 	max-width: 500px;
-	font-size: 80%;
+	font-size: 65%;
 	font-weight: normal;
 	min-height: 1em;
 	float: right;
@@ -918,6 +945,15 @@ div#o2_navButtonContainer_top{
 }
 
 
+/* Relations */
+
+div#relations_relationsContainer {
+	max-width: 800px;
+	overflow-y: scroll;
+	max-height: 800px;
+	border: 1px dashed silver;
+}
+
 /* Forms Stuff */
 
 label {
@@ -939,14 +975,34 @@ input[type=submit]:hover {
 
 html,
 body {
-	margin: 0;
-	padding: 25px;
-	padding-top: 5px;
+	height: 100%;
+	padding: 15px;
+}
+
+#main-wrapper {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	padding: 0 0 100px;
+	position: relative;
+
+	 min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -200px;
+}
+
+article {
+	flex: 1;
 }
 
 header, footer {
 	line-height: 1.2em;
 	color: #777;
+}
+
+footer, .push {
+    height: 200px; /* .push must be the same height as .footer */
 }
 
 header {
@@ -957,10 +1013,10 @@ header {
 
 footer {
 	font-size: 80%;
-	bottom: -50px;
-	z-index: -1;
+	bottom: 0;
+	left: 0;
 	position: absolute;
-	padding-right: 60px;
+	width: 100%;
 }
 
 h1 {

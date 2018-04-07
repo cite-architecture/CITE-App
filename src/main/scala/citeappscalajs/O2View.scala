@@ -129,7 +129,6 @@ def passageContainer = {
 		{ previousUrnsMenu.bind }
 
 		<div id="o2_navButtonContainer_top">
-			Navigate text 
 			{ prevButton.bind }
 			{ nextButton.bind }
 		</div>

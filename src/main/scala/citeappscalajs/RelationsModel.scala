@@ -27,4 +27,102 @@ import scala.scalajs.js.annotation.JSExport
 @JSExportTopLevel("citeapp.RelationsModel")
 object RelationsModel {
 	val citeRelations = Var[Option[CiteRelationSet]](None)
+	val foundRelations = Vars.empty[CiteTriple]
+
+	val allVerbs = Vars.empty[(Cite2Urn,String)]
+
+	val urn = Var[Option[Urn]](None)
+	val inputBoxUrnStr = Var("")
+	val filterVerb = Var[Option[Cite2Urn]](None)
+	val userMessageVisibility = Var("app_hidden")
+	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null
+	val userMessage = Var("")
+	val userAlert = Var("default")
+
+	def clearRelations:Unit = {
+		urn.value = None
+		filterVerb.value = None
+		inputBoxUrnStr.value = ""
+		foundRelations.value.clear
+	}
+
+	def getVerbLabel(u:Cite2Urn):String = {
+		val label:String = ObjectModel.collRep.value match {
+			case None => {
+				val label:String = {
+					u.objectOption match {
+						case Some(o) => o
+						case None => "< nothing specified >"
+					}
+				}	
+				label
+			}
+			case Some(cr) => {
+				val label:String = {
+					(cr ~~ u) match {
+						case objVec if (objVec.size > 0) => {
+							objVec(0).label	
+						}
+						case _ => { 
+							u.objectOption match {
+								case Some(o) => o
+								case None => "< nothing specified >"
+							}
+						}
+					}
+				}	
+				label
+			}
+		}
+		label
+	}
+
+
+	def loadAllVerbs:Unit = {
+		citeRelations.value match {
+			case None => allVerbs.value.clear
+			case Some(crs) => {
+				val verbs:Vector[Cite2Urn] = {
+					crs.relations.map( _.relation ).toVector.distinct
+				}	
+				val verbPairs:Vector[(Cite2Urn, String)] = {
+					ObjectModel.collRep.value match {
+						case None => {
+							verbs.map( v => {
+								val label:String = {
+									v.objectOption match {
+										case Some(o) => o
+										case None => "< nothing specified >"
+									}
+								}	
+								(v, label)
+							}).toVector	
+						}
+						case Some(cr) => {
+							verbs.map( v => {
+								val label:String = {
+									(cr ~~ v) match {
+										case objVec if (objVec.size > 0) => {
+											objVec(0).label	
+										}
+										case _ => { 
+											v.objectOption match {
+												case Some(o) => o
+												case None => "< nothing specified >"
+											}
+										}
+									}
+								}	
+								(v, label)
+							}).toVector
+						}
+					}	
+				}
+				allVerbs.value.clear
+				for (vp <- verbPairs) { 
+					allVerbs.value += vp
+				}
+			}	
+		}		
+	}
 }
