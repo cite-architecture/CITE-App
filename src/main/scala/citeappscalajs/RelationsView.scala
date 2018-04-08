@@ -78,7 +78,7 @@ object RelationsView {
 			<p id="relations_reportingCurrentSearch" class="app_reportingCurrentUrn"> 
 				{ 
 					RelationsModel.urn.bind match {
-						case Some(u) => u.toString
+						case Some(u) => s"${u}"
 						case None => "[ no URN requested ]"
 					} 
 				} 
@@ -90,6 +90,7 @@ object RelationsView {
 						case None => ""
 					}	
 				}
+				{  s" (${RelationsModel.foundRelations.bind.size} relations.)" }
 			</p>
 
 			{ relationsSpace.bind }

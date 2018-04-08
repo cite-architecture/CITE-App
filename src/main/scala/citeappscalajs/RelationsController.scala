@@ -106,6 +106,7 @@ object RelationsController {
 				}
 
 			}
+			//g.console.log(s"found: ${foundRelations.size} out of ${RelationsModel.citeRelations.value.get.size} for ${RelationsModel.urn.value}")	
 			// Let's sort by subject URN
 			val sortedRelations:Vector[CiteTriple] = foundRelations.relations.toVector.sortBy(_.urn1.toString)
 			RelationsModel.foundRelations.value.clear
