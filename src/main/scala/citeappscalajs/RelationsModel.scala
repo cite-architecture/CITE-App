@@ -39,11 +39,35 @@ object RelationsModel {
 	val userMessage = Var("")
 	val userAlert = Var("default")
 
+	case class HistoryItem(search:Urn, filter:Option[Cite2Urn]) {
+		override def toString:String = {
+			filter match {
+				case Some(f) => s"${search} filtered by “${f.objectComponent}”."
+				case None => s"${search}."
+			}
+		}
+	}
+	val searchHistory = Vars.empty[HistoryItem]
+
 	def clearRelations:Unit = {
 		urn.value = None
 		filterVerb.value = None
 		inputBoxUrnStr.value = ""
 		foundRelations.value.clear
+	}
+
+	def updateHistory(hi:HistoryItem):Unit = {
+		val oldHistory:Vector[HistoryItem] = {
+			searchHistory.value.map(s => {
+				s
+			}).toVector
+
+		}
+		val newHistory:Vector[HistoryItem] = Vector(hi) ++ oldHistory
+		searchHistory.value.clear
+		for (i <- newHistory){
+			searchHistory.value += i
+		}
 	}
 
 	def getVerbLabel(u:Cite2Urn):String = {

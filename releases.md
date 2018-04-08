@@ -1,5 +1,7 @@
 # Release notes
 
+**1.9.2**: Search history menu for relations tab.
+
 **1.9.1**: Using CiteRelations 2.0.4.
 
 **1.9.0**: Relations tab.

@@ -92,15 +92,25 @@ object RelationsController {
 		findRelations
 	}
 
+	def findRelations(hi:RelationsModel.HistoryItem):Unit = {
+		RelationsModel.urn.value = Some(hi.search)
+		RelationsModel.filterVerb.value = hi.filter
+		RelationsController.findRelations
+	}
+
 	def findRelations:Unit = {
 		if ((RelationsModel.urn.value != None) && (RelationsModel.citeRelations.value != None)) {
 
 			val foundRelations:CiteRelationSet = {
 				RelationsModel.filterVerb.value match {
 					case Some(fv) => {
+						val historyItem:RelationsModel.HistoryItem = RelationsModel.HistoryItem(RelationsModel.urn.value.get, Some(fv))
+						RelationsModel.updateHistory(historyItem)	
 						RelationsModel.citeRelations.value.get.verb(fv) ~~ RelationsModel.urn.value.get
 					}
 					case _ => {
+						val historyItem:RelationsModel.HistoryItem = RelationsModel.HistoryItem(RelationsModel.urn.value.get, None )
+						RelationsModel.updateHistory(historyItem)	
 						RelationsModel.citeRelations.value.get ~~ RelationsModel.urn.value.get
 					}
 				}

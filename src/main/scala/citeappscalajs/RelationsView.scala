@@ -56,6 +56,7 @@ object RelationsView {
 		<div id="relations_Container">
 
 			<div id="relations_sidebar" class="app_sidebarDiv">
+				{ previousQueryMenu.bind }
 				<h2>Find URNs in Relations</h2>
 				<p id="relations_urnInputP">
 					{ RelationsView.verbFilterSelect.bind }
@@ -193,5 +194,39 @@ object RelationsView {
 			}
 		</select>
 	}
+
+/* Previous Searches */
+@dom
+def previousQueryMenu = {
+	<div id="queryObject_previousMenu"
+	class= { 
+		if (RelationsModel.searchHistory.bind.size < 1) {
+			"dropdown empty" 
+		} else {
+			"dropdown"
+		} 
+	} >
+	<span>History</span>
+	{ RelationsView.previousQueriesMenu.bind }
+	</div>
+}
+
+@dom
+def previousQueriesMenu = {
+	<div class="dropdown-content">
+		{ RelationsView.loadPreviousSearches.bind }
+	</div>
+}
+
+@dom
+def loadPreviousSearches = {
+for (q <- RelationsModel.searchHistory) yield {
+
+				<p onclick={ event: Event => {
+						RelationsController.findRelations(q)
+					}
+				}>{ q.toString }</p>
+			}
+}
 
 }

@@ -905,7 +905,7 @@ div#o2_navButtonContainer_top{
 
 .dropdown-content {
     display: none;
-		font-size: 80%;
+	font-size: 100%;
     position: absolute;
 		left: -1px;
     background-color: #f8f8f8;
