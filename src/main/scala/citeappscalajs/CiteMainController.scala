@@ -119,6 +119,7 @@ object CiteMainController {
 	*/
 	def clearRepositories:Unit = {
 		O2Model.textRepo.value = None
+		NGModel.corpusOrUrn.value = None
 		ObjectModel.collRep.value = None
 		CiteMainModel.mainLibrary.value = None
 		CommentaryModel.clearComments
@@ -195,11 +196,17 @@ object CiteMainController {
 
 			// Relations stuff
 			timeStart = new js.Date().getTime()
+			RelationsModel.clearRelations
 			repo.relationSet match {
 				case Some(rs) => {
 					RelationsModel.citeRelations.value = Some(rs)
+					CiteMainModel.showRelations.value = true
+					RelationsModel.loadAllVerbs
 				}
-				case None => RelationsModel.citeRelations.value = None
+				case None => {
+					RelationsModel.citeRelations.value = None
+					CiteMainModel.showRelations.value = false 
+				}
 			}
 			timeEnd = new js.Date().getTime()
 			g.console.log(s"Initialized CiteRelations in ${(timeEnd - timeStart)/1000} seconds.")

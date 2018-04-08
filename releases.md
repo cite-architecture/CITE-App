@@ -1,5 +1,9 @@
 # Release notes
 
+**1.9.1**: Using CiteRelations 2.0.4.
+
+**1.9.0**: Relations tab.
+
 **1.8.1**: Replace list of cited works with dropdown menu, for O2 view and NGram view.
 
 **1.8.0**: Implemented CiteRelations and the Commentary Datamodel for texts.

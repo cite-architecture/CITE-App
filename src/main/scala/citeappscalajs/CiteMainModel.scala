@@ -45,5 +45,6 @@ object CiteMainModel {
 		val showCollections = Var(true)
 		val showImages = Var(true)
 		val mainLibrary = Var[Option[CiteLibrary]](None)
+		val showRelations = Var(true)
 
 }

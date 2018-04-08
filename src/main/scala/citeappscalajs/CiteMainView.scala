@@ -25,6 +25,7 @@ object CiteMainView {
 	val ngramView = NGView.nGdiv
 	val objectView = ObjectView.objectDiv
 	val imageView = CiteBinaryImageView.imageDiv
+	val relationsView = RelationsView.relationsDiv
 
 
 	def changeTab(tab:String):Unit = {
@@ -112,7 +113,7 @@ object CiteMainView {
 
 	@dom
 	def mainDiv = {
-
+		<div id="main-wrapper">
 		<header>
 			{ filePicker.bind }
 			CITE Environment
@@ -181,12 +182,27 @@ object CiteMainView {
 						</div>
 				</div>
 
+				<div id="app_tab_relations"
+					class={
+							CiteMainModel.showRelations.bind match {
+								case true => "app_visible app_tab"
+								case _ => "app_hidden app_tab"
+							}
+					}>
+					<input type="radio" id="tab-5" name="tab-group-1" checked={ false }/>
+					<label class="tab_label" for="tab-5">Relations</label>
+						<div class="content">
+						 { relationsView.bind }
+						</div>
+				</div>
+
 			</div>
 		</article>
+		 <div class="push"></div>
 		<footer>
 		{ footer.bind }
 		</footer>
-
+	</div>
 	}
 
 
