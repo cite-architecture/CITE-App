@@ -91,7 +91,7 @@ object RelationsView {
 						case None => ""
 					}	
 				}
-				{  s" (${RelationsModel.foundRelations.bind.size} relations.)" }
+				{  s" (${RelationsModel.foundRelations.length.bind} relations.)" }
 			</p>
 
 			{ relationsSpace.bind }
@@ -200,7 +200,7 @@ object RelationsView {
 def previousQueryMenu = {
 	<div id="queryObject_previousMenu"
 	class= { 
-		if (RelationsModel.searchHistory.bind.size < 1) {
+		if (RelationsModel.searchHistory.length.bind < 1) {
 			"dropdown empty" 
 		} else {
 			"dropdown"

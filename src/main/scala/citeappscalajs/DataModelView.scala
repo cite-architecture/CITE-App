@@ -312,7 +312,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 	@dom
 	def mappedDseToTextContainer = {
 		<div id="o2_mappedDseContainer" class={
-				DSEModel.currentListOfDseUrns.bind.size match {
+				DSEModel.currentListOfDseUrns.length.bind match {
 					case s if (s > 0) => "app_visible"
 					case _ => "app_hidden"
 				}	
@@ -325,7 +325,7 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 	@dom
 	def mappedCommentaryToTextContainer = {
 		<div id="o2_mappedCommentContainer" class={
-				CommentaryModel.currentCommentsAll.bind.size match {
+				CommentaryModel.currentCommentsAll.length.bind match {
 					case s if (s > 0) => "app_visible"
 					case _ => "app_hidden"
 				}	

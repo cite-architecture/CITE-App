@@ -490,7 +490,7 @@ def propertyListEnumeration = {
 def previousQueryMenu = {
 	<div id="queryObject_previousMenu"
 	class={
-			{ if ((QueryObjectModel.pastQueries.bind.size < 1) && (ObjectModel.objectHistory.bind.size < 1)) { 
+			{ if ((QueryObjectModel.pastQueries.length.bind < 1) && (ObjectModel.objectHistory.length.bind < 1)) { 
 				"dropdown empty" 
 			} else {
 				"dropdown"

@@ -1,5 +1,7 @@
 # Release notes
 
+**1.9.3**: Resolved all deprecation warnings from Binding.scala; improved display of text-nodes.
+
 **1.9.2**: Search history menu for relations tab.
 
 **1.9.1**: Using CiteRelations 2.0.4.

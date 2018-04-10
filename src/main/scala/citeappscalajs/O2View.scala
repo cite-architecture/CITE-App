@@ -153,7 +153,7 @@ def passageContainer = {
 def previousUrnsMenu = {
 	<div id="o2_urnHistoryMenu"
 	class={
-			if (O2Model.urnHistory.bind.size < 1) {
+			if (O2Model.urnHistory.length.bind < 1) {
 				"dropdown empty" 
 			} else {
 				"dropdown"
@@ -200,8 +200,13 @@ def versionNodes(vCorp:O2Model.BoundCorpus) = {
 				for ( n <- vn.nodes) yield {
 					val checkForLong:String = {
 						n.text.size match {
-							case s if (s > 20) => " long"
-							case _ => ""
+							case s if (s < 20) => {
+								n.urn.exemplarOption match {
+									case Some(eo) => " "
+									case None => " long"
+								}
+							}
+							case _ => " long"
 						}
 					}
 					val inDse = DSEModel.ctsInDse(n.urn)
@@ -293,7 +298,7 @@ def prevButton = {
 def citedWorksMenu = {
 	<div id="o2_citedWorksMenu"
 	class={
-			if (O2Model.citedWorks.bind.size < 1) {
+			if (O2Model.citedWorks.length.bind < 1) {
 				"dropdown empty" 
 			} else {
 				"dropdown"
