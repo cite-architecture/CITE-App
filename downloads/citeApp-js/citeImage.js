@@ -94,6 +94,7 @@ function initOpenSeadragon(imagePath) {
 		id: 'image_zoomContainer',
 		prefixUrl: 'citeApp-js/images/',
 		crossOriginPolicy: "Anonymous",
+      ajaxWithCredentials: false,
 		defaultZoomLevel: 1,
 		tileSources: imagePath,
 		//tileSources: 'http://www.homermultitext.org/iipsrv?DeepZoom=/project/homer/pyramidal/deepzoom/hmt/vaimg/2017a/VA024RN_0025.tif.dzi',
