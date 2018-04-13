@@ -22,6 +22,8 @@ CITE Application is a single web page you can open in a browser. Precompiled ver
 
 **N.b.** In the `downloads` directory there is a `js` directory that CiteApp uses for providing zooming views of binary images, using [OpenSeadragon](https://openseadragon.github.io). 
 
+**Images not working?** You probably need to deal with browser restrictions. See the [Wiki page on this topic](https://github.com/cite-architecture/CITE-App/wiki/Local-File-and-Cross-Domain-Restrictions).
+
 ## Building
 
 CITE Application is targetted for Scala 2.12.You can use normal `sbt` using normal tasks for [ScalaJS projects](https://www.scala-js.org/doc/project/building.html) such as  `sbt fastOptJS` or `sbt fullOptJS`.
