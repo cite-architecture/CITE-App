@@ -30,8 +30,14 @@ object CiteMainController {
 		Initiate app with a URL to an online CEX file	
 	*/
 	@JSExport
-	def main(libUrl: String, localImagePath:String): Unit = {
-
+	def main(libUrl: String, localImagePath:String, serverMode:String): Unit = {
+		CiteMainView.serverMode.value = (serverMode == "true")	
+		CiteBinaryImageModel.imgUseLocal.value = {
+			CiteMainView.serverMode.value match {
+				case true => { false }
+				case _ => { true }
+			}
+		}
 		CiteBinaryImageModel.imgArchivePath.value = localImagePath
 		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
 		val task = Task{ CiteMainController.loadRemoteLibrary(libUrl) }
