@@ -26,6 +26,7 @@ object CiteMainView {
 	val objectView = ObjectView.objectDiv
 	val imageView = CiteBinaryImageView.imageDiv
 	val relationsView = RelationsView.relationsDiv
+	val serverMode = Var(false)
 
 
 	def changeTab(tab:String):Unit = {
@@ -55,8 +56,13 @@ object CiteMainView {
 	@dom
 	def imageLocalRemoteSwitch = {
 			<div id="imageSourceSwitchContainer" class={
-				CiteBinaryImageModel.hasBinaryImages.bind match {
-					case true => "app_visible"
+				CiteMainView.serverMode.value match {
+					case false => {	
+						CiteBinaryImageModel.hasBinaryImages.bind match {
+							case true => "app_visible"
+							case _ => "app_hidden"
+						}
+					}
 					case _ => "app_hidden"
 				}
 			}>

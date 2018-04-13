@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Cite Environment (Development 1.9.3)</title>
+  <title>Cite Environment (Development 1.9.4)</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<link rel="stylesheet" type="text/css" href="application.css">
 </head>
@@ -23,7 +23,8 @@
 		// Where is the folder identified as the image-archive for local images? 
 		// (This will be prefixed to the name of the directory.)
 		var localImagePath = "../../../";
-		citeapp.CiteMainController.main(defaultLibraryUrl, localImagePath);
+		var serverMode = "false";
+		citeapp.CiteMainController.main(defaultLibraryUrl, localImagePath, serverMode);
 </script>
 </body>
 </html>

@@ -2,7 +2,7 @@ enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
 name := "citeapp"
 
-version := "1.9.3"
+version := "1.9.4"
 
 scalaVersion := "2.12.3"
 
@@ -39,6 +39,7 @@ spa := {
 //	val defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/libraries/millionplus.cex"
   val defaultLibraryUrl = "https://raw.githubusercontent.com/Eumaeus/fuCiteDX/master/hdt_papyrus.cex"
   //val defaultLibraryUrl = "https://raw.githubusercontent.com/Eumaeus/fuCiteDX/master/fu-spring2018.cex"
+  val serverMode = false 
 	val defaultLibraryDelimiter = "#"
   val defaultImagePath = "" // Path prefixed to the named directories for local images
 
@@ -56,8 +57,9 @@ spa := {
 	val urlPlaceholder = "DEFAULTLIBRARYURL"
 	val delimiterPlaceholder = "DEFAULTLIBRARYDELIMITER"
   val imagePathPlaceholder = "DEFAULTIMAGEPATH"
+  val serverModePlaceholder = "SERVERMODE"
 
-  val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n").replaceAll(urlPlaceholder,defaultLibraryUrl).replaceAll(delimiterPlaceholder,defaultLibraryDelimiter).replaceAll(imagePathPlaceholder,defaultImagePath)
+  val template2Text = Source.fromFile("src/main/resources/cite-TEMPLATE2.html").getLines.mkString("\n").replaceAll(urlPlaceholder,defaultLibraryUrl).replaceAll(delimiterPlaceholder,defaultLibraryDelimiter).replaceAll(imagePathPlaceholder,defaultImagePath).replaceAll(serverModePlaceholder,serverMode.toString)
   val newFile = "downloads/cite-" + version.value + ".html"
   new PrintWriter(newFile) { write(template1Text + js + template2Text); close }
   println("Runnable single-page app is in " + newFile)
