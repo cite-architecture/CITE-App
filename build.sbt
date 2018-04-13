@@ -39,7 +39,7 @@ spa := {
 //	val defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/libraries/millionplus.cex"
   val defaultLibraryUrl = "https://raw.githubusercontent.com/Eumaeus/fuCiteDX/master/hdt_papyrus.cex"
   //val defaultLibraryUrl = "https://raw.githubusercontent.com/Eumaeus/fuCiteDX/master/fu-spring2018.cex"
-  val serverMode = false 
+  val serverMode = true
 	val defaultLibraryDelimiter = "#"
   val defaultImagePath = "" // Path prefixed to the named directories for local images
 

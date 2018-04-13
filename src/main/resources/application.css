@@ -998,8 +998,11 @@ article {
 
 header, footer {
 	line-height: 1.2em;
-	color: #777;
+	color: ;
 }
+
+header { color: maroon; }
+footer { color: #777; }
 
 footer, .push {
     height: 200px; /* .push must be the same height as .footer */
