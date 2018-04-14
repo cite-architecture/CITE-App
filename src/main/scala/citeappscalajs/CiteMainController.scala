@@ -202,6 +202,7 @@ object CiteMainController {
 
 			// Relations stuff
 			timeStart = new js.Date().getTime()
+			RelationsModel.citeRelations.value = None
 			RelationsModel.clearRelations
 			repo.relationSet match {
 				case Some(rs) => {

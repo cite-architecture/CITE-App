@@ -37,7 +37,7 @@ import java.io.PrintWriter
 spa := {
 
 //	val defaultLibraryUrl = "https://raw.githubusercontent.com/cite-architecture/citedx/master/libraries/millionplus.cex"
-  val defaultLibraryUrl = "https://raw.githubusercontent.com/Eumaeus/fuCiteDX/master/hmt-cwb4.cex"
+  val defaultLibraryUrl = "https://raw.githubusercontent.com/homermultitext/hmt-archive/master/release-candidates/hmt-rc1.cex"
   //val defaultLibraryUrl = "https://raw.githubusercontent.com/Eumaeus/fuCiteDX/master/fu-spring2018.cex"
   val serverMode = true
 	val defaultLibraryDelimiter = "#"
