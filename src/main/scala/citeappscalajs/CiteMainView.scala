@@ -121,6 +121,9 @@ object CiteMainView {
 	def mainDiv = {
 		<div id="main-wrapper">
 		<header>
+			<span id="app_header_cexInfo">
+			{ CiteMainModel.currentLibraryMetadataString.bind }
+			</span>
 			{ filePicker.bind }
 			CITE Environment
 			<span id="app_header_versionInfo">version { BuildInfo.version }</span>

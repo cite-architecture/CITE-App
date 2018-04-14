@@ -536,6 +536,16 @@ a:hover {
 		font-weight: normal;
 }
 
+#app_header_cexInfo{
+	font-size: 50%;
+	line-height: 1.1em;
+	margin-bottom: 0.5em;
+	display: block;
+	color: #777;
+	font-weight: normal;
+	margin-left: 2px;
+}
+
 .app_hidden {
 	display: none;
 	visibility: hidden;
