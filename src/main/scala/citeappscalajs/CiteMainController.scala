@@ -104,6 +104,7 @@ object CiteMainController {
 	  CiteMainModel.showNg.value = false
 	  CiteMainModel.showCollections.value = false
 	  CiteMainModel.showImages.value = false
+	  CiteMainModel.showRelations.value = false
 	}
 
 	/*
