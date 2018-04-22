@@ -1,5 +1,7 @@
 # Release notes
 
+**1.9.5**: Fixed bug in NGram URN reporting; sped it up.
+
 **1.9.4**: Added "server mode" option, which removes the "local/remote" switch for images (using only "remote").
 
 **1.9.3**: Resolved all deprecation warnings from Binding.scala; improved display of text-nodes.
