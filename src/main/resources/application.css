@@ -5,6 +5,10 @@ div#object_objectContainer ul.citeLinks_linksList, ul.citeLinks_linksList {
 	margin-bottom: 4px;
 }
 
+ul.citeLinks_linksList li {
+	list-style-type: none;
+}
+
 li#image_imagePreviewDiv {
 	list-style: none;
 }

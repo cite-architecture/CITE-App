@@ -229,7 +229,7 @@ def versionNodes(vCorp:O2Model.BoundCorpus) = {
 									onclick = { event: Event => {
 										val task = Task{ DataModelController.retrieveObject(None,o) }
 										val future = task.runAsync
-									}}>∞</span>									
+									}}>▴</span>									
 								}	
 							}
 							{

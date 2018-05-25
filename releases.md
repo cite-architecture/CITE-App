@@ -1,5 +1,7 @@
 # Release notes
 
+**1.9.6**: Replaced indicator for DSE records attached to a text passage.
+
 **1.9.5**: Fixed bug in NGram URN reporting; sped it up.
 
 **1.9.4**: Added "server mode" option, which removes the "local/remote" switch for images (using only "remote").

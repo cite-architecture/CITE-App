@@ -59,7 +59,10 @@ object DSEModel {
 						}
 						dseUrns.size match {
 							case 0 => None
-							case _ => Some(dseUrns)
+							case _ => {
+								//g.console.log(s"Mapped to this image: ${dseUrns.size}")
+								Some(dseUrns)
+							}
 						}
 					}
 				}
@@ -90,7 +93,10 @@ object DSEModel {
 						}
 						dseUrns.size match {
 							case 0 => None
-							case _ => Some(dseUrns)
+							case _ => {
+								g.console.log(s"Mapped to this text: ${dseUrns.size}")
+								Some(dseUrns)
+							}
 						}
 					}
 				}
