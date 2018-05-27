@@ -40,6 +40,10 @@ ul#relations_relationsList {
 	list-style-type: decimal;
 }
 
+#nrelations_verbFilterSelect {
+	max-width: 90%;
+}
+
 li.relations_listItem {
 	font-size: 85%;
 	margin-bottom: 1.5em;
