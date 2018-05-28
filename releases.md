@@ -1,5 +1,7 @@
 # Release notes
 
+**1.9.8**: Accurately reporting the presence of a given text in the repository.
+
 **1.9.7**: Sped up text retrieval when there are thousands of commentary relations. 
 
 **1.9.6**: Replaced indicator for DSE records attached to a text passage.
