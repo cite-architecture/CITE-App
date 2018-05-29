@@ -35,6 +35,7 @@ def objectLinks(contextUrn:Option[Cite2Urn], propVal:Cite2Urn) = {
 				{ DataModelView.objectLinkItem(contextUrn, propVal).bind }
 				{ DataModelView.imageLinkItem(contextUrn, propVal).bind }
 				{ DataModelView.dseLinkItem(contextUrn, propVal).bind }
+				{ DataModelView.relationsLinkItem(contextUrn, propVal).bind }
 			</ul>
 		}
 		case None => { 
@@ -213,6 +214,19 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 			}
 			case None => { <!-- empty content --> }
 		}
+	}
+
+	@dom
+	def relationsLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn) = {
+		<span class="citeLinks_linkSpan"> 
+			<a onclick={ event: Event => {
+					js.Dynamic.global.document.getElementById("relations_urnInput").value = propVal.toString
+					CiteMainView.changeTab("relations")
+					RelationsController.changeUrn(s"${propVal.toString}")
+				}
+			}>Find in Relations</a>
+			
+		</span>
 	}
 
 	@dom

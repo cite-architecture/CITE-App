@@ -1,5 +1,7 @@
 # Release notes
 
+**1.10.0**: Adding link to look up any object, or Cite2Urn propert-value in Relations.
+
 **1.9.8**: Accurately reporting the presence of a given text in the repository.
 
 **1.9.7**: Sped up text retrieval when there are thousands of commentary relations. 

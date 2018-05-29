@@ -34,6 +34,7 @@ object CiteMainView {
 			case "text" => js.Dynamic.global.document.getElementById("tab-1").checked = true
 			case "object" => js.Dynamic.global.document.getElementById("tab-3").checked = true
 			case "image" => js.Dynamic.global.document.getElementById("tab-4").checked = true
+			case "relations" => js.Dynamic.global.document.getElementById("tab-5").checked = true
 		}
 	}
 
