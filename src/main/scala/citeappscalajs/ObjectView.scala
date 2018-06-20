@@ -389,15 +389,23 @@ def objectCollectionsContainer = {
 /* General-use functions for making clickable URNs */
 @dom
 def collectionUrnSpan(urn:Cite2Urn) = {
-	<span
+	<a
 	class="app_clickable"
 	onclick={ event: Event => {
+		val mouseEvent = event.asInstanceOf[MouseEvent]
+		if (mouseEvent.metaKey){
+			true
+		} else {
 			ObjectController.insertFirstObjectUrn(urn) 
 			ObjectModel.clearObject
+			false
 		}
-	}>
+	}
+	}
+	href={ s"?urn=${urn}"}	
+	>
 	{ urn.toString }
-	</span>
+	</a>
 }
 
 /* For URN properties in objects */

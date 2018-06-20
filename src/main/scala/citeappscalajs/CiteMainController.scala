@@ -287,7 +287,7 @@ object CiteMainController {
 							val decryptedUrn:Option[Urn] = {
 								parts(1).take(8) match {
 									case ("urn:cts:") => Some(CtsUrn(decryptedString))
-									case ("urn:cite") => Some(Cite2Urn(decryptedString))
+									case ("urn:cite") => Some(Cite2Urn(decryptedString).dropProperty)
 									case _ => {
 										None
 									}

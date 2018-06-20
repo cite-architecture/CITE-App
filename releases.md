@@ -1,5 +1,7 @@
 # Release notes
 
+**1.11.0**: Implemented Alt-click on Text and Object links to open a new instance of the browser, with the selected URN displayed.
+
 **1.10.0**: Adding link to look up any object, or Cite2Urn propert-value in Relations.
 
 **1.9.8**: Accurately reporting the presence of a given text in the repository.
