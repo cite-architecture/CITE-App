@@ -153,14 +153,21 @@ def workUrnSpan(urn:CtsUrn, s:String) = {
 
 @dom
 def passageUrnSpan(urn:CtsUrn, s:String) = {
-	<span
+	<a
 	class="app_clickable app_urn"
 	onclick={ event: Event => {
+		val mouseEvent = event.asInstanceOf[MouseEvent]
+		if (mouseEvent.metaKey){
+			true
+		} else {
 			DataModelController.retrieveTextPassage(None, urn)
+			false
 		}
-	}>
+	}
+	}
+	href={ s"?urn=${urn}" }>
 	{ s }
-	</span>
+	</a>
 }
 
 	// HTML Div: main div for text work

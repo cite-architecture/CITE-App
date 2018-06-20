@@ -113,8 +113,16 @@ object CiteBinaryImageView {
 						<li>
 							<a
 								onclick={ event: Event => {
-								DataModelController.retrieveObject(None,ic) }
-								}> { s"${ic}" } </a>
+									val mouseEvent = event.asInstanceOf[MouseEvent]
+									if (mouseEvent.metaKey){
+										true
+									} else {
+										DataModelController.retrieveObject(None,ic) 
+										false
+									}
+								} }
+								href={ s"?urn=${ic}"}	
+								> { s"${ic}" } </a>
 							<br/>
 								{ ObjectController.labelForCollection(ic) }
 							</li>

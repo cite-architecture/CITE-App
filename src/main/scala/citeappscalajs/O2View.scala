@@ -347,14 +347,21 @@ def passageUrnSpan(urn:CtsUrn, s:String) = {
 	<span>
 	{ s }
 	</span>
-	<span
+	<a
 	class="app_clickable"
 	onclick={ event: Event => {
+			val mouseEvent = event.asInstanceOf[MouseEvent]
+			if (mouseEvent.metaKey){
+				true
+			} else {
 				O2Controller.changeUrn(urn)
+				false
+			}
 		}
-	}>
+	}
+	href = { s"?urn=${urn}" } >
 	{ urn.toString}
-	</span>
+	</a>
 }
 
 
