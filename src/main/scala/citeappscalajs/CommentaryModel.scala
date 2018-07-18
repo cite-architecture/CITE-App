@@ -42,7 +42,7 @@ object CommentaryModel {
 		DataModelController.hasCommentaryModel match {
 			case false => Vars.empty[Urn]	
 			case _ => {
-				val relevantComments:Vector[CiteComment] = currentCommentsAll.value.filter(_.text.asInstanceOf[CtsUrn] == urn).toVector
+				val relevantComments:Vector[CiteComment] = currentCommentsAll.value.filter(_.text.asInstanceOf[CtsUrn] >= urn).toVector
 				val v = Vars.empty[Urn]	
 				for (c <- relevantComments) {
 					v.value += c.comment
@@ -65,26 +65,49 @@ object CommentaryModel {
 			case s if (s > 0) => {
 				val twiddledComments:Vector[CiteComment] = {
 					commentList.value.filter( c => {
-						c.text match {
-							case CtsUrn(_) => {
-								//((corp ~~ c.text.asInstanceOf[CtsUrn]).size > 0)	
-								//(corp.nodes.filter(_.urn == c.text.asInstanceOf[CtsUrn]).size > 0)
-								val curn:CtsUrn = c.text.asInstanceOf[CtsUrn]
-								/*
-								val curn:CtsUrn = {
-									if (tempUrn.isRange){ 
-										CtsUrn(s"${tempUrn.dropPassage}${tempUrn.rangeBegin}")
-									} else {
-										tempUrn
+						val textMatch:Boolean = {
+							c.text match {
+								case CtsUrn(_) => {
+									//((corp ~~ c.text.asInstanceOf[CtsUrn]).size > 0)	
+									//(corp.nodes.filter(_.urn == c.text.asInstanceOf[CtsUrn]).size > 0)
+									val curn:CtsUrn = c.text.asInstanceOf[CtsUrn]
+									/*
+									val curn:CtsUrn = {
+										if (tempUrn.isRange){ 
+											CtsUrn(s"${tempUrn.dropPassage}${tempUrn.rangeBegin}")
+										} else {
+											tempUrn
+										}
 									}
+									*/
+									(corp.nodes.view.filter(_.urn == curn).size > 0)
+
+
 								}
-								*/
-								(corp.nodes.view.filter(_.urn == curn).size > 0)
-
-
+								case _ => false
 							}
-							case _ => false
 						}
+						val commentMatch:Boolean = {
+							c.comment match {
+								case CtsUrn(_) => {
+									//((corp ~~ c.text.asInstanceOf[CtsUrn]).size > 0)	
+									//(corp.nodes.filter(_.urn == c.text.asInstanceOf[CtsUrn]).size > 0)
+									val curn:CtsUrn = c.comment.asInstanceOf[CtsUrn]
+									/*
+									val curn:CtsUrn = {
+										if (tempUrn.isRange){ 
+											CtsUrn(s"${tempUrn.dropPassage}${tempUrn.rangeBegin}")
+										} else {
+											tempUrn
+										}
+									}
+									*/
+									(corp.nodes.view.filter(_.urn == curn).size > 0)
+								}
+								case _ => false
+							}
+						}
+						(textMatch || commentMatch)
 					}).toVector
 				}
 				// If any of the twiddledComments were ranges, let's expand those…

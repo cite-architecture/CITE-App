@@ -1,5 +1,7 @@
 # Release notes
 
+**1.12.0**: Commentaries now point two ways, and are more clearly identified.
+
 **1.11.0**: Implemented Alt-click on Text and Object links to open a new instance of the browser, with the selected URN displayed.
 
 **1.10.0**: Adding link to look up any object, or Cite2Urn propert-value in Relations.

@@ -394,21 +394,68 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 	}
 
 	@dom
+	def commentaryTextLinkItem(u:CtsUrn) = {
+		<a
+			onclick={ event: Event => {
+				val mouseEvent = event.asInstanceOf[MouseEvent]
+				if (mouseEvent.metaKey){
+					true
+				} else {
+					DataModelController.retrieveTextPassage(None, u)
+					false
+				}
+			}}
+			href={ s"?urn=${u}" }
+			>
+			{u.toString}
+		</a>
+	}
+
+	@dom
+	def commentaryObjectLinkItem(urn:Cite2Urn) = {
+		<a onclick={ event: Event => {
+				val mouseEvent = event.asInstanceOf[MouseEvent]
+				if (mouseEvent.metaKey){
+					true
+				} else {
+					DataModelController.retrieveObject(None,urn)
+					false
+				}
+			}
+		} 
+		href={ s"?urn=${urn}" }
+		> { urn.toString }</a>
+	}
+
+	@dom
+	def commentaryLinkItem(c:CommentaryModel.CiteComment) = {
+		<li>
+			{
+				c.comment match {
+					case CtsUrn(_) => commentaryTextLinkItem(c.comment.asInstanceOf[CtsUrn]).bind
+					case _ => commentaryObjectLinkItem(c.comment.asInstanceOf[Cite2Urn]).bind
+				}	
+			}	
+			"comments on"
+			{
+				c.text match {
+					case CtsUrn(_) => commentaryTextLinkItem(c.text.asInstanceOf[CtsUrn]).bind
+					case _ => commentaryObjectLinkItem(c.text.asInstanceOf[Cite2Urn]).bind
+				}	
+			}	
+
+		</li>
+	}
+
+
+	@dom
 	def commentaryPassages = {
 		O2Model.currentNumberOfCitableNodes.bind match {
 			case 0 => { <p>None</p> }
 			case _ => {  
 				<ul>{ 
 					for (c <- CommentaryModel.currentCommentsDistinctComments) yield {
-						c.comment match {
-							case CtsUrn(_) =>{
-								{ DataModelView.textLinkItem(None, c.comment.asInstanceOf[CtsUrn] ).bind }
-							}
-							case _ => {
-								{ DataModelView.objectLinkItem(None, c.comment.asInstanceOf[Cite2Urn], true).bind }
-							}
-
-						}
+						commentaryLinkItem(c).bind
 					}
 				} </ul>
 			}
