@@ -40,8 +40,8 @@ object CiteMainController {
 		}
 		CiteBinaryImageModel.imgArchivePath.value = localImagePath
 		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
-		val task = Task{ CiteMainController.loadRemoteLibrary(libUrl) }
-		val future = task.runAsync
+		//val task = Task{ CiteMainController.loadRemoteLibrary(libUrl) }
+		//val future = task.runAsync
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
@@ -141,12 +141,12 @@ object CiteMainController {
 		hideTabs
 		clearRepositories
 
-		
 
 		try {
 			// Set up repo 
 			var timeStart = new js.Date().getTime()
 			val wholeTimeStart = timeStart
+			g.console.log("about to read cex")
 			val repo:CiteLibrary = CiteLibrary(cexString, CiteMainModel.cexMainDelimiter, CiteMainModel.cexSecondaryDelimiter)
 			var timeEnd = new js.Date().getTime()
 			g.console.log("==========================")

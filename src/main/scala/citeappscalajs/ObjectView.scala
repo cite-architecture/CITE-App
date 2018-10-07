@@ -289,6 +289,9 @@ def propertyLabelFromPropertyUrn(urn:Cite2Urn) = {
 				<p>{ ObjectView.renderCiteUrnProperty(Some(p.urn.value),Cite2Urn(p.propertyValue.value)).bind }</p>
 				}
 			case CtsUrnType =>{ <p>{ DataModelView.textLinks(contextUrn, CtsUrn(p.propertyValue.value)).bind }</p>}
+			case StringType => {
+				<p>{ ExtendedTextPropertyView.extendedTextLinks(contextUrn,p).bind}</p>
+			}
 			case _ =>{ 
 				<p>{ s"${p.propertyValue.bind.toString}"}</p>
 			}
