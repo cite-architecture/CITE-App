@@ -4,6 +4,7 @@
   <title>Cite Environment (Development 1.11.0)</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<link rel="stylesheet" type="text/css" href="application.css">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="crossorigin=""/>
 </head>
 <body>
 
@@ -12,7 +13,9 @@
 <script type="text/javascript" src="citeApp-js/openseadragon-guides.js"></script>
 <script type="text/javascript" src="citeApp-js/marked.min.js"></script>
 <script type="text/javascript" src="citeApp-js/textExtensions.js"></script>
-
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+   crossorigin=""></script>
 <script type="text/javascript" src="../citeapp-fastopt.js"></script>
 <script>
 		//var defaultLibraryUrl = "https://raw.githubusercontent.com/eumaeus/fucitedx/master/hdt_papyrus.cex"

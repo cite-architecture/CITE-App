@@ -1,4 +1,10 @@
 /* CiteLinks */
+
+.leafletMap {
+	height: 180px;
+	border: 1px solid silver;
+}
+
 div#object_objectContainer ul.citeLinks_linksList, ul.citeLinks_linksList {
 	display: block;
 	margin-top: 4px;
