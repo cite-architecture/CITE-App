@@ -89,7 +89,6 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 @dom
 	def objectLinkItem(contextUrn:Option[Cite2Urn],propVal:Cite2Urn,labeled:Boolean = false, idString:String = "", groupId:String = "") = {
 		val tempUrn:Cite2Urn = propVal.dropExtensions.dropProperty
-g.console.log(s"tempUrn == ${tempUrn}")
 		val roiGroupClass:String = {
 			groupId match {
 				case s if (s == "") => ""

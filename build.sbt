@@ -20,6 +20,7 @@ libraryDependencies ++= Seq(
   "edu.holycross.shot" %%% "citeobj" % "7.0.1",
   "edu.holycross.shot" %%% "citerelations" % "2.2.0",
   "edu.holycross.shot" %%% "citebinaryimage" % "1.1.2",
+  "com.github.karasiq" %%% "scalajs-marked" % "1.0.2",
   "com.thoughtworks.binding" %%% "dom" % "latest.version"
 )
 

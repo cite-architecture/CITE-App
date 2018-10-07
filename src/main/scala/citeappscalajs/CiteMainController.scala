@@ -40,8 +40,8 @@ object CiteMainController {
 		}
 		CiteBinaryImageModel.imgArchivePath.value = localImagePath
 		CiteMainController.updateUserMessage("Loading default library. Please be patient…",1)
-		//val task = Task{ CiteMainController.loadRemoteLibrary(libUrl) }
-		//val future = task.runAsync
+		val task = Task{ CiteMainController.loadRemoteLibrary(libUrl) }
+		val future = task.runAsync
 
 		dom.render(document.body, CiteMainView.mainDiv)
 	}
