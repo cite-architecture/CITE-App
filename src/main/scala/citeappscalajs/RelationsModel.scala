@@ -50,7 +50,6 @@ object RelationsModel {
 	val searchHistory = Vars.empty[HistoryItem]
 
 	def clearRelations:Unit = {
-		g.console.log("clearing relations")
 		urn.value = None
 		filterVerb.value = None
 		inputBoxUrnStr.value = ""
