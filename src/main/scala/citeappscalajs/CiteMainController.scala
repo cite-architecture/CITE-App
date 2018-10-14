@@ -129,7 +129,9 @@ object CiteMainController {
 		NGModel.corpusOrUrn.value = None
 		ObjectModel.collRep.value = None
 		CiteMainModel.mainLibrary.value = None
-		CommentaryModel.clearComments
+		CommentaryModel.clearAllComments
+		DataModelController.clearDataModels
+		RelationsModel.clearRelations
 	}
 
 
@@ -137,7 +139,6 @@ object CiteMainController {
 	// *** Apropos Microservice ***
 	@dom
 	def updateRepository(cexString: String) = {
-
 		hideTabs
 		clearRepositories
 
@@ -146,7 +147,6 @@ object CiteMainController {
 			// Set up repo 
 			var timeStart = new js.Date().getTime()
 			val wholeTimeStart = timeStart
-			g.console.log("about to read cex")
 			val repo:CiteLibrary = CiteLibrary(cexString, CiteMainModel.cexMainDelimiter, CiteMainModel.cexSecondaryDelimiter)
 			var timeEnd = new js.Date().getTime()
 			g.console.log("==========================")
