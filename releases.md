@@ -1,5 +1,9 @@
 # Release notes
 
+**1.13.1**: Improved handling of commenting for notional URNs.
+
+**1.13.0**: Implementing ExtendedStringPropertyTypes: markdown, geojson, Pleiades-URI, lat/long, tei-xml.
+
 **1.12.0**: Commentaries now point two ways, and are more clearly identified.
 
 **1.11.0**: Implemented Alt-click on Text and Object links to open a new instance of the browser, with the selected URN displayed.

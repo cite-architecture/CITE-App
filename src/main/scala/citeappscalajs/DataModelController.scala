@@ -116,6 +116,66 @@ object DataModelController {
 		}
 	}	
 
+	/*
+	Given a Cite2Urn, see if it identifies a property that is of type 'text' and is
+	extended by a published protocol
+	*/
+	// Returns None, or the type of extension
+	def textPropertyIsExtended(propUrn:Cite2Urn):Option[String] = {
+		try {
+			val extensionModel:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:extensions_text")
+			if ( DataModelModel.implementedDataModels.contains(extensionModel) ) {
+				propUrn.propertyOption match {
+					case Some(po) => {
+						CiteMainModel.mainLibrary.value match {
+							case Some(dms) => {
+								val extendedPropColls:Vector[Cite2Urn] = dms.collectionsForModel(extensionModel)
+								/* for each in extendedPropColls	
+									filter collection for @propertyurn	
+								*/
+								val implementingObjects:Vector[CiteObject] = {
+									// get all objects in collection of extensions
+									val allExtendedObjs:Vector[CiteObject] = extendedPropColls.view.map(c => ObjectModel.collRep.value.get.citableObjects.filter(_.urn ~~ c)).toVector.flatten		 
+									val matchingObjs:Vector[CiteObject] = allExtendedObjs.filter( ob => {
+										val thisPropUrn:Cite2Urn = propertyUrnFromPropertyName(ob.urn, "propertyurn")
+										val propVal = {
+											ob.propertyValue(thisPropUrn).asInstanceOf[Cite2Urn].objectOption match {
+												case Some(oo) => {
+													ob.propertyValue(thisPropUrn) == propUrn
+												}
+												case None => {
+													ob.propertyValue(thisPropUrn) == propUrn.dropSelector
+												}
+											}
+										}
+										propVal
+									})
+									matchingObjs
+								}
+								implementingObjects.size match {
+									case n if (n > 0) => {
+										// if there is more than one, there is bad data, but we'll just return the first one.
+										val thisObj:CiteObject = implementingObjects(0)
+										val thisPropUrn:Cite2Urn = propertyUrnFromPropertyName(thisObj.urn, "extendedtype")
+										val extType:String = thisObj.propertyValue(thisPropUrn).asInstanceOf[String]
+										Some(extType)
+									}
+									case _ => None
+								}	
+							}
+							case None => None
+						}
+					}
+					case None => None
+				}
+			} else {
+				None
+			}
+		} catch {
+			case e:Exception => Some("")
+		}
+	}
+
 	/* Check to see if the Commentary datamodel is present */
 	def hasCommentaryModel:Boolean = {
 		val commUrn:Cite2Urn = CommentaryModel.commentaryModel	

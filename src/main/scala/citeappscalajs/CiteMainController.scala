@@ -129,7 +129,9 @@ object CiteMainController {
 		NGModel.corpusOrUrn.value = None
 		ObjectModel.collRep.value = None
 		CiteMainModel.mainLibrary.value = None
-		CommentaryModel.clearComments
+		CommentaryModel.clearAllComments
+		DataModelController.clearDataModels
+		RelationsModel.clearRelations
 	}
 
 
@@ -137,11 +139,9 @@ object CiteMainController {
 	// *** Apropos Microservice ***
 	@dom
 	def updateRepository(cexString: String) = {
-
 		hideTabs
 		clearRepositories
 
-		
 
 		try {
 			// Set up repo 

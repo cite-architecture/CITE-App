@@ -124,8 +124,8 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 			case _ => {
 				// need to see if it is a collection or range
 				var isBrowsable:Boolean = {
-					( propVal.isRange ) || 
-					( propVal.objectComponentOption == None)
+					( propVal.dropProperty.isRange ) || 
+					( propVal.dropProperty.objectComponentOption == None)
 				}
 				isBrowsable match {
 					case false => {
@@ -135,8 +135,9 @@ def textLinkItem(contextUrn:Option[Cite2Urn], u:CtsUrn, idString:String = "", gr
 						}
 					}
 					case _ => {
+
 						val coll:Option[CiteCollectionDef] = {
-							ObjectModel.collRep.value.get.catalog.collection(propVal)
+							ObjectModel.collRep.value.get.catalog.collection(propVal.dropProperty)
 						}
 						coll match {
 							case Some(c) => {

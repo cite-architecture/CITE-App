@@ -52,14 +52,19 @@ object CommentaryModel {
 		}
 	}
 
+def clearAllComments:Unit = {
+		commentList.value.clear
+		currentCommentsAll.value.clear
+		currentCommentsDistinctComments.value.clear
+	}
 
-	def clearComments:Unit = {
+	def clearPassageComments:Unit = {
 		currentCommentsAll.value.clear
 		currentCommentsDistinctComments.value.clear
 	}
 
 	def updateCurrentListOfComments(corp:Corpus):Unit = {
-		clearComments	
+		clearPassageComments	
 		//val corpUrns:Vector[CtsUrn] = corp.urns
 		commentList.value.size match {
 			case s if (s > 0) => {
@@ -80,7 +85,7 @@ object CommentaryModel {
 										}
 									}
 									*/
-									(corp.nodes.view.filter(_.urn == curn).size > 0)
+									(corp.nodes.view.filter(_.urn <= curn).size > 0)
 
 
 								}
@@ -116,6 +121,10 @@ object CommentaryModel {
 						c.text.asInstanceOf[CtsUrn].isRange
 					}).toVector
 				}
+
+
+
+
 				val expandedRangeComments:Vector[CiteComment] = {
 					(
 					for (rc <- rangeComments) yield {
@@ -130,16 +139,72 @@ object CommentaryModel {
 						c.text.asInstanceOf[CtsUrn].isRange == false
 					}).toVector
 				}
+				
 				// And we concatenate those, and eliminate dups
 				val finalCurrentComments:Vector[CiteComment] = {
 						(nonRangeComments ++ expandedRangeComments).distinct.toVector
 				}
-				for (c <- finalCurrentComments){
-					currentCommentsAll.value += c
+
+
+				// If any comment is a Cite2Urn at the notional level, get it…
+				val notionalCollComments:Vector[CiteComment] = {
+					finalCurrentComments.filter( c => {
+						c.comment match {
+							case Cite2Urn(_) => {
+								val u:Cite2Urn = c.comment.asInstanceOf[Cite2Urn]
+								u.versionOption match {
+									case Some(v) => false
+									case None => true
+								}
+							}
+							case _ => false
+						}
+					}).distinct
+				}
+
+				// …now let's see if we can find some versions for that…
+				val versionedNotionalCommentUrns:Vector[CiteComment] = {
+					ObjectModel.collRep.value match {
+						case Some(cr) => {
+							// for each notionalCollComment, find all real urns
+							notionalCollComments.map(ncc => {
+								val realUrns:Vector[Cite2Urn] = cr.citableObjects.view.filter(_.urn ~~ ncc.comment).map(_.urn).toVector
+								val newComments:Vector[CiteComment] = realUrns.map(ru => {
+									CiteComment(ru,ncc.text)	
+								})
+								newComments
+							}).flatten
+						}
+						case None => Vector()
+					}
+				}
+
+				val reallyFinalCurrentComments:Vector[CiteComment] = finalCurrentComments ++ versionedNotionalCommentUrns
+
+				//g.console.log(s"really final = ${reallyFinalCurrentComments}")
+
+				// And we concatenate while removing unversioned comments
+				for (c <- reallyFinalCurrentComments){
+					c.comment match {
+						case CtsUrn(_) => currentCommentsAll.value += c
+						case Cite2Urn(_) => {
+							if (c.comment.asInstanceOf[Cite2Urn].versionOption != None) currentCommentsAll.value += c
+						}
+						case _ => // do nothing
+					}
 				}
 
 				// And let's get a version that just has unique comments, for the sidebar
-				val uniquedComments:Vector[CiteComment] = finalCurrentComments.groupBy(_.comment).map(_._2.head).toVector
+				val uniquedComments:Vector[CiteComment] = reallyFinalCurrentComments.filter(cc => {
+					cc.comment match {
+						case CtsUrn(_) => true
+						case Cite2Urn(_) => {
+							cc.comment.asInstanceOf[Cite2Urn].versionOption != None
+						}
+						case _ => false
+
+					}
+				}).groupBy(_.comment).map(_._2.head).toVector
 				// And why not group by work/collection, while we're at it… the list isn't going to be long
 				val map1:Vector[Tuple2[String,CiteComment]] = uniquedComments.map(c => {
 					val mapString:String = {

@@ -1,4 +1,10 @@
 /* CiteLinks */
+
+.leafletMap {
+	height: 180px;
+	border: 1px solid silver;
+}
+
 div#object_objectContainer ul.citeLinks_linksList, ul.citeLinks_linksList {
 	display: block;
 	margin-top: 4px;
@@ -1318,11 +1324,19 @@ column-gap: 30px;
 
 
 
-/* Text Formatting */
+/* Text Formatting and TEI stuff */
 
 div.p {
 	display: block;
 	padding-bottom: 0.5em;
+}
+
+lemma {
+	font-weight: bold;
+}
+
+foreign[rend="ital"] {
+	font-style: italic;
 }
 
 unclear {
