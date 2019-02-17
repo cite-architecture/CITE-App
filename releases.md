@@ -1,5 +1,7 @@
 # Release notes
 
+**1.13.2**: Updated CITE libraries.
+
 **1.13.1**: Improved handling of commenting for notional URNs.
 
 **1.13.0**: Implementing ExtendedStringPropertyTypes: markdown, geojson, Pleiades-URI, lat/long, tei-xml.
