@@ -19,7 +19,7 @@ import js.annotation._
 import monix.execution.Scheduler.Implicits.global
 import monix.eval._
 
-@JSExportTopLevel("citeapp.O2View")
+@JSExportTopLevel("O2View")
 object O2View {
 
 
@@ -202,8 +202,8 @@ def versionNodes(vCorp:O2Model.BoundCorpus) = {
 						n.text.size match {
 							case s if (s < 20) => {
 								n.urn.exemplarOption match {
-									case Some(eo) => " "
-									case None => " long"
+									case Some(eo) => " short"
+									case None => " short"
 								}
 							}
 							case _ => " long"

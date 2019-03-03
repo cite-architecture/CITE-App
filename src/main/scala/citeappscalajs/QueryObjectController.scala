@@ -17,7 +17,7 @@ import scala.scalajs.js.annotation.JSExport
 import js.annotation._
 
 
-@JSExportTopLevel("citeapp.QueryObjectController")
+@JSExportTopLevel("QueryObjectController")
 object QueryObjectController {
 
 	def isValidSearch:Unit = {

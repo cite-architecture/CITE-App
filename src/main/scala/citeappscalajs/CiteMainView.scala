@@ -18,7 +18,7 @@ import scala.scalajs.js.annotation.JSExport
 import js.annotation._
 
 
-@JSExportTopLevel("citeapp.CiteMainView")
+@JSExportTopLevel("CiteMainView")
 object CiteMainView {
 
 	val textView = O2View.o2div

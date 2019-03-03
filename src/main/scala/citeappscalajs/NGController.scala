@@ -15,7 +15,7 @@ import edu.holycross.shot.citeobj._
 import scala.scalajs.js.annotation.JSExport
 import js.annotation._
 
-@JSExportTopLevel("citeapp.NGController")
+@JSExportTopLevel("NGController")
 object NGController {
 
 

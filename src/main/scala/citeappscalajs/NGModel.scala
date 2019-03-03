@@ -15,7 +15,7 @@ import scala.scalajs.js.Dynamic.{ global => g }
 import scala.scalajs.js.annotation.JSExport
 import js.annotation._
 
-@JSExportTopLevel("citeapp.NGModel")
+@JSExportTopLevel("NGModel")
 object NGModel {
 
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null

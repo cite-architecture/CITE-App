@@ -23,7 +23,7 @@ import monix.eval._
 
 import scala.scalajs.js.annotation.JSExport
 
-@JSExportTopLevel("citeapp.DataModelModel")
+@JSExportTopLevel("DataModelModel")
 object DataModelModel {
 
 	var implementedDataModels:Vector[Cite2Urn] = Vector(

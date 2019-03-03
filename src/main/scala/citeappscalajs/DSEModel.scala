@@ -23,7 +23,7 @@ import monix.eval._
 
 import scala.scalajs.js.annotation.JSExport
 
-@JSExportTopLevel("citeapp.DSEModel")
+@JSExportTopLevel("DSEModel")
 object DSEModel {
 
 	val dseModelUrn:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:dse")

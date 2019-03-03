@@ -18,7 +18,7 @@ import scala.concurrent._
 import monix.execution.Scheduler.Implicits.global
 import monix.eval._
 
-@JSExportTopLevel("citeapp.QueryObjectView")
+@JSExportTopLevel("QueryObjectView")
 object QueryObjectView {
 
 	@dom

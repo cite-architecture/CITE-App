@@ -24,7 +24,7 @@ import monix.eval._
 
 import scala.scalajs.js.annotation.JSExport
 
-@JSExportTopLevel("citeapp.RelationsView")
+@JSExportTopLevel("RelationsView")
 object RelationsView {
 
 	@dom

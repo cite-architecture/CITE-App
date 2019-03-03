@@ -1,5 +1,7 @@
 # Release notes
 
+**1.13.3**: Using OHCO2 10.12.3, for improved performance.
+
 **1.13.2**: Updated CITE libraries.
 
 **1.13.1**: Improved handling of commenting for notional URNs.

@@ -19,7 +19,7 @@ import edu.holycross.shot.citebinaryimage._
 
 import scala.scalajs.js.annotation.JSExport
 
-@JSExportTopLevel("citeapp.CiteBinaryImageController")
+@JSExportTopLevel("CiteBinaryImageController")
 object CiteBinaryImageController {
 
 	

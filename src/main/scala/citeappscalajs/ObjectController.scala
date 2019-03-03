@@ -21,7 +21,7 @@ import monix.eval._
 
 import scala.scalajs.js.annotation.JSExport
 
-@JSExportTopLevel("citeapp.ObjectController")
+@JSExportTopLevel("ObjectController")
 object ObjectController {
 
 

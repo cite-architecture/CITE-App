@@ -17,7 +17,7 @@ import scala.collection.immutable.SortedMap
 import scala.scalajs.js.annotation.JSExport
 import js.annotation._
 
-@JSExportTopLevel("citeapp.O2Model")
+@JSExportTopLevel("O2Model")
 object O2Model {
 
 	var msgTimer:scala.scalajs.js.timers.SetTimeoutHandle = null

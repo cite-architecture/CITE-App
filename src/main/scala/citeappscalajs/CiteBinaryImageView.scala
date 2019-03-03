@@ -20,7 +20,7 @@ import monix.eval._
 import scala.scalajs.js.annotation.JSExport
 import js.annotation._
 
-@JSExportTopLevel("citeapp.ImageView")
+@JSExportTopLevel("ImageView")
 object CiteBinaryImageView {
 
 	val roiGroupClassPrefix:String = "image_roiGroup_"

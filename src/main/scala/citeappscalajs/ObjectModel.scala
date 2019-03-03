@@ -18,7 +18,7 @@ import edu.holycross.shot.citeobj._
 import scala.scalajs.js.annotation.JSExport
 import js.annotation._
 
-@JSExportTopLevel("citeapp.ObjectModel")
+@JSExportTopLevel("ObjectModel")
 object ObjectModel {
 
 	// Messages
