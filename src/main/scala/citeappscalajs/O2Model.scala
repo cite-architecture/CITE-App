@@ -91,10 +91,7 @@ object O2Model {
 
 	def collapseToWorkUrn(urn:CtsUrn):CtsUrn = {
 		val s = {
-			urn.passageComponentOption match {
-				case Some(pc) => s"urn:cts:${urn.namespace}:${urn.textGroup}.${urn.work}:${pc}"
-				case None => s"urn:cts:${urn.namespace}:${urn.textGroup}.${urn.work}:"
-			}
+				s"urn:cts:${urn.namespace}:${urn.textGroup}.${urn.work}:${urn.passageComponent}"
 		}
 		val u = CtsUrn(s)
 		u
@@ -125,10 +122,7 @@ object O2Model {
 				for (tc <- tempCorpusVector) {
 					val versionLabel:String = O2Model.textRepo.value.get.catalog.label(tc._1)		
 					val passageString:String = {
-						u.passageComponentOption match {
-							case Some(s) => s
-							case None => ""
-						}
+						u.passageComponent
 					}
 // in correct order to this point				
 					val boundVersionLabel = Var(versionLabel)
@@ -213,11 +207,11 @@ object O2Model {
 		try {
 			val urn = u.dropSubref
 			if (urn.isRange) throw new Exception(s"Cannot report passage level for ${urn} becfause it is a range.")
-			urn.passageComponentOption match {
-				case Some(p) => {
-					p.split('.').size
+			urn.passageComponent.size match {
+				case n if (n > 0) => {
+					urn.passageComponent.split('.').size
 				}
-				case None => throw new Exception(s"Cannot report passage level for ${u} because it does not have a passage component.")
+				case _ => throw new Exception(s"Cannot report passage level for ${urn} because it does not have a passage component.")
 			}
 		} catch {
 			case e:Exception => throw new Exception(s"${e}")	
@@ -229,11 +223,11 @@ object O2Model {
 			val urn = u.dropSubref
 			val pl:Int = passageLevel(urn)
 			if (pl < level) throw new Exception(s"${u} has a ${pl}-deep citation level, which is less than ${level}.")
-			urn.passageComponentOption match {
-				case Some(p) => {
-					p.split('.')(level-1)
+			urn.passageComponent.size match {
+				case n if (n > 0) => {
+					urn.passageComponent.split('.')(level-1)
 				}
-				case None => throw new Exception(s"Cannot report passage level for ${u} because it does not have a passage component.")
+				case _ => throw new Exception(s"Cannot report passage level for ${u} because it does not have a passage component.")
 			}
 		} catch {
 			case e:Exception => throw new Exception(s"${e}")	

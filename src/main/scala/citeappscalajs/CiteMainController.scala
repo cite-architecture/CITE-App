@@ -147,7 +147,7 @@ object CiteMainController {
 			// Set up repo 
 			var timeStart = new js.Date().getTime()
 			val wholeTimeStart = timeStart
-			val repo:CiteLibrary = CiteLibrary(cexString, CiteMainModel.cexMainDelimiter, CiteMainModel.cexSecondaryDelimiter)
+			val repo:CiteLibrary = CiteLibrary(cexString)
 			var timeEnd = new js.Date().getTime()
 			g.console.log("==========================")
 			g.console.log(s"Created CiteLibrary in ${(timeEnd - timeStart)/1000} seconds.")
@@ -168,6 +168,7 @@ object CiteMainController {
 					loadMessage += s"Updated text repository: ${ O2Model.textRepo.value.get.catalog.size } works. "
 					O2Model.updateCitedWorks
 					NGModel.updateCitedWorks
+					DSEModel.updateDseVector
 					NGController.clearResults
 					NGController.clearHistory
 					O2Model.clearPassage

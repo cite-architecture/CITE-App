@@ -17,6 +17,7 @@ import edu.holycross.shot.cite._
 import edu.holycross.shot.ohco2._
 import edu.holycross.shot.citeobj._
 import edu.holycross.shot.scm._
+import edu.holycross.shot.dse._
 
 import monix.execution.Scheduler.Implicits.global
 import monix.eval._
@@ -26,17 +27,42 @@ import scala.scalajs.js.annotation.JSExport
 @JSExportTopLevel("DSEModel")
 object DSEModel {
 
-	val dseModelUrn:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:dse")
+	val dseModelUrn:Cite2Urn = Cite2Urn("urn:cite2:cite:datamodels.v1:dsemodel")
 	val dseImageProp:String = "imageroi"
 	val dseTextProp:String = "passage"
 	val dseSurfaceProp:String = "surface"
+
+	val dseVec = Var[Option[DseVector]](None)
+
+	def updateDseVector = {
+		dseVec.value = None	
+		CiteMainModel.mainLibrary.value match {
+			case Some(lib) => {
+				dseVec.value = Some(DseVector.fromCiteLibrary(lib))
+			}
+			case None => {
+				dseVec.value = None
+			}
+		}			
+	}
 
 	// dseOn not used yet…
 	val dseOn = Var[Boolean](true)
 
 	val currentListOfDseUrns = Vars.empty[Cite2Urn]
 
+
  	def implementedByDSE_image(u:Cite2Urn):Option[Vector[Cite2Urn]] ={
+ 		dseVec.value match {
+ 			case Some(dv) => {
+ 				val passages: Vector[DsePassage] = dv.passages.filter(_.imageroi.dropExtensions == u.dropExtensions)
+ 				Some(passages.map(_.urn))
+ 			}
+	 		case None => {
+	 			None
+	 		}
+ 		}
+ 		/*
  		val plainUrn = u.dropExtensions
 		DataModelModel.dataModels.value match {
 			case Some(dm) => {
@@ -60,7 +86,7 @@ object DSEModel {
 						dseUrns.size match {
 							case 0 => None
 							case _ => {
-								//g.console.log(s"Mapped to this image: ${dseUrns.size}")
+								g.console.log(s"Mapped to this image: ${dseUrns.size}")
 								Some(dseUrns)
 							}
 						}
@@ -69,9 +95,20 @@ object DSEModel {
 			}
 			case None => None
 		}
+		*/
  	}
 
  	def implementedByDSE_text(urn:CtsUrn):Option[Vector[Cite2Urn]] ={
+ 		dseVec.value match {
+ 			case Some(dv) => {
+ 				val passages: Vector[DsePassage] = dv.passages.filter(_.passage == urn)
+ 				Some(passages.map(_.urn))
+ 			}
+	 		case None => {
+	 			None
+	 		}
+ 		}
+ 		/*
  		DataModelModel.dataModels.value match {
 			case Some(dm) => { 
 			// get any collections that implement DSE	
@@ -103,9 +140,22 @@ object DSEModel {
 			}
 			case None => None
 		}
+		*/
  	}
 
  	def dseObjectsForCorpus(corp:Vector[CtsUrn]):Option[Vector[Cite2Urn]] = {
+ 		dseVec.value match {
+ 			case Some(dv) => {
+ 				val passages: Vector[DsePassage] = dv.passages.filter( p => {
+ 					corp.contains(p.passage)	
+ 				})
+ 				Some(passages.map(_.urn))
+ 			}
+	 		case None => {
+	 			None
+	 		}
+ 		}
+ 		/*
  		try {
 	 		val outerObjectVector:Vector[Vector[Option[Cite2Urn]]] = {
 	 			corp.map(c => {
@@ -141,6 +191,7 @@ object DSEModel {
 	 			None
 	 		}
 	 	}
+	 	*/
  	}
 
  	def roisForImage(urn:Cite2Urn, contextUrn:Option[Cite2Urn], dseUrns:Option[Vector[Cite2Urn]]):Option[Vector[ImageRoiModel.Roi]] = {

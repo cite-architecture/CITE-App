@@ -1,5 +1,7 @@
 # Release notes
 
+**1.15.0**: Updated DSE Library dependency, and re-wrote code to take advantage of it.
+
 **1.14.0**: Implemented Leaflet functionality, for geo-spatial data, and Marked.js, for markdown string properties. Now using discoverable data models for extended string property types.
 
 **1.13.3**: Using OHCO2 10.12.3, for improved performance.

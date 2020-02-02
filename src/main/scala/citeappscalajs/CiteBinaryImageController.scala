@@ -357,8 +357,8 @@ object CiteBinaryImageController {
 		val path:String = pathMap("path")
 		val url:String = pathMap("url")
 
-      val bis:IIIFApi = IIIFApi(baseUrl = url, imagePath = path, maxWidth = Some(CiteBinaryImageModel.thumbnailMaxWidth))
-      val imageUrlString:String = bis.serviceRequest(urn)
+      val bis:IIIFApi = IIIFApi(baseUrl = url, imagePath = path)
+      val imageUrlString:String = bis.serviceRequest(urn, maxWidth = Some(CiteBinaryImageModel.thumbnailMaxWidth))
 
       imageUrlString
 	}
@@ -578,6 +578,7 @@ object CiteBinaryImageController {
 							updateUserMessage("Regions-of-interest will appear on the image after a short delay.",1)
 						}							
 						// Hand off to javascript for OpenSeadragon zooming
+						g.console.log(s"In changeImage. Path = ${zoomPath}")
 						CiteBinaryImageController.updateImageJS(collection.toString, s, zoomPath )
 					}
 					case _ => {

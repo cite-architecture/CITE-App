@@ -34,7 +34,7 @@ object DataModelModel {
 		// Defines a "codex model" of ordered text-bearing surfaces
 		//Cite2Urn("urn:cite2:cite:datamodels.v1:tbsmodel"),
 		// Defines a "documented scholarly editions" model of surface + image + text
-		Cite2Urn("urn:cite2:cite:datamodels.v1:dse"),
+		Cite2Urn("urn:cite2:cite:datamodels.v1:dsemodel"),
 		// Defines a CITE Collection property of type `text` more precisely
 		Cite2Urn("urn:cite2:cite:datamodels.v1:extensions_text")
 	)
