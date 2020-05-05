@@ -1,5 +1,7 @@
 # Release notes
 
+**1.16.0**: Handling of the Commentary Data Model will no longer try to be clever. It will literally use the CiteRelations present in the data, and only those.
+
 **1.15.0**: Updated DSE Library dependency, and re-wrote code to take advantage of it.
 
 **1.14.0**: Implemented Leaflet functionality, for geo-spatial data, and Marked.js, for markdown string properties. Now using discoverable data models for extended string property types.

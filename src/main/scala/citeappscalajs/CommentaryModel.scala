@@ -42,7 +42,7 @@ object CommentaryModel {
 		DataModelController.hasCommentaryModel match {
 			case false => Vars.empty[Urn]	
 			case _ => {
-				val relevantComments:Vector[CiteComment] = currentCommentsAll.value.filter(_.text.asInstanceOf[CtsUrn] >= urn).toVector
+				val relevantComments:Vector[CiteComment] = currentCommentsAll.value.filter(_.text.asInstanceOf[CtsUrn] == urn).toVector
 				val v = Vars.empty[Urn]	
 				for (c <- relevantComments) {
 					v.value += c.comment

@@ -2,7 +2,7 @@ enablePlugins(ScalaJSPlugin, BuildInfoPlugin)
 
 name := "citeapp"
 
-version := "1.15.0"
+version := "1.16.0"
 
 scalaVersion := "2.12.8"
 
